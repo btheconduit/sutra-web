@@ -37,7 +37,7 @@ Do not introduce features that interfere with this.
 - Minimal layout
 - Generous spacing
 - No clutter
-- No unnecessary animations
+- Smooth clear use of animations
 - Typography should be calm and readable
 
 Avoid:
