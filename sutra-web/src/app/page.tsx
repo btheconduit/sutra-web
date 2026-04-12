@@ -142,12 +142,16 @@ function SearchSidebar({
   results,
   onSelect,
   inputRef,
+  highlightedIndex,
+  onKeyDown,
 }: {
   query: string;
   onQueryChange: (q: string) => void;
   results: GlossaryEntry[];
   onSelect: (entry: GlossaryEntry) => void;
   inputRef: React.RefObject<HTMLInputElement | null>;
+  highlightedIndex: number;
+  onKeyDown: (e: React.KeyboardEvent) => void;
 }) {
   return (
     <div className="flex h-full w-72 shrink-0 flex-col border-r border-zinc-200 bg-white px-5 pt-8 dark:border-zinc-800/50 dark:bg-black">
@@ -164,17 +168,18 @@ function SearchSidebar({
           type="text"
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
+          onKeyDown={onKeyDown}
           placeholder="Search — e.g. adhyāsa"
-          className="w-full rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 outline-none transition-colors focus:border-zinc-400 focus:bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-600 dark:focus:border-zinc-600 dark:focus:bg-zinc-950"
+          className="w-full rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-200 focus:border-zinc-400 focus:bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-600 dark:focus:border-zinc-600 dark:focus:bg-zinc-950"
         />
 
         {results.length > 0 && (
-          <ul className="absolute top-full z-10 mt-1 w-full rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-            {results.map((entry) => (
+          <ul className="animate-slide-down absolute top-full z-10 mt-1 w-full rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+            {results.map((entry, index) => (
               <li key={entry.id}>
                 <button
                   onClick={() => onSelect(entry)}
-                  className="w-full px-3 py-2 text-left transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  className={`w-full px-3 py-2 text-left transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 ${index === highlightedIndex ? "bg-zinc-100 dark:bg-zinc-800" : ""}`}
                 >
                   <span className="text-sm text-zinc-900 dark:text-zinc-100">
                     {entry.term}
@@ -189,7 +194,7 @@ function SearchSidebar({
         )}
 
         {query.length > 0 && results.length === 0 && (
-          <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-600">
+          <p className="animate-fade-in mt-3 text-xs text-zinc-400 dark:text-zinc-600">
             No results for &ldquo;{query}&rdquo;
           </p>
         )}
@@ -217,7 +222,7 @@ function CollapsedPanel({
   onClose: () => void;
 }) {
   return (
-    <div className="flex h-full w-12 shrink-0 flex-col items-center rounded-lg border border-zinc-200 bg-white py-4 dark:border-zinc-700/60 dark:bg-zinc-900/50">
+    <div className="flex h-full w-12 shrink-0 flex-col items-center rounded-lg border border-zinc-200 bg-white py-4 transition-all duration-300 ease-out dark:border-zinc-700/60 dark:bg-zinc-900/50">
       <button
         onClick={onClose}
         aria-label={`Close ${entry.term}`}
@@ -262,15 +267,15 @@ function WordPanel({
 
   return (
     <div
-      className={`${expanded ? "w-[32rem]" : "w-80"} h-full shrink-0 overflow-y-auto rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700/60 dark:bg-zinc-900/50`}
+      className={`${expanded ? "w-[32rem]" : "w-80"} h-full shrink-0 overflow-y-auto rounded-lg border border-zinc-200 bg-white p-6 transition-[width] duration-300 ease-out dark:border-zinc-700/60 dark:bg-zinc-900/50`}
     >
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <div className="text-xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">
-            {entry.term}
-          </div>
-          <div className="mt-1 font-mono text-sm text-zinc-400 dark:text-zinc-500">
+          <div className="text-xl font-light tracking-tight font-mono text-zinc-900 dark:text-zinc-100">
             {entry.devanagari || toDevanagari(entry.term)}
+          </div>
+          <div className="mt-1 text-sm text-zinc-400 dark:text-zinc-500">
+            {entry.term}
           </div>
         </div>
         <div className="ml-4 mt-1 flex items-center gap-1">
@@ -299,8 +304,8 @@ function WordPanel({
       </div>
 
       <div className="space-y-6">
-        <Section label="Transliteration">{entry.transliteration}</Section>
         <Section label="Definition">{entry.definition}</Section>
+        <Section label="Transliteration">{entry.transliteration}</Section>
         {entry.root && <Section label="Root">{entry.root}</Section>}
         {entry.vedantaMeaning && (
           <Section label="Vedantic meaning">{entry.vedantaMeaning}</Section>
@@ -318,7 +323,7 @@ function WordPanel({
                     <button
                       key={term}
                       onClick={() => onSelectTerm(linked)}
-                      className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-900 dark:text-zinc-300 dark:decoration-zinc-600 dark:hover:text-zinc-100"
+                      className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-all hover:-translate-y-px hover:text-zinc-900 dark:text-zinc-300 dark:decoration-zinc-600 dark:hover:text-zinc-100"
                     >
                       {term}
                     </button>
@@ -375,6 +380,11 @@ export default function Home() {
 
   const results = useMemo(() => searchGlossary(query), [query]);
   const hasPanels = openEntries.length > 0;
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+
+  useEffect(() => {
+    setHighlightedIndex(-1);
+  }, [results]);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -430,6 +440,28 @@ export default function Home() {
     setPanelStates((prev) => ({ ...prev, [id]: "default" }));
   }, []);
 
+  const handleSearchKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (results.length === 0) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setHighlightedIndex((prev) =>
+          prev < results.length - 1 ? prev + 1 : 0,
+        );
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setHighlightedIndex((prev) =>
+          prev > 0 ? prev - 1 : results.length - 1,
+        );
+      } else if (e.key === "Enter" && highlightedIndex >= 0) {
+        e.preventDefault();
+        handleSelect(results[highlightedIndex]);
+      }
+    },
+    [results, highlightedIndex, handleSelect],
+  );
+
   // Landing state — no panels open
   if (!hasPanels) {
     return (
@@ -449,17 +481,18 @@ export default function Home() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
               placeholder="Search a term — e.g. adhyāsa"
-              className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-base text-zinc-900 placeholder-zinc-400 outline-none transition-colors focus:border-zinc-400 focus:bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-600 dark:focus:border-zinc-600 dark:focus:bg-zinc-950"
+              className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-base text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-200 focus:border-zinc-400 focus:bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-600 dark:focus:border-zinc-600 dark:focus:bg-zinc-950"
             />
 
             {results.length > 0 && (
-              <ul className="absolute top-full z-10 mt-2 w-full rounded-lg border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-                {results.map((entry) => (
+              <ul className="animate-slide-down absolute top-full z-10 mt-2 w-full rounded-lg border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+                {results.map((entry, index) => (
                   <li key={entry.id}>
                     <button
                       onClick={() => handleSelect(entry)}
-                      className="w-full px-4 py-3 text-left transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      className={`w-full px-4 py-3 text-left transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 ${index === highlightedIndex ? "bg-zinc-100 dark:bg-zinc-800" : ""}`}
                     >
                       <span className="text-sm text-zinc-900 dark:text-zinc-100">
                         {entry.term}
@@ -479,7 +512,7 @@ export default function Home() {
             )}
 
             {query.length > 0 && results.length === 0 && (
-              <div className="mt-6">
+              <div className="animate-fade-in mt-6">
                 <p className="text-sm text-zinc-500">
                   No results for &ldquo;{query}&rdquo;
                 </p>
@@ -509,6 +542,8 @@ export default function Home() {
         results={results}
         onSelect={handleSelect}
         inputRef={inputRef}
+        highlightedIndex={highlightedIndex}
+        onKeyDown={handleSearchKeyDown}
       />
 
       <div
@@ -525,6 +560,7 @@ export default function Home() {
                 if (el) panelRefs.current.set(entry.id, el);
                 else panelRefs.current.delete(entry.id);
               }}
+              className="animate-slide-in-right"
             >
               {state === "collapsed" ? (
                 <CollapsedPanel

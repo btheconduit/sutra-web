@@ -34,6 +34,7 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`,
           }}
         />
+        <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async />
       </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
