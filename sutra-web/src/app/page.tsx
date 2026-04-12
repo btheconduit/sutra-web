@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { glossary, type GlossaryEntry } from "./data/glossary";
 import { toDevanagari } from "./data/devanagari";
+import { categories, type Category } from "./data/categories";
 
 // --- Brand ---
 
@@ -186,6 +187,9 @@ function SearchSidebar({
   inputRef,
   highlightedIndex,
   onKeyDown,
+  selectedCategory,
+  onCategorySelect,
+  onInfoClick,
 }: {
   query: string;
   onQueryChange: (q: string) => void;
@@ -194,15 +198,31 @@ function SearchSidebar({
   inputRef: React.RefObject<HTMLInputElement | null>;
   highlightedIndex: number;
   onKeyDown: (e: React.KeyboardEvent) => void;
+  selectedCategory: string | null;
+  onCategorySelect: (id: string | null) => void;
+  onInfoClick: () => void;
 }) {
+  const categoryEntries = useMemo(() => {
+    if (!selectedCategory) return [];
+    const cat = categories.find((c) => c.id === selectedCategory);
+    if (!cat) return [];
+    return cat.termIds
+      .map((id) => glossary.find((e) => e.id === id))
+      .filter((e): e is GlossaryEntry => e !== undefined);
+  }, [selectedCategory]);
+
   return (
     <div className="flex h-full w-72 shrink-0 flex-col border-r border-zinc-200 bg-white px-5 pt-8 dark:border-zinc-800/50 dark:bg-black">
-      <div className="mb-1">
+      <div className="mb-6 flex items-center justify-between">
         <Wordmark width={64} />
+        <button
+          onClick={onInfoClick}
+          aria-label="About Sutra"
+          className="text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
+        >
+          <IconInfo />
+        </button>
       </div>
-      <p className="mb-6 text-xs text-zinc-400 dark:text-zinc-600">
-        Sanskrit lookup for Vedanta study
-      </p>
 
       <div className="relative">
         <input
@@ -241,6 +261,56 @@ function SearchSidebar({
           </p>
         )}
       </div>
+
+      {query.length === 0 && (
+        <div className="mt-6 flex flex-col gap-3 overflow-y-auto pb-4">
+          <div className="flex flex-wrap gap-1.5">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() =>
+                  onCategorySelect(
+                    selectedCategory === cat.id ? null : cat.id,
+                  )
+                }
+                className={`rounded px-2 py-1 text-[11px] transition-all duration-200 ${
+                  selectedCategory === cat.id
+                    ? "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
+                    : "text-zinc-400 hover:text-zinc-600 dark:text-zinc-600 dark:hover:text-zinc-400"
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+
+          {categoryEntries.length > 0 && (
+            <div className="animate-fade-in flex flex-col gap-1">
+              {categoryEntries.map((entry) => (
+                <button
+                  key={entry.id}
+                  onClick={() => onSelect(entry)}
+                  className="rounded-md px-3 py-2 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
+                >
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-sm text-zinc-800 dark:text-zinc-200">
+                      {entry.term}
+                    </span>
+                    <span className="font-mono text-xs text-zinc-400 dark:text-zinc-600">
+                      {entry.devanagari || toDevanagari(entry.term)}
+                    </span>
+                  </div>
+                  <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-600">
+                    {entry.definition.length > 60
+                      ? entry.definition.slice(0, 60) + "…"
+                      : entry.definition}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -407,10 +477,157 @@ function Section({
   );
 }
 
+// --- Info panel ---
+
+function IconInfo({ className }: { className?: string }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
+      <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2" />
+      <path d="M8 7v4M8 5.5v-.01" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function InfoPanel({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="animate-fade-in fixed inset-0 z-30 flex items-center justify-center bg-black/20 dark:bg-black/50" onClick={onClose}>
+      <div
+        className="animate-slide-down mx-4 w-full max-w-md rounded-xl border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-950"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-6 flex items-start justify-between">
+          <h2 className="text-lg font-light text-zinc-900 dark:text-zinc-100">
+            About Sutra
+          </h2>
+          <button onClick={onClose} className={iconButtonClass}>
+            <IconClose />
+          </button>
+        </div>
+
+        <div className="space-y-5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+          <p>
+            Sutra is a quiet lookup tool for Sanskrit terms used in Vedanta study.
+            Search any term, browse by category, or follow related terms to deepen
+            your understanding.
+          </p>
+
+          <div>
+            <h3 className="mb-1.5 text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">
+              How to use
+            </h3>
+            <ul className="space-y-1.5 text-zinc-500 dark:text-zinc-400">
+              <li>Type a Sanskrit term in the search bar</li>
+              <li>Browse categories to explore terms by theme</li>
+              <li>Click any term to open its full entry</li>
+              <li>Follow related terms to trace connections</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="mb-1.5 text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">
+              Supporting this project
+            </h3>
+            <p className="text-zinc-500 dark:text-zinc-400">
+              Sutra is offered freely as a service to students and practitioners.
+              This project is sustained entirely by donations. If you find it
+              useful in your study, consider contributing to help keep it available
+              for others.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// --- Categories ---
+
+function CategoryBlocks({
+  selected,
+  onSelect,
+}: {
+  selected: string | null;
+  onSelect: (id: string | null) => void;
+}) {
+  return (
+    <div className="flex flex-wrap justify-center gap-2">
+      {categories.map((cat) => (
+        <button
+          key={cat.id}
+          onClick={() => onSelect(selected === cat.id ? null : cat.id)}
+          className={`rounded-md border px-3 py-1.5 text-xs transition-all duration-200 ${
+            selected === cat.id
+              ? "border-zinc-400 bg-zinc-100 text-zinc-900 dark:border-zinc-500 dark:bg-zinc-800 dark:text-zinc-100"
+              : "border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-700 dark:hover:text-zinc-300"
+          }`}
+        >
+          {cat.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function TermCard({
+  entry,
+  onSelect,
+}: {
+  entry: GlossaryEntry;
+  onSelect: (entry: GlossaryEntry) => void;
+}) {
+  return (
+    <button
+      onClick={() => onSelect(entry)}
+      className="group rounded-lg border border-zinc-200 px-4 py-3 text-left transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:border-zinc-700 dark:hover:bg-zinc-900/50"
+    >
+      <div className="font-mono text-base text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors">
+        {entry.devanagari || toDevanagari(entry.term)}
+      </div>
+      <div className="mt-1 text-sm text-zinc-700 dark:text-zinc-200">
+        {entry.term}
+      </div>
+      <div className="mt-1.5 text-xs leading-relaxed text-zinc-400 dark:text-zinc-600">
+        {entry.definition.length > 80
+          ? entry.definition.slice(0, 80) + "…"
+          : entry.definition}
+      </div>
+    </button>
+  );
+}
+
+function CategoryTermCards({
+  category,
+  onSelect,
+}: {
+  category: Category;
+  onSelect: (entry: GlossaryEntry) => void;
+}) {
+  const entries = category.termIds
+    .map((id) => glossary.find((e) => e.id === id))
+    .filter((e): e is GlossaryEntry => e !== undefined);
+
+  if (entries.length === 0) return null;
+
+  return (
+    <div className="animate-fade-in w-full">
+      <p className="mb-4 text-center text-xs text-zinc-400 dark:text-zinc-600">
+        {category.description}
+      </p>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {entries.map((entry) => (
+          <TermCard key={entry.id} entry={entry} onSelect={onSelect} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // --- Main ---
 
 export default function Home() {
   const [query, setQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [showInfo, setShowInfo] = useState(false);
   const [openEntries, setOpenEntries] = useState<GlossaryEntry[]>([]);
   const [panelStates, setPanelStates] = useState<Record<string, PanelState>>(
     {},
@@ -559,20 +776,28 @@ export default function Home() {
     return (
       <div className="flex flex-1 flex-col items-center justify-start bg-white font-sans dark:bg-black">
         <ThemeToggle dark={dark} onToggle={toggle} />
+        {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
+        <button
+          onClick={() => setShowInfo(true)}
+          aria-label="About Sutra"
+          className="fixed top-5 left-5 z-20 text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
+        >
+          <IconInfo />
+        </button>
         <main className="flex w-full max-w-2xl flex-col items-center px-6 pt-32 pb-16">
-          <div className="mb-2">
+          <div className="mb-10">
             <Wordmark width={120} />
           </div>
-          <p className="mb-12 text-sm text-zinc-500">
-            Sanskrit lookup for Vedanta study
-          </p>
 
           <div className="relative w-full">
             <input
               ref={inputRef}
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                if (e.target.value.length > 0) setSelectedCategory(null);
+              }}
               onKeyDown={handleSearchKeyDown}
               placeholder="Search a term — e.g. adhyāsa"
               className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-base text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-200 focus:border-zinc-400 focus:bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-600 dark:focus:border-zinc-600 dark:focus:bg-zinc-950"
@@ -613,10 +838,22 @@ export default function Home() {
           </div>
 
           {query.length === 0 && (
-            <p className="mt-16 max-w-sm text-center text-sm leading-relaxed text-zinc-300 dark:text-zinc-700">
-              A quiet tool for finding Sanskrit terms in context, so you can
-              return to study without distraction.
-            </p>
+            <div className="mt-12 w-full space-y-6">
+              <CategoryBlocks
+                selected={selectedCategory}
+                onSelect={setSelectedCategory}
+              />
+              {selectedCategory &&
+                (() => {
+                  const cat = categories.find((c) => c.id === selectedCategory);
+                  return cat ? (
+                    <CategoryTermCards
+                      category={cat}
+                      onSelect={handleSelect}
+                    />
+                  ) : null;
+                })()}
+            </div>
           )}
         </main>
       </div>
@@ -627,6 +864,7 @@ export default function Home() {
   return (
     <div className="flex h-full flex-1 bg-white font-sans dark:bg-black">
       <ThemeToggle dark={dark} onToggle={toggle} />
+      {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
 
       <SearchSidebar
         query={query}
@@ -636,6 +874,9 @@ export default function Home() {
         inputRef={inputRef}
         highlightedIndex={highlightedIndex}
         onKeyDown={handleSearchKeyDown}
+        selectedCategory={selectedCategory}
+        onCategorySelect={setSelectedCategory}
+        onInfoClick={() => setShowInfo(true)}
       />
 
       <div
