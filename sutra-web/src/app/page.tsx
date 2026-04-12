@@ -313,10 +313,10 @@ function WordPanel({
     >
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <div className="text-xl font-light tracking-tight font-mono text-zinc-900 dark:text-zinc-100">
+          <div className="text-3xl font-light tracking-tight font-mono text-zinc-900 dark:text-zinc-100">
             {entry.devanagari || toDevanagari(entry.term)}
           </div>
-          <div className="mt-1 text-sm text-zinc-400 dark:text-zinc-500">
+          <div className="mt-1 text-base text-zinc-400 dark:text-zinc-500">
             {entry.term}
           </div>
         </div>
@@ -347,11 +347,11 @@ function WordPanel({
 
       <div className="space-y-6">
         <Section label="Definition">{entry.definition}</Section>
-        <Section label="Transliteration">{entry.transliteration}</Section>
-        {entry.root && <Section label="Root">{entry.root}</Section>}
         {entry.vedantaMeaning && (
           <Section label="Vedantic meaning">{entry.vedantaMeaning}</Section>
         )}
+        <Section label="Transliteration">{entry.transliteration}</Section>
+        {entry.root && <Section label="Root">{entry.root}</Section>}
         {entry.relatedTerms && entry.relatedTerms.length > 0 && (
           <div>
             <div className="mb-1 text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">
@@ -397,10 +397,10 @@ function Section({
 }) {
   return (
     <div>
-      <div className="mb-1 text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">
+      <div className="mb-1 text-sm uppercase tracking-widest text-zinc-400 dark:text-zinc-600">
         {label}
       </div>
-      <div className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+      <div className="text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
         {children}
       </div>
     </div>
@@ -419,6 +419,9 @@ export default function Home() {
   const panelContainerRef = useRef<HTMLDivElement>(null);
   const panelRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const { dark, toggle } = useTheme();
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dropIndex, setDropIndex] = useState<number | null>(null);
+  const [dropSide, setDropSide] = useState<"left" | "right">("left");
 
   const results = useMemo(() => searchGlossary(query), [query]);
   const hasPanels = openEntries.length > 0;
@@ -503,6 +506,53 @@ export default function Home() {
     },
     [results, highlightedIndex, handleSelect],
   );
+
+  const handleDragStart = useCallback((index: number) => {
+    setDragIndex(index);
+  }, []);
+
+  const handleDragOver = useCallback(
+    (e: React.DragEvent, index: number) => {
+      e.preventDefault();
+      if (dragIndex === null || index === dragIndex) {
+        setDropIndex(null);
+        return;
+      }
+      const rect = e.currentTarget.getBoundingClientRect();
+      const midX = rect.left + rect.width / 2;
+      setDropSide(e.clientX < midX ? "left" : "right");
+      setDropIndex(index);
+    },
+    [dragIndex],
+  );
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      if (dragIndex === null || dropIndex === null || dragIndex === dropIndex) {
+        setDragIndex(null);
+        setDropIndex(null);
+        return;
+      }
+      setOpenEntries((prev) => {
+        const next = [...prev];
+        const [moved] = next.splice(dragIndex, 1);
+        // Adjust insertion: if dropping on the right side, insert after
+        let insertAt = dropIndex > dragIndex ? dropIndex - 1 : dropIndex;
+        if (dropSide === "right") insertAt += 1;
+        next.splice(insertAt, 0, moved);
+        return next;
+      });
+      setDragIndex(null);
+      setDropIndex(null);
+    },
+    [dragIndex, dropIndex, dropSide],
+  );
+
+  const handleDragEnd = useCallback(() => {
+    setDragIndex(null);
+    setDropIndex(null);
+  }, []);
 
   // Landing state — no panels open
   if (!hasPanels) {
@@ -592,8 +642,11 @@ export default function Home() {
         ref={panelContainerRef}
         className="flex flex-1 items-stretch gap-3 overflow-x-auto p-4"
       >
-        {openEntries.map((entry) => {
+        {openEntries.map((entry, index) => {
           const state = panelStates[entry.id] || "default";
+          const isDragging = dragIndex === index;
+          const showLeftLine = dropIndex === index && dropSide === "left" && dragIndex !== null;
+          const showRightLine = dropIndex === index && dropSide === "right" && dragIndex !== null;
 
           return (
             <div
@@ -602,8 +655,19 @@ export default function Home() {
                 if (el) panelRefs.current.set(entry.id, el);
                 else panelRefs.current.delete(entry.id);
               }}
-              className="animate-slide-in-right"
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={handleDrop}
+              onDragEnd={handleDragEnd}
+              className={`relative animate-slide-in-right cursor-grab transition-all duration-200 active:cursor-grabbing ${isDragging ? "opacity-30 scale-[0.97]" : ""}`}
             >
+              {showLeftLine && (
+                <div className="absolute -left-2 top-2 bottom-2 w-0.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-fade-in" />
+              )}
+              {showRightLine && (
+                <div className="absolute -right-2 top-2 bottom-2 w-0.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-fade-in" />
+              )}
               {state === "collapsed" ? (
                 <CollapsedPanel
                   entry={entry}
