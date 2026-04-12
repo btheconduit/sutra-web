@@ -159,21 +159,36 @@ function useTheme() {
   return { dark, toggle };
 }
 
-function ThemeToggle({
+function TopBar({
   dark,
   onToggle,
+  onInfoClick,
 }: {
   dark: boolean;
   onToggle: () => void;
+  onInfoClick: () => void;
 }) {
   return (
-    <button
-      onClick={onToggle}
-      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-      className="fixed top-5 right-5 z-20 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-600 dark:hover:text-zinc-400"
-    >
-      {dark ? "light" : "dark"}
-    </button>
+    <div className="fixed top-5 right-5 z-20 flex items-center gap-3 rounded-lg border border-zinc-200/40 bg-white/40 px-3 py-2 backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-950/30">
+      <button
+        onClick={onInfoClick}
+        aria-label="About Sutra"
+        className="text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
+      >
+        <IconInfo />
+      </button>
+      <button
+        onClick={onToggle}
+        aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+        className="text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
+      >
+        {dark ? (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        ) : (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        )}
+      </button>
+    </div>
   );
 }
 
@@ -190,6 +205,8 @@ function SearchSidebar({
   selectedCategory,
   onCategorySelect,
   onInfoClick,
+  collapsed,
+  onToggleCollapse,
 }: {
   query: string;
   onQueryChange: (q: string) => void;
@@ -201,6 +218,8 @@ function SearchSidebar({
   selectedCategory: string | null;
   onCategorySelect: (id: string | null) => void;
   onInfoClick: () => void;
+  collapsed: boolean;
+  onToggleCollapse: () => void;
 }) {
   const categoryEntries = useMemo(() => {
     if (!selectedCategory) return [];
@@ -211,29 +230,76 @@ function SearchSidebar({
       .filter((e): e is GlossaryEntry => e !== undefined);
   }, [selectedCategory]);
 
+  if (collapsed) {
+    return (
+      <div
+        className="flex h-full w-12 shrink-0 flex-col items-center border-r border-zinc-200/40 bg-white/40 pt-4 backdrop-blur-2xl backdrop-saturate-150 transition-[width] duration-300 ease-out dark:border-zinc-700/30 dark:bg-zinc-950/30"
+      >
+        <span className="mb-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/sutra-brandmark-black.svg" alt="Sutra" width={24} height={24} className="block dark:hidden" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/sutra-brandmark-white.svg" alt="Sutra" width={24} height={24} className="hidden dark:block" />
+        </span>
+        <button
+          onClick={onToggleCollapse}
+          aria-label="Expand sidebar"
+          title="Expand sidebar (⌘B)"
+          className="mb-3 text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-400"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button
+          onClick={() => { onToggleCollapse(); requestAnimationFrame(() => inputRef.current?.focus()); }}
+          aria-label="Search"
+          title="Search (/)"
+          className="text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-400"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex h-full w-72 shrink-0 flex-col border-r border-zinc-200/40 bg-white/40 px-5 pt-8 backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-950/30">
+    <div className="flex h-full w-72 shrink-0 flex-col border-r border-zinc-200/40 bg-white/40 px-5 pt-8 backdrop-blur-2xl backdrop-saturate-150 transition-[width] duration-300 ease-out dark:border-zinc-700/30 dark:bg-zinc-950/30">
       <div className="mb-6 flex items-center justify-between">
         <Wordmark width={64} />
-        <button
-          onClick={onInfoClick}
-          aria-label="About Sutra"
-          className="text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
-        >
-          <IconInfo />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onToggleCollapse}
+            aria-label="Collapse sidebar"
+            title="Collapse sidebar (⌘B)"
+            className="text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+        </div>
       </div>
 
       <div className="relative">
-        <input
-          ref={inputRef}
-          type="text"
-          value={query}
-          onChange={(e) => onQueryChange(e.target.value)}
-          onKeyDown={onKeyDown}
-          placeholder="Search — e.g. adhyāsa"
-          className="w-full rounded-lg border border-zinc-200/40 bg-white/30 px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none backdrop-blur-md transition-all duration-300 focus:border-zinc-300 focus:bg-white/50 focus:shadow-[0_0_0_3px_rgba(161,161,170,0.12)] dark:border-zinc-700/30 dark:bg-zinc-800/20 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-500 dark:focus:bg-zinc-800/40 dark:focus:shadow-[0_0_0_3px_rgba(161,161,170,0.08)]"
-        />
+        <div className="relative">
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={(e) => onQueryChange(e.target.value)}
+            onKeyDown={onKeyDown}
+            placeholder="Find a term (e.g. adhyāsa, freedom, atma)"
+            className="peer w-full rounded-lg border border-zinc-200/40 bg-white/30 px-3.5 py-2.5 pr-8 text-sm text-zinc-900 placeholder-zinc-400 outline-none backdrop-blur-md transition-all duration-300 focus:border-zinc-300 focus:bg-white/50 focus:shadow-[0_0_0_3px_rgba(161,161,170,0.12)] dark:border-zinc-700/30 dark:bg-zinc-800/20 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-500 dark:focus:bg-zinc-800/40 dark:focus:shadow-[0_0_0_3px_rgba(161,161,170,0.08)]"
+          />
+          {query.length > 0 ? (
+            <button
+              onClick={() => { onQueryChange(""); inputRef.current?.focus(); }}
+              aria-label="Clear search"
+              className="absolute top-1/2 right-3 -translate-y-1/2 text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          ) : (
+            <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 rounded border border-zinc-200 bg-zinc-100/60 px-1.5 py-0.5 text-[10px] text-zinc-400 transition-opacity peer-focus:opacity-0 dark:border-zinc-700 dark:bg-zinc-800/60 dark:text-zinc-500">/</span>
+          )}
+        </div>
 
         {results.length > 0 && (
           <ul className="animate-slide-down absolute top-full z-10 mt-1.5 w-full overflow-hidden rounded-lg border border-zinc-200/40 bg-white/50 shadow-lg backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-900/40 dark:shadow-zinc-950/50">
@@ -241,14 +307,19 @@ function SearchSidebar({
               <li key={entry.id} className={index > 0 ? "border-t border-zinc-100 dark:border-zinc-800/60" : ""}>
                 <button
                   onClick={() => onSelect(entry)}
-                  className={`flex w-full items-baseline gap-2 px-3.5 py-2.5 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/60 ${index === highlightedIndex ? "bg-zinc-50 dark:bg-zinc-800/60" : ""}`}
+                  className={`w-full px-3.5 py-2.5 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/60 ${index === highlightedIndex ? "bg-zinc-50 dark:bg-zinc-800/60" : ""}`}
                 >
-                  <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    {entry.term}
-                  </span>
-                  <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
-                    {entry.devanagari || toDevanagari(entry.term)}
-                  </span>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                      {entry.term}
+                    </span>
+                    <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+                      {entry.devanagari || toDevanagari(entry.term)}
+                    </span>
+                  </div>
+                  <div className="mt-0.5 truncate text-xs text-zinc-400 dark:text-zinc-500">
+                    {entry.definition}
+                  </div>
                 </button>
               </li>
             ))}
@@ -348,7 +419,7 @@ function CollapsedPanel({
         className="flex flex-1 items-center"
       >
         <span
-          className="text-xs font-light tracking-wide text-zinc-500 dark:text-zinc-400"
+          className="text-sm font-light tracking-wide text-zinc-500 dark:text-zinc-400"
           style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
         >
           {entry.term}
@@ -619,15 +690,15 @@ function WordPanel({
 
   return (
     <div
-      className={`${expanded ? "w-[32rem]" : "w-80"} flex h-full shrink-0 flex-col rounded-lg border border-zinc-200 bg-white transition-[width] duration-300 ease-out dark:border-zinc-700/60 dark:bg-zinc-900/50`}
+      className={`${expanded ? "w-[32rem]" : "w-80"} flex h-full shrink-0 flex-col rounded-lg border border-zinc-200 bg-white transition-all duration-300 ease-out hover:border-zinc-300 hover:shadow-md dark:border-zinc-700/60 dark:bg-zinc-900/50 dark:hover:border-zinc-600/60 dark:hover:shadow-zinc-950/40`}
     >
       <div className="flex-1 overflow-y-auto p-6">
         <div className="mb-6 flex items-start justify-between">
           <div>
-            <div className="text-3xl font-light tracking-tight font-mono text-zinc-900 dark:text-zinc-100">
+            <div className="text-4xl font-light tracking-tight font-mono text-zinc-900 dark:text-zinc-100">
               {entry.devanagari || toDevanagari(entry.term)}
             </div>
-            <div className="mt-1 text-base text-zinc-400 dark:text-zinc-500">
+            <div className="mt-1.5 text-lg text-zinc-400 dark:text-zinc-500">
               {entry.term}
             </div>
           </div>
@@ -665,7 +736,7 @@ function WordPanel({
           {entry.root && <Section label="Root">{entry.root}</Section>}
           {entry.relatedTerms && entry.relatedTerms.length > 0 && (
             <div>
-              <div className="mb-1 text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">
+              <div className="mb-1 text-xs tracking-wide text-zinc-400 dark:text-zinc-600">
                 Related terms
               </div>
               <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm leading-relaxed">
@@ -713,7 +784,7 @@ function Section({
 }) {
   return (
     <div>
-      <div className="mb-1 text-sm uppercase tracking-widest text-zinc-400 dark:text-zinc-600">
+      <div className="mb-1 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
         {label}
       </div>
       <div className="text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
@@ -758,19 +829,39 @@ function InfoPanel({ onClose }: { onClose: () => void }) {
           </p>
 
           <div>
-            <h3 className="mb-1.5 text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">
+            <h3 className="mb-3 text-xs tracking-wide text-zinc-400 dark:text-zinc-600">
               How to use
             </h3>
-            <ul className="space-y-1.5 text-zinc-500 dark:text-zinc-400">
-              <li>Type a Sanskrit term in the search bar</li>
-              <li>Browse categories to explore terms by theme</li>
-              <li>Click any term to open its full entry</li>
-              <li>Follow related terms to trace connections</li>
-            </ul>
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="rounded-lg border border-zinc-100 bg-zinc-50/50 px-3.5 py-3 dark:border-zinc-800/60 dark:bg-zinc-900/40">
+                <span className="mb-1 block text-zinc-400 dark:text-zinc-500">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                </span>
+                <p className="text-xs leading-snug text-zinc-500 dark:text-zinc-400">Search and open multiple terms side by side</p>
+              </div>
+              <div className="rounded-lg border border-zinc-100 bg-zinc-50/50 px-3.5 py-3 dark:border-zinc-800/60 dark:bg-zinc-900/40">
+                <span className="mb-1 block text-zinc-400 dark:text-zinc-500">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                </span>
+                <p className="text-xs leading-snug text-zinc-500 dark:text-zinc-400">Browse categories by theme</p>
+              </div>
+              <div className="rounded-lg border border-zinc-100 bg-zinc-50/50 px-3.5 py-3 dark:border-zinc-800/60 dark:bg-zinc-900/40">
+                <span className="mb-1 block text-zinc-400 dark:text-zinc-500">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </span>
+                <p className="text-xs leading-snug text-zinc-500 dark:text-zinc-400">Add personal notes to any term</p>
+              </div>
+              <div className="rounded-lg border border-zinc-100 bg-zinc-50/50 px-3.5 py-3 dark:border-zinc-800/60 dark:bg-zinc-900/40">
+                <span className="mb-1 block text-zinc-400 dark:text-zinc-500">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                </span>
+                <p className="text-xs leading-snug text-zinc-500 dark:text-zinc-400">Follow related terms to explore</p>
+              </div>
+            </div>
           </div>
 
           <div>
-            <h3 className="mb-1.5 text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">
+            <h3 className="mb-1.5 text-xs tracking-wide text-zinc-400 dark:text-zinc-600">
               Supporting this project
             </h3>
             <p className="text-zinc-500 dark:text-zinc-400">
@@ -824,7 +915,7 @@ function TermCard({
   return (
     <button
       onClick={() => onSelect(entry)}
-      className="group rounded-lg border border-zinc-200 px-4 py-3 text-left transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:border-zinc-700 dark:hover:bg-zinc-900/50"
+      className="group rounded-lg border border-zinc-200 px-4 py-3 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-300 hover:bg-zinc-50 hover:shadow-sm dark:border-zinc-800 dark:hover:border-zinc-700 dark:hover:bg-zinc-900/50 dark:hover:shadow-zinc-950/30"
     >
       <div className="font-mono text-base text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors">
         {entry.devanagari || toDevanagari(entry.term)}
@@ -872,7 +963,7 @@ function CategoryTermCards({
 
 export default function Home() {
   const [query, setQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>("core");
   const [showInfo, setShowInfo] = useState(false);
   const [openEntries, setOpenEntries] = useState<GlossaryEntry[]>([]);
   const [panelStates, setPanelStates] = useState<Record<string, PanelState>>(
@@ -886,6 +977,7 @@ export default function Home() {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
   const [dropSide, setDropSide] = useState<"left" | "right">("left");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const results = useMemo(() => searchGlossary(query), [query]);
   const hasPanels = openEntries.length > 0;
@@ -898,6 +990,42 @@ export default function Home() {
   useEffect(() => {
     inputRef.current?.focus();
   }, [hasPanels]);
+
+  // Global keyboard shortcuts
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement)?.tagName;
+      const isInput = tag === "INPUT" || tag === "TEXTAREA";
+
+      // "/" — focus search (only when not typing in an input)
+      if (e.key === "/" && !isInput) {
+        e.preventDefault();
+        if (sidebarCollapsed && hasPanels) setSidebarCollapsed(false);
+        requestAnimationFrame(() => inputRef.current?.focus());
+        return;
+      }
+
+      // Cmd/Ctrl+B — toggle sidebar (only in panel view)
+      if ((e.metaKey || e.ctrlKey) && e.key === "b" && hasPanels) {
+        e.preventDefault();
+        setSidebarCollapsed((prev) => !prev);
+        return;
+      }
+
+      // Escape — blur search or collapse sidebar
+      if (e.key === "Escape" && hasPanels) {
+        if (isInput && document.activeElement === inputRef.current) {
+          inputRef.current?.blur();
+        } else if (!sidebarCollapsed) {
+          setSidebarCollapsed(true);
+        }
+        return;
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [hasPanels, sidebarCollapsed]);
 
   useEffect(() => {
     try {
@@ -1077,18 +1205,20 @@ export default function Home() {
   if (!hasPanels) {
     return (
       <div className="flex flex-1 flex-col items-center justify-start bg-white font-sans dark:bg-black">
-        <ThemeToggle dark={dark} onToggle={toggle} />
+        <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} />
         {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
-        <button
-          onClick={() => setShowInfo(true)}
-          aria-label="About Sutra"
-          className="fixed top-5 left-5 z-20 text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
-        >
-          <IconInfo />
-        </button>
         <main className="flex w-full max-w-2xl flex-col items-center px-6 pt-32 pb-16">
-          <div className="mb-10">
+          <div className="mb-10 flex flex-col items-center">
+            <span className="mb-5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/sutra-brandmark-black.svg" alt="" width={64} height={64} className="block dark:hidden" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/sutra-brandmark-white.svg" alt="" width={64} height={64} className="hidden dark:block" />
+            </span>
             <Wordmark width={120} />
+            <p className="mt-3 text-sm text-zinc-400 dark:text-zinc-600">
+              Look up Sanskrit terms with clarity
+            </p>
           </div>
 
           <div className="relative w-full">
@@ -1101,7 +1231,7 @@ export default function Home() {
                 if (e.target.value.length > 0) setSelectedCategory(null);
               }}
               onKeyDown={handleSearchKeyDown}
-              placeholder="Search a term — e.g. adhyāsa"
+              placeholder="Find a term (e.g. adhyāsa, freedom, atma)"
               className="w-full rounded-xl border border-zinc-200 bg-zinc-50/80 px-5 py-3.5 text-base text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-300 focus:border-zinc-400 focus:bg-white focus:shadow-[0_0_0_3px_rgba(161,161,170,0.1)] dark:border-zinc-700/60 dark:bg-zinc-900/60 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-500 dark:focus:bg-zinc-900 dark:focus:shadow-[0_0_0_3px_rgba(161,161,170,0.08)]"
             />
 
@@ -1165,7 +1295,7 @@ export default function Home() {
   // Panel state — search sidebar + horizontal panels
   return (
     <div className="relative flex h-full min-h-0 flex-1 overflow-hidden bg-white font-sans dark:bg-black">
-      <ThemeToggle dark={dark} onToggle={toggle} />
+      <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} />
       {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
 
       {/* Sidebar overlays the panel area for glass effect */}
@@ -1181,12 +1311,14 @@ export default function Home() {
           selectedCategory={selectedCategory}
           onCategorySelect={setSelectedCategory}
           onInfoClick={() => setShowInfo(true)}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
         />
       </div>
 
       <div
         ref={panelContainerRef}
-        className="flex min-h-0 flex-1 items-stretch gap-3 overflow-x-auto p-4 pl-[19rem]"
+        className={`flex min-h-0 flex-1 items-stretch gap-3 overflow-x-auto p-4 transition-[padding] duration-300 ease-out ${sidebarCollapsed ? "pl-16" : "pl-[19rem]"}`}
       >
         {openEntries.map((entry, index) => {
           const state = panelStates[entry.id] || "default";
