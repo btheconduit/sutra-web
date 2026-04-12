@@ -36,7 +36,7 @@ export default function RootLayout({
         />
         <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="h-full flex flex-col">{children}</body>
     </html>
   );
 }

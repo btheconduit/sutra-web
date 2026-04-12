@@ -360,6 +360,236 @@ function CollapsedPanel({
 
 // --- Full panel (default + expanded) ---
 
+type StickyNote = { id: string; text: string; color: number };
+
+let noteIdCounter = 0;
+function nextNoteId() {
+  return `note-${Date.now()}-${++noteIdCounter}`;
+}
+
+const stickyColors = [
+  { bg: "bg-amber-50 border-amber-200/80 dark:bg-amber-950/30 dark:border-amber-800/40", dot: "bg-amber-300 dark:bg-amber-700" },
+  { bg: "bg-sky-50 border-sky-200/80 dark:bg-sky-950/30 dark:border-sky-800/40", dot: "bg-sky-300 dark:bg-sky-700" },
+  { bg: "bg-rose-50 border-rose-200/80 dark:bg-rose-950/30 dark:border-rose-800/40", dot: "bg-rose-300 dark:bg-rose-700" },
+  { bg: "bg-emerald-50 border-emerald-200/80 dark:bg-emerald-950/30 dark:border-emerald-800/40", dot: "bg-emerald-300 dark:bg-emerald-700" },
+  { bg: "bg-violet-50 border-violet-200/80 dark:bg-violet-950/30 dark:border-violet-800/40", dot: "bg-violet-300 dark:bg-violet-700" },
+];
+
+function ColorPicker({
+  selected,
+  onSelect,
+}: {
+  selected: number;
+  onSelect: (index: number) => void;
+}) {
+  return (
+    <div className="flex items-center gap-1.5">
+      {stickyColors.map((c, i) => (
+        <button
+          key={i}
+          onClick={() => onSelect(i)}
+          className={`h-3.5 w-3.5 rounded-full transition-all ${c.dot} ${selected === i ? "ring-1.5 ring-offset-1 ring-zinc-400 dark:ring-zinc-500 dark:ring-offset-zinc-900 scale-110" : "opacity-60 hover:opacity-100"}`}
+          aria-label={`Color ${i + 1}`}
+        />
+      ))}
+    </div>
+  );
+}
+
+function StickyNoteCard({
+  note,
+  onRemove,
+  onChangeColor,
+  onEdit,
+}: {
+  note: StickyNote;
+  onRemove: () => void;
+  onChangeColor: (color: number) => void;
+  onEdit: (text: string) => void;
+}) {
+  const [showColors, setShowColors] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(note.text);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const color = stickyColors[note.color % stickyColors.length];
+
+  useEffect(() => {
+    if (editing) textareaRef.current?.focus();
+  }, [editing]);
+
+  useEffect(() => {
+    setDraft(note.text);
+  }, [note.text]);
+
+  return (
+    <div
+      className={`group/sticky relative rounded border px-3 py-2 ${color.bg}`}
+    >
+      <div className="absolute -top-1.5 right-3 flex items-center gap-1 opacity-0 transition-opacity group-hover/sticky:opacity-100">
+        <button
+          onClick={() => setShowColors((v) => !v)}
+          className="flex h-4 w-4 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-600"
+          aria-label="Change color"
+        >
+          <div className={`h-2 w-2 rounded-full ${color.dot}`} />
+        </button>
+        <button
+          onClick={onRemove}
+          className="flex h-4 w-4 items-center justify-center rounded-full bg-zinc-300 text-white dark:bg-zinc-600"
+          aria-label="Remove note"
+        >
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+            <path d="M1.5 1.5l5 5M6.5 1.5l-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </button>
+      </div>
+      {showColors && (
+        <div className="mb-2">
+          <ColorPicker selected={note.color} onSelect={(c) => { onChangeColor(c); setShowColors(false); }} />
+        </div>
+      )}
+      {editing ? (
+        <div>
+          <textarea
+            ref={textareaRef}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                const trimmed = draft.trim();
+                if (trimmed) onEdit(trimmed);
+                else onRemove();
+                setEditing(false);
+              }
+              if (e.key === "Escape") {
+                setDraft(note.text);
+                setEditing(false);
+              }
+            }}
+            onBlur={() => {
+              const trimmed = draft.trim();
+              if (trimmed && trimmed !== note.text) onEdit(trimmed);
+              else setDraft(note.text);
+              setEditing(false);
+            }}
+            rows={2}
+            className="w-full resize-none rounded bg-transparent text-xs leading-relaxed text-zinc-600 outline-none dark:text-zinc-300"
+          />
+        </div>
+      ) : (
+        <div
+          onClick={() => setEditing(true)}
+          className="cursor-text whitespace-pre-wrap text-xs leading-relaxed text-zinc-600 dark:text-zinc-300"
+        >
+          {note.text}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function NotesArea({
+  entryId,
+  notes,
+  onAdd,
+  onRemove,
+  onChangeColor,
+  onEdit,
+}: {
+  entryId: string;
+  notes: StickyNote[];
+  onAdd: (id: string, text: string, color: number) => void;
+  onRemove: (id: string, index: number) => void;
+  onChangeColor: (id: string, index: number, color: number) => void;
+  onEdit: (id: string, index: number, text: string) => void;
+}) {
+  const [composing, setComposing] = useState(false);
+  const [draft, setDraft] = useState("");
+  const [draftColor, setDraftColor] = useState(0);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (composing) textareaRef.current?.focus();
+  }, [composing]);
+
+  return (
+    <div className="space-y-2">
+      {notes.map((note, i) => (
+        <StickyNoteCard
+          key={note.id}
+          note={note}
+          onRemove={() => onRemove(entryId, i)}
+          onChangeColor={(c) => onChangeColor(entryId, i, c)}
+          onEdit={(text) => onEdit(entryId, i, text)}
+        />
+      ))}
+
+      {composing ? (
+        <div>
+          <textarea
+            ref={textareaRef}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                if (draft.trim()) {
+                  onAdd(entryId, draft.trim(), draftColor);
+                  setDraft("");
+                  setDraftColor(0);
+                  setComposing(false);
+                }
+              }
+              if (e.key === "Escape") {
+                setDraft("");
+                setComposing(false);
+              }
+            }}
+            placeholder="Write a note..."
+            rows={2}
+            className={`w-full resize-none rounded border px-3 py-2 text-xs leading-relaxed text-zinc-700 outline-none transition-colors dark:text-zinc-200 ${stickyColors[draftColor % stickyColors.length].bg}`}
+          />
+          <div className="mt-2 flex items-center gap-3">
+            <ColorPicker selected={draftColor} onSelect={setDraftColor} />
+            <div className="ml-auto flex items-center gap-2">
+              <button
+                onClick={() => {
+                  if (draft.trim()) {
+                    onAdd(entryId, draft.trim(), draftColor);
+                    setDraft("");
+                    setDraftColor(0);
+                    setComposing(false);
+                  }
+                }}
+                className="rounded px-2 py-0.5 text-xs font-medium text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+              >
+                Add
+              </button>
+              <button
+                onClick={() => {
+                  setDraft("");
+                  setComposing(false);
+                }}
+                className="rounded px-2 py-0.5 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <button
+          onClick={() => setComposing(true)}
+          className="w-full rounded border border-dashed border-zinc-200 px-3 py-2 text-left text-xs text-zinc-400 transition-colors hover:border-zinc-300 hover:text-zinc-500 dark:border-zinc-700/60 dark:text-zinc-600 dark:hover:border-zinc-600 dark:hover:text-zinc-400"
+        >
+          {notes.length === 0 ? "Add a note..." : "+ Add another note"}
+        </button>
+      )}
+    </div>
+  );
+}
+
 function WordPanel({
   entry,
   panelState,
@@ -367,6 +597,11 @@ function WordPanel({
   onCollapse,
   onToggleExpand,
   onSelectTerm,
+  notes,
+  onAddNote,
+  onRemoveNote,
+  onChangeNoteColor,
+  onEditNote,
 }: {
   entry: GlossaryEntry;
   panelState: "default" | "expanded";
@@ -374,85 +609,96 @@ function WordPanel({
   onCollapse: () => void;
   onToggleExpand: () => void;
   onSelectTerm: (entry: GlossaryEntry) => void;
+  notes: StickyNote[];
+  onAddNote: (id: string, text: string, color: number) => void;
+  onRemoveNote: (id: string, index: number) => void;
+  onChangeNoteColor: (id: string, index: number, color: number) => void;
+  onEditNote: (id: string, index: number, text: string) => void;
 }) {
   const expanded = panelState === "expanded";
 
   return (
     <div
-      className={`${expanded ? "w-[32rem]" : "w-80"} h-full shrink-0 overflow-y-auto rounded-lg border border-zinc-200 bg-white p-6 transition-[width] duration-300 ease-out dark:border-zinc-700/60 dark:bg-zinc-900/50`}
+      className={`${expanded ? "w-[32rem]" : "w-80"} flex h-full shrink-0 flex-col rounded-lg border border-zinc-200 bg-white transition-[width] duration-300 ease-out dark:border-zinc-700/60 dark:bg-zinc-900/50`}
     >
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <div className="text-3xl font-light tracking-tight font-mono text-zinc-900 dark:text-zinc-100">
-            {entry.devanagari || toDevanagari(entry.term)}
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="mb-6 flex items-start justify-between">
+          <div>
+            <div className="text-3xl font-light tracking-tight font-mono text-zinc-900 dark:text-zinc-100">
+              {entry.devanagari || toDevanagari(entry.term)}
+            </div>
+            <div className="mt-1 text-base text-zinc-400 dark:text-zinc-500">
+              {entry.term}
+            </div>
           </div>
-          <div className="mt-1 text-base text-zinc-400 dark:text-zinc-500">
-            {entry.term}
+          <div className="ml-4 mt-1 flex items-center gap-1">
+            <button
+              onClick={onCollapse}
+              aria-label="Minimize panel"
+              className={iconButtonClass}
+            >
+              <IconMinimize />
+            </button>
+            <button
+              onClick={onToggleExpand}
+              aria-label={expanded ? "Collapse panel" : "Expand panel"}
+              className={iconButtonClass}
+            >
+              {expanded ? <IconCollapse /> : <IconExpand />}
+            </button>
+            <button
+              onClick={onClose}
+              aria-label={`Close ${entry.term}`}
+              className={iconButtonClass}
+            >
+              <IconClose />
+            </button>
           </div>
         </div>
-        <div className="ml-4 mt-1 flex items-center gap-1">
-          <button
-            onClick={onCollapse}
-            aria-label="Minimize panel"
-            className={iconButtonClass}
-          >
-            <IconMinimize />
-          </button>
-          <button
-            onClick={onToggleExpand}
-            aria-label={expanded ? "Collapse panel" : "Expand panel"}
-            className={iconButtonClass}
-          >
-            {expanded ? <IconCollapse /> : <IconExpand />}
-          </button>
-          <button
-            onClick={onClose}
-            aria-label={`Close ${entry.term}`}
-            className={iconButtonClass}
-          >
-            <IconClose />
-          </button>
+
+        <div className="space-y-6">
+          <Section label="Definition">{entry.definition}</Section>
+          {entry.vedantaMeaning && (
+            <Section label="Vedantic meaning">{entry.vedantaMeaning}</Section>
+          )}
+          <Section label="Transliteration">{entry.transliteration}</Section>
+          {entry.root && <Section label="Root">{entry.root}</Section>}
+          {entry.relatedTerms && entry.relatedTerms.length > 0 && (
+            <div>
+              <div className="mb-1 text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">
+                Related terms
+              </div>
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm leading-relaxed">
+                {entry.relatedTerms.map((term) => {
+                  const linked = findByTerm(term);
+                  if (linked) {
+                    return (
+                      <button
+                        key={term}
+                        onClick={() => onSelectTerm(linked)}
+                        className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-all hover:-translate-y-px hover:text-zinc-900 dark:text-zinc-300 dark:decoration-zinc-600 dark:hover:text-zinc-100"
+                      >
+                        {term}
+                      </button>
+                    );
+                  }
+                  return (
+                    <span
+                      key={term}
+                      className="text-zinc-400 dark:text-zinc-500"
+                    >
+                      {term}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="space-y-6">
-        <Section label="Definition">{entry.definition}</Section>
-        {entry.vedantaMeaning && (
-          <Section label="Vedantic meaning">{entry.vedantaMeaning}</Section>
-        )}
-        <Section label="Transliteration">{entry.transliteration}</Section>
-        {entry.root && <Section label="Root">{entry.root}</Section>}
-        {entry.relatedTerms && entry.relatedTerms.length > 0 && (
-          <div>
-            <div className="mb-1 text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">
-              Related terms
-            </div>
-            <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm leading-relaxed">
-              {entry.relatedTerms.map((term) => {
-                const linked = findByTerm(term);
-                if (linked) {
-                  return (
-                    <button
-                      key={term}
-                      onClick={() => onSelectTerm(linked)}
-                      className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-all hover:-translate-y-px hover:text-zinc-900 dark:text-zinc-300 dark:decoration-zinc-600 dark:hover:text-zinc-100"
-                    >
-                      {term}
-                    </button>
-                  );
-                }
-                return (
-                  <span
-                    key={term}
-                    className="text-zinc-400 dark:text-zinc-500"
-                  >
-                    {term}
-                  </span>
-                );
-              })}
-            </div>
-          </div>
-        )}
+      <div className="shrink-0 border-t border-zinc-100 px-6 py-4 dark:border-zinc-800/60">
+        <NotesArea entryId={entry.id} notes={notes} onAdd={onAddNote} onRemove={onRemoveNote} onChangeColor={onChangeNoteColor} onEdit={onEditNote} />
       </div>
     </div>
   );
@@ -636,6 +882,7 @@ export default function Home() {
   const panelContainerRef = useRef<HTMLDivElement>(null);
   const panelRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const { dark, toggle } = useTheme();
+  const [notes, setNotes] = useState<Record<string, StickyNote[]>>({});
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
   const [dropSide, setDropSide] = useState<"left" | "right">("left");
@@ -651,6 +898,61 @@ export default function Home() {
   useEffect(() => {
     inputRef.current?.focus();
   }, [hasPanels]);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("sutra-notes");
+      if (saved) {
+        const parsed = JSON.parse(saved) as Record<string, StickyNote[]>;
+        for (const key of Object.keys(parsed)) {
+          parsed[key] = parsed[key].map((n) => n.id ? n : { ...n, id: nextNoteId() });
+        }
+        setNotes(parsed);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  const handleAddNote = useCallback((id: string, text: string, color: number) => {
+    setNotes((prev) => {
+      const next = { ...prev, [id]: [...(prev[id] || []), { id: nextNoteId(), text, color }] };
+      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const handleRemoveNote = useCallback((id: string, index: number) => {
+    setNotes((prev) => {
+      const arr = [...(prev[id] || [])];
+      arr.splice(index, 1);
+      const next = { ...prev };
+      if (arr.length === 0) delete next[id];
+      else next[id] = arr;
+      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const handleChangeNoteColor = useCallback((id: string, index: number, color: number) => {
+    setNotes((prev) => {
+      const arr = [...(prev[id] || [])];
+      if (!arr[index]) return prev;
+      arr[index] = { ...arr[index], color };
+      const next = { ...prev, [id]: arr };
+      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const handleEditNote = useCallback((id: string, index: number, text: string) => {
+    setNotes((prev) => {
+      const arr = [...(prev[id] || [])];
+      if (!arr[index]) return prev;
+      arr[index] = { ...arr[index], text };
+      const next = { ...prev, [id]: arr };
+      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      return next;
+    });
+  }, []);
 
   const handleSelect = useCallback(
     (entry: GlossaryEntry) => {
@@ -862,7 +1164,7 @@ export default function Home() {
 
   // Panel state — search sidebar + horizontal panels
   return (
-    <div className="relative flex h-full flex-1 bg-white font-sans dark:bg-black">
+    <div className="relative flex h-full min-h-0 flex-1 overflow-hidden bg-white font-sans dark:bg-black">
       <ThemeToggle dark={dark} onToggle={toggle} />
       {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
 
@@ -884,7 +1186,7 @@ export default function Home() {
 
       <div
         ref={panelContainerRef}
-        className="flex flex-1 items-stretch gap-3 overflow-x-auto p-4 pl-[19rem]"
+        className="flex min-h-0 flex-1 items-stretch gap-3 overflow-x-auto p-4 pl-[19rem]"
       >
         {openEntries.map((entry, index) => {
           const state = panelStates[entry.id] || "default";
@@ -926,6 +1228,11 @@ export default function Home() {
                   onCollapse={() => handleCollapse(entry.id)}
                   onToggleExpand={() => handleToggleExpand(entry.id)}
                   onSelectTerm={handleSelect}
+                  notes={notes[entry.id] || []}
+                  onAddNote={handleAddNote}
+                  onRemoveNote={handleRemoveNote}
+                  onChangeNoteColor={handleChangeNoteColor}
+                  onEditNote={handleEditNote}
                 />
               )}
             </div>
