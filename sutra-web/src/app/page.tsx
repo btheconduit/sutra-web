@@ -212,7 +212,7 @@ function SearchSidebar({
   }, [selectedCategory]);
 
   return (
-    <div className="flex h-full w-72 shrink-0 flex-col border-r border-zinc-200 bg-white px-5 pt-8 dark:border-zinc-800/50 dark:bg-black">
+    <div className="flex h-full w-72 shrink-0 flex-col border-r border-zinc-200/40 bg-white/40 px-5 pt-8 backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-950/30">
       <div className="mb-6 flex items-center justify-between">
         <Wordmark width={64} />
         <button
@@ -232,21 +232,21 @@ function SearchSidebar({
           onChange={(e) => onQueryChange(e.target.value)}
           onKeyDown={onKeyDown}
           placeholder="Search — e.g. adhyāsa"
-          className="w-full rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-200 focus:border-zinc-400 focus:bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-600 dark:focus:border-zinc-600 dark:focus:bg-zinc-950"
+          className="w-full rounded-lg border border-zinc-200/40 bg-white/30 px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none backdrop-blur-md transition-all duration-300 focus:border-zinc-300 focus:bg-white/50 focus:shadow-[0_0_0_3px_rgba(161,161,170,0.12)] dark:border-zinc-700/30 dark:bg-zinc-800/20 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-500 dark:focus:bg-zinc-800/40 dark:focus:shadow-[0_0_0_3px_rgba(161,161,170,0.08)]"
         />
 
         {results.length > 0 && (
-          <ul className="animate-slide-down absolute top-full z-10 mt-1 w-full rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+          <ul className="animate-slide-down absolute top-full z-10 mt-1.5 w-full overflow-hidden rounded-lg border border-zinc-200/40 bg-white/50 shadow-lg backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-900/40 dark:shadow-zinc-950/50">
             {results.map((entry, index) => (
-              <li key={entry.id}>
+              <li key={entry.id} className={index > 0 ? "border-t border-zinc-100 dark:border-zinc-800/60" : ""}>
                 <button
                   onClick={() => onSelect(entry)}
-                  className={`w-full px-3 py-2 text-left transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 ${index === highlightedIndex ? "bg-zinc-100 dark:bg-zinc-800" : ""}`}
+                  className={`flex w-full items-baseline gap-2 px-3.5 py-2.5 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/60 ${index === highlightedIndex ? "bg-zinc-50 dark:bg-zinc-800/60" : ""}`}
                 >
-                  <span className="text-sm text-zinc-900 dark:text-zinc-100">
+                  <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                     {entry.term}
                   </span>
-                  <span className="ml-2 font-mono text-xs text-zinc-400 dark:text-zinc-600">
+                  <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
                     {entry.devanagari || toDevanagari(entry.term)}
                   </span>
                 </button>
@@ -273,10 +273,10 @@ function SearchSidebar({
                     selectedCategory === cat.id ? null : cat.id,
                   )
                 }
-                className={`rounded px-2 py-1 text-[11px] transition-all duration-200 ${
+                className={`rounded-full border px-2.5 py-1 text-[11px] transition-all duration-200 ${
                   selectedCategory === cat.id
-                    ? "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
-                    : "text-zinc-400 hover:text-zinc-600 dark:text-zinc-600 dark:hover:text-zinc-400"
+                    ? "border-zinc-300 bg-zinc-100 text-zinc-800 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200"
+                    : "border-transparent text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-400"
                 }`}
               >
                 {cat.label}
@@ -801,10 +801,10 @@ function CategoryBlocks({
         <button
           key={cat.id}
           onClick={() => onSelect(selected === cat.id ? null : cat.id)}
-          className={`rounded-md border px-3 py-1.5 text-xs transition-all duration-200 ${
+          className={`rounded-full border px-3.5 py-1.5 text-xs transition-all duration-200 ${
             selected === cat.id
-              ? "border-zinc-400 bg-zinc-100 text-zinc-900 dark:border-zinc-500 dark:bg-zinc-800 dark:text-zinc-100"
-              : "border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 dark:border-zinc-800 dark:text-zinc-500 dark:hover:border-zinc-700 dark:hover:text-zinc-300"
+              ? "border-zinc-400 bg-zinc-100 text-zinc-800 dark:border-zinc-500 dark:bg-zinc-800 dark:text-zinc-200"
+              : "border-zinc-200 text-zinc-400 hover:border-zinc-300 hover:text-zinc-600 dark:border-zinc-700/60 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-300"
           }`}
         >
           {cat.label}
@@ -1102,26 +1102,26 @@ export default function Home() {
               }}
               onKeyDown={handleSearchKeyDown}
               placeholder="Search a term — e.g. adhyāsa"
-              className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-base text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-200 focus:border-zinc-400 focus:bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-600 dark:focus:border-zinc-600 dark:focus:bg-zinc-950"
+              className="w-full rounded-xl border border-zinc-200 bg-zinc-50/80 px-5 py-3.5 text-base text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-300 focus:border-zinc-400 focus:bg-white focus:shadow-[0_0_0_3px_rgba(161,161,170,0.1)] dark:border-zinc-700/60 dark:bg-zinc-900/60 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-500 dark:focus:bg-zinc-900 dark:focus:shadow-[0_0_0_3px_rgba(161,161,170,0.08)]"
             />
 
             {results.length > 0 && (
-              <ul className="animate-slide-down absolute top-full z-10 mt-2 w-full rounded-lg border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+              <ul className="animate-slide-down absolute top-full z-10 mt-2 w-full overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-700/60 dark:bg-zinc-900 dark:shadow-zinc-950/50">
                 {results.map((entry, index) => (
-                  <li key={entry.id}>
+                  <li key={entry.id} className={index > 0 ? "border-t border-zinc-100 dark:border-zinc-800/60" : ""}>
                     <button
                       onClick={() => handleSelect(entry)}
-                      className={`w-full px-4 py-3 text-left transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 ${index === highlightedIndex ? "bg-zinc-100 dark:bg-zinc-800" : ""}`}
+                      className={`flex w-full items-baseline gap-3 px-5 py-3 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/60 ${index === highlightedIndex ? "bg-zinc-50 dark:bg-zinc-800/60" : ""}`}
                     >
-                      <span className="text-sm text-zinc-900 dark:text-zinc-100">
+                      <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                         {entry.term}
                       </span>
-                      <span className="ml-3 font-mono text-xs text-zinc-400 dark:text-zinc-600">
+                      <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
                         {entry.devanagari || toDevanagari(entry.term)}
                       </span>
-                      <span className="ml-3 text-xs text-zinc-500">
-                        {entry.definition.length > 60
-                          ? entry.definition.slice(0, 60) + "…"
+                      <span className="ml-auto text-xs text-zinc-400 dark:text-zinc-500">
+                        {entry.definition.length > 50
+                          ? entry.definition.slice(0, 50) + "…"
                           : entry.definition}
                       </span>
                     </button>
@@ -1132,7 +1132,7 @@ export default function Home() {
 
             {query.length > 0 && results.length === 0 && (
               <div className="animate-fade-in mt-6">
-                <p className="text-sm text-zinc-500">
+                <p className="text-sm text-zinc-400 dark:text-zinc-500">
                   No results for &ldquo;{query}&rdquo;
                 </p>
               </div>
@@ -1164,26 +1164,29 @@ export default function Home() {
 
   // Panel state — search sidebar + horizontal panels
   return (
-    <div className="flex h-full min-h-0 flex-1 overflow-hidden bg-white font-sans dark:bg-black">
+    <div className="relative flex h-full min-h-0 flex-1 overflow-hidden bg-white font-sans dark:bg-black">
       <ThemeToggle dark={dark} onToggle={toggle} />
       {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
 
-      <SearchSidebar
-        query={query}
-        onQueryChange={setQuery}
-        results={results}
-        onSelect={handleSelect}
-        inputRef={inputRef}
-        highlightedIndex={highlightedIndex}
-        onKeyDown={handleSearchKeyDown}
-        selectedCategory={selectedCategory}
-        onCategorySelect={setSelectedCategory}
-        onInfoClick={() => setShowInfo(true)}
-      />
+      {/* Sidebar overlays the panel area for glass effect */}
+      <div className="absolute inset-y-0 left-0 z-10">
+        <SearchSidebar
+          query={query}
+          onQueryChange={setQuery}
+          results={results}
+          onSelect={handleSelect}
+          inputRef={inputRef}
+          highlightedIndex={highlightedIndex}
+          onKeyDown={handleSearchKeyDown}
+          selectedCategory={selectedCategory}
+          onCategorySelect={setSelectedCategory}
+          onInfoClick={() => setShowInfo(true)}
+        />
+      </div>
 
       <div
         ref={panelContainerRef}
-        className="flex min-h-0 flex-1 items-stretch gap-3 overflow-x-auto p-4"
+        className="flex min-h-0 flex-1 items-stretch gap-3 overflow-x-auto p-4 pl-[19rem]"
       >
         {openEntries.map((entry, index) => {
           const state = panelStates[entry.id] || "default";
