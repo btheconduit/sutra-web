@@ -7,6 +7,7 @@ export interface GlossaryEntry {
   root?: string;
   vedantaMeaning?: string;
   relatedTerms?: string[];
+  tags?: string[];
 }
 
 export const glossary: GlossaryEntry[] = [
@@ -53,6 +54,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "abhayam",
     definition:
       "Absence or removal of fear.",
+    tags: ["fearlessness", "safety", "courage", "protection", "security"],
   },
   {
     id: "abheda",
@@ -60,6 +62,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "abheda",
     definition:
       "Identity; absence of difference.",
+    tags: ["non-difference", "identity", "oneness", "unity", "non-duality"],
   },
   {
     id: "abhedabhavana",
@@ -572,6 +575,7 @@ export const glossary: GlossaryEntry[] = [
     vedantaMeaning:
       "The mutual superimposition of the Self and the not-Self. Śaṅkara opens the Brahmasūtra-bhāṣya by identifying adhyāsa as the root cause of saṃsāra — mistaking the body-mind for ātmā and ātmā for the body-mind.",
     relatedTerms: ["avidyā", "mithyā", "viveka"],
+    tags: ["superimposition", "projection", "error", "confusion", "misidentification", "ignorance"],
   },
   {
     id: "adhyasah",
@@ -788,6 +792,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "ahaṅkāraḥ",
     definition:
       "Sense of self; self-image; ego.",
+    relatedTerms: ["manas", "buddhiḥ", "cittam", "antaḥkaraṇam"],
+    tags: ["ego", "self-image", "identity", "I-sense", "individuality"],
   },
   {
     id: "ahavaniya",
@@ -802,6 +808,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "ahiṃsā",
     definition:
       "Abstaining from killing or harming others in thought, word, or deed.",
+    tags: ["non-violence", "peace", "compassion", "harmlessness", "non-injury"],
   },
   {
     id: "ahutih",
@@ -1259,6 +1266,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "Without beginning (e.g. jñānaḥ, līlānā, cidātmā, avidyā, taccitoḥ yogaḥ).",
     relatedTerms: ["avidyā", "yogaḥ"],
+    tags: ["beginningless", "eternal", "timeless", "infinite"],
   },
   {
     id: "analah",
@@ -1302,6 +1310,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "ānandaḥ",
     definition:
       "The true nature of happiness; wholeness; mantaḥ.",
+    relatedTerms: ["brahman", "ātmā", "sat"],
+    tags: ["happiness", "bliss", "joy", "wholeness", "fullness", "completeness"],
   },
   {
     id: "anandamayah",
@@ -1331,6 +1341,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "Limitless, eternal, endless, boundless, infinite. anantam Limitless wholeness.",
     relatedTerms: ["anantara", "anantaram", "ānantaryam"],
+    tags: ["limitless", "infinite", "eternal", "endless", "boundless", "wholeness"],
   },
   {
     id: "anantara",
@@ -1409,6 +1420,7 @@ export const glossary: GlossaryEntry[] = [
     vedantaMeaning:
       "The body, senses, mind, and all objects of experience. Anātmā is mithyā — it has no independent existence apart from ātmā. Discrimination between ātmā and anātmā is the foundation of viveka.",
     relatedTerms: ["ātmā", "viveka", "mithyā"],
+    tags: ["not-self", "body", "mind", "objects", "world", "inert"],
   },
   {
     id: "anavadhanam",
@@ -1606,6 +1618,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "antaḥkaraṇam",
     definition:
       "The mind; the instrument inside.",
+    relatedTerms: ["manas", "buddhiḥ", "ahaṅkāraḥ", "cittam"],
+    tags: ["mind", "inner instrument", "psyche", "mental"],
   },
   {
     id: "antar",
@@ -2216,6 +2230,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "aparigraha",
     definition:
       "Without possessions; renunciation.",
+    tags: ["non-possessiveness", "renunciation", "simplicity", "non-attachment", "non-greed"],
   },
   {
     id: "aparijnanam",
@@ -3053,7 +3068,8 @@ export const glossary: GlossaryEntry[] = [
     root: "√at — that which pervades, or √an — to breathe",
     vedantaMeaning:
       "Pure awareness, identical with Brahman. Not the body, mind, or ego. Ātmā is self-evident, self-luminous, and the only reality that is never negated.",
-    relatedTerms: ["brahman", "anātmā", "sākṣī"],
+    relatedTerms: ["brahman", "anātmā", "sākṣī", "jīvah", "caitanyam", "ānandaḥ"],
+    tags: ["self", "awareness", "consciousness", "soul", "spirit", "being", "reality", "identity"],
   },
   {
     id: "atmaka",
@@ -3445,6 +3461,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "avidyā",
     definition:
       "Ignorance.",
+    relatedTerms: ["adhyāsa", "mithyā", "māyā", "vidyā", "jñānam", "mokṣa"],
+    tags: ["ignorance", "delusion", "error", "not-knowing", "confusion", "bondage", "misunderstanding"],
   },
   {
     id: "avidyopadhih",
@@ -3538,6 +3556,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "Not manifest; not apparent; unknown; as noun: avidyā; māyā.",
     relatedTerms: ["avidyā", "maya"],
+    tags: ["unmanifest", "hidden", "subtle", "invisible", "potential"],
   },
   {
     id: "avyaktam",
@@ -3880,6 +3899,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "bhaktiḥ",
     definition:
       "The recognition (that the Lord is giver of the fruits of action) which makes one a devotee; love without duality; devotion; committed love.",
+    relatedTerms: ["īśvarah", "mokṣa", "karma", "śraddhā"],
+    tags: ["devotion", "love", "worship", "faith", "surrender", "prayer"],
   },
   {
     id: "bhamah",
@@ -4260,7 +4281,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "brahman",
     definition:
       "The truth of everything; the meaning of satyam jñānam anantam; one of four ṛtviḥs or priests employed at a Soma sacrifice.",
-    relatedTerms: ["jñānam", "satyam"],
+    relatedTerms: ["ātmā", "īśvarah", "sat", "satyam", "ānandaḥ", "jñānam", "māyā"],
+    tags: ["absolute", "reality", "truth", "infinite", "god", "existence", "consciousness", "limitless", "whole"],
   },
   {
     id: "brahmanah",
@@ -4329,6 +4351,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "buddhiḥ",
     definition:
       "The intellect; reasoning; knowledge; recognition; will; deliberate thought.",
+    relatedTerms: ["manas", "ahaṅkāraḥ", "cittam", "antaḥkaraṇam"],
+    tags: ["intellect", "reason", "understanding", "thought", "intelligence", "mind", "discernment"],
   },
   {
     id: "budh",
@@ -4343,6 +4367,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "caitanyam",
     definition:
       "Awareness, consciousness, cf.",
+    relatedTerms: ["ātmā", "sākṣī", "brahman"],
+    tags: ["awareness", "consciousness", "sentience", "aliveness"],
   },
   {
     id: "caityam",
@@ -4491,6 +4517,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "cetana",
     definition:
       "Alive; sentient; living.",
+    tags: ["sentient", "conscious", "alive", "living", "awareness"],
   },
   {
     id: "cetomsavah",
@@ -4642,7 +4669,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "cittam",
     definition:
       "Memory, mind, thought, thinking, reason, intellect; desire, intention.",
-    relatedTerms: ["citta"],
+    relatedTerms: ["manas", "buddhiḥ", "ahaṅkāraḥ", "antaḥkaraṇam"],
+    tags: ["mind", "memory", "thought", "thinking", "mental"],
   },
   {
     id: "codana",
@@ -4728,6 +4756,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "damaḥ",
     definition:
       "Mastery; control of sense organs and organs of action.",
+    relatedTerms: ["samaḥ", "uparatih", "titikṣā", "śraddhā", "sādhanatuṣṭayam"],
+    tags: ["sense-control", "restraint", "mastery", "discipline", "senses"],
   },
   {
     id: "danam",
@@ -4799,6 +4829,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "dayā",
     definition:
       "Compassion; empathy.",
+    tags: ["compassion", "empathy", "kindness", "mercy", "sympathy"],
   },
   {
     id: "dayalu",
@@ -4913,6 +4944,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "dharmaḥ",
     definition:
       "Law; practice; custom; virtue; duty; propriety; order; attribute.",
+    relatedTerms: ["karma", "mokṣa", "vedaḥ"],
+    tags: ["duty", "law", "virtue", "righteousness", "order", "ethics", "morality", "conduct"],
   },
   {
     id: "dharmi",
@@ -5044,6 +5077,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "dīkṣā",
     definition:
       "Initiation.",
+    tags: ["initiation", "consecration", "beginning", "ceremony"],
   },
   {
     id: "dina",
@@ -5762,6 +5796,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "Attribute; quality; particular modification; adjective; sattvaṃ rajas tamas as constituents of māyā; knot; the vowels a, e, o.",
     relatedTerms: ["sattvam", "rajas", "tamas", "maya"],
+    tags: ["quality", "attribute", "nature", "property", "constituent"],
   },
   {
     id: "guruh",
@@ -5769,6 +5804,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "guruh",
     definition:
       "Remover of ignorance; teacher of ātmavidyā.",
+    relatedTerms: ["śraddhā", "jñānam", "vidyā", "upaniṣad"],
+    tags: ["teacher", "master", "guide", "mentor", "wisdom"],
   },
   {
     id: "gurukulam",
@@ -5996,6 +6033,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "icchā",
     definition:
       "Desire; wish.",
+    tags: ["desire", "wish", "will", "wanting", "longing"],
   },
   {
     id: "icchasaktih",
@@ -6143,7 +6181,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "īśvarah",
     definition:
       "Lord (Īśvarā); jagatkāraṇam; brahman manifest as the entire creation.",
-    relatedTerms: ["jagatkāraṇam", "brahman"],
+    relatedTerms: ["brahman", "jīvah", "māyā", "jagatkāraṇam"],
+    tags: ["god", "lord", "creator", "divine", "supreme"],
   },
   {
     id: "itara",
@@ -6369,6 +6408,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jīvah",
     definition:
       "The person identified with the physical body; the individual.",
+    relatedTerms: ["ātmā", "īśvarah", "avidyā", "sākṣī", "saṃsāra"],
+    tags: ["individual", "person", "soul", "being", "embodied"],
   },
   {
     id: "jivana",
@@ -6411,7 +6452,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jñānam",
     definition:
       "Knowledge, abhidhā asaṃdigdhaṃ (not negatable and free from doubt).",
-    relatedTerms: ["abhidhā"],
+    relatedTerms: ["brahman", "vidyā", "avidyā", "mokṣa"],
+    tags: ["knowledge", "wisdom", "understanding", "knowing", "awareness", "clarity"],
   },
   {
     id: "jnananistha",
@@ -6735,6 +6777,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "karma",
     definition:
       "Nom. sing. karma. Action from free will; certain consequences of action; duty.",
+    relatedTerms: ["dharmaḥ", "saṃsāra", "mokṣa", "yogaḥ"],
+    tags: ["action", "deed", "consequence", "cause", "effect", "result", "duty"],
   },
   {
     id: "karmakandah",
@@ -6800,6 +6844,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "karuṇā",
     definition:
       "Compassion; empathy; understanding.",
+    tags: ["compassion", "mercy", "empathy", "kindness", "grace"],
   },
   {
     id: "karya",
@@ -7047,7 +7092,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "kriyā",
     definition:
       "An action; doing.",
-    relatedTerms: ["kriyāvān"],
+    relatedTerms: ["kriyāvān", "karma"],
+    tags: ["action", "activity", "doing", "ritual", "practice"],
   },
   {
     id: "kriyasaktih",
@@ -7140,6 +7186,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "kṣamā",
     definition:
       "Patient; enduring; competent; proper; forgiving.",
+    tags: ["forgiveness", "patience", "forbearance", "tolerance"],
   },
   {
     id: "ksanika",
@@ -7637,7 +7684,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "manas",
     definition:
       "Mind - doubt, desire, emotion, perception, ego, memory; see buddhiḥ.",
-    relatedTerms: ["buddhiḥ"],
+    relatedTerms: ["buddhiḥ", "ahaṅkāraḥ", "cittam", "antaḥkaraṇam"],
+    tags: ["mind", "emotion", "desire", "doubt", "perception", "thinking"],
   },
   {
     id: "manasa",
@@ -7697,6 +7745,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "mantrah",
     definition:
       "Vedic mental prayer.",
+    tags: ["prayer", "chant", "sacred", "hymn", "invocation"],
   },
   {
     id: "manusya",
@@ -7820,6 +7869,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "maya",
     definition:
       "At the end of compound Made of, consisting of, full of.",
+    relatedTerms: ["avidyā", "mithyā", "guṇah", "īśvarah", "brahman"],
+    tags: ["illusion", "appearance", "power", "creation", "magic", "manifestation"],
   },
   {
     id: "mayavin",
@@ -7900,6 +7951,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "mithyā",
     definition:
       "Existing only as dependent on something else; error.",
+    relatedTerms: ["avidyā", "adhyāsa", "māyā", "brahman", "satyam"],
+    tags: ["dependent", "apparent", "illusion", "false", "unreal", "appearance"],
   },
   {
     id: "mitih",
@@ -7939,7 +7992,8 @@ export const glossary: GlossaryEntry[] = [
     root: "√muc — to release, to set free",
     vedantaMeaning:
       "Not a future event or a place to reach. Mokṣa is the recognition that one is already free — that ātmā was never bound. It is the cessation of self-ignorance (avidyā-nivṛtti), not the gain of something new.",
-    relatedTerms: ["avidyā", "ātmā", "brahman"],
+    relatedTerms: ["avidyā", "ātmā", "brahman", "saṃsāra", "jñānam"],
+    tags: ["liberation", "freedom", "release", "enlightenment", "free"],
   },
   {
     id: "moksah",
@@ -8063,7 +8117,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "mumukṣutvam",
     definition:
       "The state of desiring mokṣaḥ.",
-    relatedTerms: ["mokṣaḥ"],
+    relatedTerms: ["mokṣa", "viveka", "vairāgyam", "sādhanatuṣṭayam"],
+    tags: ["desire", "liberation", "longing", "seeking", "freedom", "qualification"],
   },
   {
     id: "munih",
@@ -8369,6 +8424,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "nidrā",
     definition:
       "Sleep.",
+    tags: ["sleep", "rest", "unconscious", "dormancy"],
   },
   {
     id: "nigamanam",
@@ -8634,6 +8690,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "nirguṇaḥ",
     definition:
       "That which is free from all attributes.",
+    relatedTerms: ["saguṇa", "brahman", "guṇah"],
+    tags: ["attributeless", "formless", "unconditioned", "absolute", "without qualities"],
   },
   {
     id: "nirgunam-brahma",
@@ -8743,6 +8801,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "nirvāṇam",
     definition:
       "Final liberation; emancipation; extinguished.",
+    relatedTerms: ["mokṣa", "saṃsāra"],
+    tags: ["liberation", "freedom", "peace", "extinction", "cessation", "release"],
   },
   {
     id: "nirvedah",
@@ -9441,6 +9501,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "pariṇāmaḥ",
     definition:
       "also pariṇāmaḥ Transformation; change.",
+    tags: ["transformation", "change", "evolution", "modification"],
   },
   {
     id: "parinisthita",
@@ -9861,7 +9922,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "prajñā",
     definition:
       "Understanding; knowledge; wisdom; discernment.",
-    relatedTerms: ["prajñānam", "prajñāptiḥ"],
+    relatedTerms: ["prajñānam", "prajñāptiḥ", "jñānam", "buddhiḥ"],
+    tags: ["wisdom", "understanding", "discernment", "insight", "intelligence"],
   },
   {
     id: "prajnanam",
@@ -10011,6 +10073,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "That which is available for and capable of creation; Nature consisting of the three guṇas; the natural condition or state of anything; origin; source. In Sāṅkhya philosophy active nature as distinguished from puruṣaḥ, the passive spirit or soul.",
     relatedTerms: ["puruṣaḥ", "sāṅkhya"],
+    tags: ["nature", "matter", "creation", "material", "origin", "source"],
   },
   {
     id: "pralayah",
@@ -10041,7 +10104,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "pramāṇam",
     definition:
       "Means of knowledge; ajñāta jñāpakam.",
-    relatedTerms: ["ajñāta"],
+    relatedTerms: ["pratyakṣam", "anumānam", "śabdaḥ", "upamānam", "arthāpattiḥ", "anupalabdhiḥ"],
+    tags: ["knowledge", "means", "proof", "evidence", "epistemology", "valid knowledge"],
   },
   {
     id: "pramanyam",
@@ -10079,6 +10143,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "prāṇaḥ",
     definition:
       "Life energy; breath; respiration - a prāṇaḥ seated in the lungs.",
+    tags: ["breath", "life", "energy", "vital", "air", "life-force"],
   },
   {
     id: "pranamah",
@@ -10820,6 +10885,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "pūjā",
     definition:
       "Worship; service to the deity at a shrine or temple.",
+    tags: ["worship", "ritual", "devotion", "prayer", "ceremony", "offering"],
   },
   {
     id: "pujanam",
@@ -10949,6 +11015,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "puruṣaḥ",
     definition:
       "Original source of creation; the Supreme Being; a man.",
+    tags: ["spirit", "soul", "consciousness", "supreme", "being", "person"],
   },
   {
     id: "purusakarah",
@@ -11078,6 +11145,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "rajas",
     definition:
       "Energy; ambition; enthusiasm; anxiety; the active guṇa.",
+    relatedTerms: ["guṇah", "sattvam", "tamas"],
+    tags: ["activity", "passion", "energy", "restlessness", "ambition", "desire"],
   },
   {
     id: "rajata",
@@ -11343,6 +11412,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sādhanam",
     definition:
       "Means of accomplishment.",
+    relatedTerms: ["sādhanatuṣṭayam", "viveka", "vairāgyam"],
+    tags: ["practice", "means", "discipline", "preparation", "method"],
   },
   {
     id: "sadhanatustayam",
@@ -11350,7 +11421,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sādhanatuṣṭayam",
     definition:
       "Fourfold qualifications which indicate a person ready for self-knowledge (nityānityavastuvivekaḥ, phalabhogarāgaḥ, śamādiṣaṭkasampatiḥ (śamah damaḥ uparamaḥ titikṣā samādhānam (śraddhā)), mumukṣuttam.",
-    relatedTerms: ["samādhānam", "uparamah", "śraddhā", "titikṣā", "damaḥ", "samaḥ"],
+    relatedTerms: ["viveka", "vairāgyam", "mumukṣutvam", "samaḥ", "damaḥ", "uparatih", "titikṣā", "śraddhā"],
   },
   {
     id: "sadharana",
@@ -11410,6 +11481,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "saguṇa",
     definition:
       "Having attributes or qualities.",
+    relatedTerms: ["nirguṇaḥ", "brahman", "guṇah", "īśvarah"],
+    tags: ["qualified", "with form", "attributes", "personal", "conditioned"],
   },
   {
     id: "sagunam-brahma",
@@ -11529,6 +11602,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sākṣī",
     definition:
       "Witness.",
+    relatedTerms: ["ātmā", "caitanyam", "jīvah"],
+    tags: ["witness", "observer", "awareness", "consciousness", "seer"],
   },
   {
     id: "saksipratyaksam",
@@ -11622,6 +11697,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "samādhiḥ",
     definition:
       "Absorption; meditation without division of meditator and object of meditation - one of the eight aṅgas of Patañjali's Yoga.",
+    relatedTerms: ["yogaḥ", "manas", "ātmā"],
+    tags: ["meditation", "absorption", "concentration", "focus", "stillness", "contemplation"],
   },
   {
     id: "samagra",
@@ -11643,7 +11720,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "samaḥ",
     definition:
       "Management of the mind.",
-    relatedTerms: ["samāhita", "samāhāraḥ"],
+    relatedTerms: ["damaḥ", "uparatih", "titikṣā", "śraddhā", "sādhanatuṣṭayam"],
+    tags: ["mind-control", "equanimity", "calm", "discipline", "composure"],
   },
   {
     id: "samaharah",
@@ -12079,6 +12157,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "saṃsāra",
     definition:
       "The cycle of becoming; the course of worldly life; the jīva's reality.",
+    relatedTerms: ["mokṣa", "karma", "avidyā", "jīvah"],
+    tags: ["cycle", "rebirth", "suffering", "bondage", "worldly", "transmigration"],
   },
   {
     id: "samsargah",
@@ -12625,6 +12705,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sāra",
     definition:
       "Best; essential; genuine; highest.",
+    tags: ["essence", "essential", "core", "best", "genuine"],
   },
   {
     id: "saram",
@@ -12767,6 +12848,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sat",
     definition:
       "Timeless-limitless existence; the self-existent.",
+    relatedTerms: ["brahman", "satyam", "ātmā"],
+    tags: ["existence", "being", "truth", "real", "eternal", "timeless"],
   },
   {
     id: "satam",
@@ -12817,7 +12900,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sattvam",
     definition:
       "Inner disposition of enjoyment; antaḥkaraṇa; the virtuous guṇaḥ.",
-    relatedTerms: ["guṇah"],
+    relatedTerms: ["guṇah", "rajas", "tamas"],
+    tags: ["purity", "clarity", "goodness", "virtue", "harmony", "balance", "light"],
   },
   {
     id: "sattvika",
@@ -12834,6 +12918,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "satyam",
     definition:
       "That which exists; the nature of truth; true.",
+    relatedTerms: ["brahman", "sat", "mithyā"],
+    tags: ["truth", "real", "reality", "existence", "true"],
   },
   {
     id: "saucam",
@@ -13170,7 +13256,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "śraddhā",
     definition:
       "Faith and trust in the pramāṇa and the guru.",
-    relatedTerms: ["śrāddhana"],
+    relatedTerms: ["samaḥ", "damaḥ", "uparatih", "titikṣā", "sādhanatuṣṭayam", "guruh"],
+    tags: ["faith", "trust", "confidence", "belief", "conviction"],
   },
   {
     id: "sraddhana",
@@ -13319,6 +13406,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "Firm, steady, fixed.",
     relatedTerms: ["sthiram"],
+    tags: ["steady", "firm", "stable", "fixed", "grounded"],
   },
   {
     id: "sthiram",
@@ -13866,6 +13954,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "tamas",
     definition:
       "Darkness; sorrow; dullness; the ignorance guṇa.",
+    relatedTerms: ["guṇah", "sattvam", "rajas"],
+    tags: ["darkness", "inertia", "dullness", "ignorance", "laziness", "heaviness"],
   },
   {
     id: "tandita",
@@ -13936,6 +14026,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "tapas",
     definition:
       "Religious austerity; prayer; disciplined inquiry; heat.",
+    tags: ["austerity", "discipline", "heat", "effort", "practice", "purification"],
   },
   {
     id: "taratamyam",
@@ -14029,7 +14120,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "tattvam",
     definition:
       "Truth.",
-    relatedTerms: ["tattvamasi"],
+    relatedTerms: ["tattvamasi", "brahman", "satyam"],
+    tags: ["truth", "essence", "reality", "principle", "nature"],
   },
   {
     id: "tattvamasi",
@@ -14145,6 +14237,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "titikṣā",
     definition:
       "Cheerful endurance; bearing opposites with equanimity.",
+    relatedTerms: ["samaḥ", "damaḥ", "uparatih", "śraddhā", "sādhanatuṣṭayam"],
+    tags: ["endurance", "patience", "forbearance", "tolerance", "resilience", "equanimity"],
   },
   {
     id: "toyam",
@@ -14237,6 +14331,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "turīyam",
     definition:
       "Fourth, a fourth part, quarter.",
+    relatedTerms: ["ātmā", "brahman", "caitanyam"],
+    tags: ["fourth", "transcendent", "beyond", "pure consciousness", "awareness"],
   },
   {
     id: "tusta",
@@ -14586,7 +14682,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "upamānam",
     definition:
       "Comparison; illustration - a pramāṇa.",
-    relatedTerms: ["upamā"],
+    relatedTerms: ["pramāṇam"],
   },
   {
     id: "upamardanam",
@@ -14608,7 +14704,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "upaniṣad",
     definition:
       "The definite, well ascertained knowledge that is self, which makes one recognize brahman and destroys all sorrow; revealed texts dealing with the self; that which is the most profound secret.",
-    relatedTerms: ["brahman"],
+    relatedTerms: ["brahman", "vedaḥ", "vedāntaḥ", "guruh"],
+    tags: ["scripture", "teaching", "wisdom", "revelation", "self-knowledge", "text"],
   },
   {
     id: "upanyasah",
@@ -14653,6 +14750,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "uparatih",
     definition:
       "Stopping; not doing actions which distract or inhibit your growth.",
+    relatedTerms: ["samaḥ", "damaḥ", "titikṣā", "śraddhā", "sādhanatuṣṭayam"],
+    tags: ["withdrawal", "restraint", "cessation", "renunciation", "discipline"],
   },
   {
     id: "upasakah",
@@ -15029,6 +15128,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vairāgyam",
     definition:
       "Dispassion toward worldly gain.",
+    relatedTerms: ["viveka", "mumukṣutvam", "sādhanatuṣṭayam", "mokṣa"],
+    tags: ["dispassion", "detachment", "renunciation", "non-attachment", "letting go"],
   },
   {
     id: "vaisakhah",
@@ -15285,6 +15386,8 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "Subtle impressions left on the mind by previous actions; knowledge derived from memory; desire.",
     root: "memory",
+    relatedTerms: ["karma", "manas", "saṃsāra"],
+    tags: ["impression", "conditioning", "tendency", "habit", "memory", "pattern"],
   },
   {
     id: "vasantah",
@@ -15349,6 +15452,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vedaḥ",
     definition:
       "Revealed knowledge of Vedic India; four sacred scriptures including Upaniṣads.",
+    relatedTerms: ["upaniṣad", "vedāntaḥ", "dharmaḥ"],
+    tags: ["scripture", "knowledge", "revelation", "sacred", "text", "tradition"],
   },
   {
     id: "vedanam",
@@ -15371,6 +15476,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vedāntaḥ",
     definition:
       "Scriptures at the end of the Veda dealing with knowledge that is the self; that which says you are whole and you are the whole.",
+    relatedTerms: ["vedaḥ", "upaniṣad", "brahman", "ātmā"],
+    tags: ["philosophy", "self-knowledge", "scripture", "teaching", "wholeness"],
   },
   {
     id: "vesah",
@@ -15586,6 +15693,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vidyā",
     definition:
       "Knowledge.",
+    relatedTerms: ["avidyā", "jñānam", "brahman"],
+    tags: ["knowledge", "wisdom", "learning", "understanding", "clarity"],
   },
   {
     id: "vidyut",
@@ -16312,7 +16421,8 @@ export const glossary: GlossaryEntry[] = [
     root: "vi + √vic — to separate, to discern",
     vedantaMeaning:
       "Nitya-anitya-vastu-viveka — the discrimination between the eternal (nitya) and the non-eternal (anitya). Listed as the first qualification (sādhana) for a student of Vedanta.",
-    relatedTerms: ["adhyāsa", "anātmā", "vairāgya"],
+    relatedTerms: ["adhyāsa", "anātmā", "vairāgyam", "mumukṣutvam", "sādhanatuṣṭayam"],
+    tags: ["discrimination", "discernment", "real", "unreal", "clarity", "wisdom", "qualification"],
   },
   {
     id: "vivekah",
@@ -16846,6 +16956,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "yogaḥ",
     definition:
       "A means for accomplishing something; conformity with the order; connection.",
+    relatedTerms: ["karma", "jñānam", "bhaktiḥ", "mokṣa", "samādhiḥ"],
+    tags: ["union", "practice", "discipline", "path", "connection", "means"],
   },
   {
     id: "yogya",
