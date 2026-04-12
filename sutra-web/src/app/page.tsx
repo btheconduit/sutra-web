@@ -78,23 +78,65 @@ function findByTerm(term: string): GlossaryEntry | undefined {
 function searchGlossary(query: string): GlossaryEntry[] {
   if (!query.trim()) return [];
   const q = normalize(query.trim());
+  const words = q.split(/\s+/).filter(Boolean);
 
-  const exact: GlossaryEntry[] = [];
-  const startsWith: GlossaryEntry[] = [];
-  const contains: GlossaryEntry[] = [];
+  const scored: { entry: GlossaryEntry; score: number }[] = [];
 
   for (const entry of glossary) {
-    const n = normalize(entry.term);
-    if (n === q) {
-      exact.push(entry);
-    } else if (n.startsWith(q)) {
-      startsWith.push(entry);
-    } else if (n.includes(q)) {
-      contains.push(entry);
+    const term = normalize(entry.term);
+    const def = normalize(entry.definition);
+    const vedanta = entry.vedantaMeaning ? normalize(entry.vedantaMeaning) : "";
+    const tags = entry.tags ? entry.tags.map(normalize) : [];
+
+    let score = 0;
+
+    // Term matching (highest priority)
+    if (term === q) {
+      score = 100;
+    } else if (term.startsWith(q)) {
+      score = 80;
+    } else if (term.includes(q)) {
+      score = 60;
+    }
+
+    // Tag matching — exact word match against curated keywords
+    if (score === 0 && tags.length > 0) {
+      for (const word of words) {
+        if (tags.some((t) => t === word || t.includes(word))) {
+          score = Math.max(score, 40);
+        }
+      }
+    }
+
+    // Definition matching — search words in definition text
+    if (score === 0) {
+      const allWords = words.every((w) => def.includes(w));
+      const someWords = words.some((w) => def.includes(w));
+      if (allWords && words.length > 0) {
+        score = 30;
+      } else if (someWords) {
+        score = 20;
+      }
+    }
+
+    // Vedanta meaning matching
+    if (score === 0 && vedanta) {
+      const allWords = words.every((w) => vedanta.includes(w));
+      const someWords = words.some((w) => vedanta.includes(w));
+      if (allWords && words.length > 0) {
+        score = 15;
+      } else if (someWords) {
+        score = 10;
+      }
+    }
+
+    if (score > 0) {
+      scored.push({ entry, score });
     }
   }
 
-  return [...exact, ...startsWith, ...contains];
+  scored.sort((a, b) => b.score - a.score);
+  return scored.map((s) => s.entry);
 }
 
 // --- Theme ---
