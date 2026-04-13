@@ -212,12 +212,12 @@ function TopBar({
   onInfoClick: () => void;
 }) {
   return (
-    <div className="fixed top-5 right-5 z-20 flex items-center gap-3 rounded-lg border border-zinc-200/40 bg-white/40 px-3 py-2 backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-950/30">
+    <div className="fixed top-5 right-5 z-20 flex items-center gap-3 rounded-lg border border-zinc-200/40 bg-white/40 px-3 py-2 leading-none backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-950/30">
       <Tooltip label="About (I)">
         <button
           onClick={onInfoClick}
           aria-label="About Sutra"
-          className="text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
+          className="flex items-center text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
         >
           <IconInfo />
         </button>
@@ -226,7 +226,7 @@ function TopBar({
         <button
           onClick={onToggle}
           aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-          className="text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
+          className="flex items-center text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
         >
           {dark ? (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -1626,6 +1626,8 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
   const [dropIndex, setDropIndex] = useState<number | null>(null);
   const [dropSide, setDropSide] = useState<"left" | "right">("left");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [highlightedPanelId, setHighlightedPanelId] = useState<string | null>(null);
+  const newPanelIds = useRef<Set<string>>(new Set());
 
   const results = useMemo(() => searchGlossary(query), [query]);
   const hasPanels = openEntries.length > 0;
@@ -1689,11 +1691,34 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [hasPanels, sidebarCollapsed, toggle]);
 
+  const triggerHighlight = useCallback((id: string) => {
+    setHighlightedPanelId(id);
+  }, []);
+
+  // Scroll a panel into the visible area (accounting for sidebar overlay)
+  const scrollPanelIntoView = useCallback((el: HTMLDivElement) => {
+    const container = panelContainerRef.current;
+    if (!container) return;
+    const sidebarWidth = parseFloat(getComputedStyle(container).paddingLeft);
+    const containerRect = container.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const visibleLeft = containerRect.left + sidebarWidth;
+    const visibleRight = containerRect.right;
+
+    if (elRect.left < visibleLeft) {
+      // Panel is hidden behind sidebar — scroll left
+      container.scrollBy({ left: elRect.left - visibleLeft - 16, behavior: "smooth" });
+    } else if (elRect.right > visibleRight) {
+      // Panel is off-screen to the right — scroll right
+      container.scrollBy({ left: elRect.right - visibleRight + 16, behavior: "smooth" });
+    }
+  }, []);
+
   const handleSelect = useCallback(
     (entry: GlossaryEntry) => {
       const existing = openEntries.find((e) => e.id === entry.id);
       if (existing) {
-        // Restore if collapsed, then scroll to it
+        // Restore if collapsed, scroll to it, then highlight
         setPanelStates((prev) => {
           if (prev[entry.id] === "collapsed") {
             return { ...prev, [entry.id]: "default" };
@@ -1701,18 +1726,20 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
           return prev;
         });
         const el = panelRefs.current.get(entry.id);
-        el?.scrollIntoView({ behavior: "smooth", inline: "start" });
+        if (el) scrollPanelIntoView(el);
+        triggerHighlight(entry.id);
       } else {
+        newPanelIds.current.add(entry.id);
         setOpenEntries((prev) => [...prev, entry]);
         setPanelStates((prev) => ({ ...prev, [entry.id]: "default" }));
         requestAnimationFrame(() => {
           const el = panelRefs.current.get(entry.id);
-          el?.scrollIntoView({ behavior: "smooth", inline: "start" });
+          if (el) scrollPanelIntoView(el);
         });
       }
       setQuery("");
     },
-    [openEntries],
+    [openEntries, triggerHighlight],
   );
 
   const handleClose = useCallback((id: string) => {
@@ -1944,7 +1971,15 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
               onDragOver={(e) => handleDragOver(e, index)}
               onDrop={(e) => handleDrop(e, index)}
               onDragEnd={handleDragEnd}
-              className={`relative animate-slide-in-right cursor-grab transition-all duration-200 active:cursor-grabbing ${isDragging ? "opacity-30 scale-[0.97]" : ""}`}
+              className={`relative cursor-grab transition-all duration-200 active:cursor-grabbing ${isDragging ? "opacity-30 scale-[0.97]" : ""} ${newPanelIds.current.has(entry.id) ? "animate-slide-in-right" : ""} ${highlightedPanelId === entry.id ? "animate-panel-highlight" : ""}`}
+              onAnimationEnd={(e) => {
+                if (e.animationName === "slide-in-right") {
+                  newPanelIds.current.delete(entry.id);
+                }
+                if (e.animationName === "panel-highlight" || e.animationName === "panel-highlight-dark") {
+                  setHighlightedPanelId(null);
+                }
+              }}
             >
               {showLeftLine && (
                 <div className="absolute -left-4 top-1 bottom-1 w-4 rounded-lg bg-zinc-300/60 dark:bg-zinc-500/45 animate-fade-in shadow-[0_0_12px_rgba(161,161,170,0.3)] dark:shadow-[0_0_12px_rgba(161,161,170,0.15)]" />
