@@ -1829,7 +1829,7 @@ function DesktopHome() {
 
       <div
         ref={panelContainerRef}
-        className={`flex min-h-0 flex-1 items-stretch gap-3 overflow-x-auto p-4 transition-[padding] duration-300 ease-out ${sidebarCollapsed ? "pl-16" : "pl-[19rem]"}`}
+        className={`flex min-h-0 flex-1 items-stretch gap-3 overflow-x-auto p-4 pr-24 transition-[padding] duration-300 ease-out ${sidebarCollapsed ? "pl-16" : "pl-[19rem]"}`}
       >
         {openEntries.map((entry, index) => {
           const state = panelStates[entry.id] || "default";
