@@ -404,26 +404,34 @@ function CollapsedPanel({
   onRestore: () => void;
   onClose: () => void;
 }) {
+  const devanagari = entry.devanagari || toDevanagari(entry.transliteration);
   return (
-    <div className="flex h-full w-12 shrink-0 flex-col items-center rounded-lg border border-zinc-200 bg-white py-4 transition-all duration-300 ease-out dark:border-zinc-700/60 dark:bg-zinc-900/50">
-      <button
-        onClick={onClose}
-        aria-label={`Close ${entry.term}`}
-        className={`${iconButtonClass} mb-3`}
-      >
-        <IconClose />
-      </button>
+    <div className="flex h-full w-16 shrink-0 flex-col items-center rounded-lg border border-zinc-200/80 bg-zinc-50 py-4 transition-all duration-300 ease-out dark:border-zinc-700/60 dark:bg-zinc-900/70">
       <button
         onClick={onRestore}
         aria-label={`Restore ${entry.term}`}
-        className="flex flex-1 items-center"
+        className="flex flex-col items-center gap-3 pt-1"
       >
         <span
-          className="text-sm font-light tracking-wide text-zinc-500 dark:text-zinc-400"
+          className="text-lg font-normal tracking-wide text-zinc-700 dark:text-zinc-300"
+          style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
+        >
+          {devanagari}
+        </span>
+        <span
+          className="text-sm font-light tracking-wide text-zinc-400 dark:text-zinc-500"
           style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
         >
           {entry.term}
         </span>
+      </button>
+      <div className="flex-1" />
+      <button
+        onClick={onClose}
+        aria-label={`Close ${entry.term}`}
+        className={iconButtonClass}
+      >
+        <IconClose />
       </button>
     </div>
   );
@@ -1679,9 +1687,9 @@ function DesktopHome() {
   );
 
   const handleDrop = useCallback(
-    (e: React.DragEvent) => {
+    (e: React.DragEvent, targetIndex: number) => {
       e.preventDefault();
-      if (dragIndex === null || dropIndex === null || dragIndex === dropIndex) {
+      if (dragIndex === null || targetIndex === dragIndex) {
         setDragIndex(null);
         setDropIndex(null);
         return;
@@ -1689,8 +1697,7 @@ function DesktopHome() {
       setOpenEntries((prev) => {
         const next = [...prev];
         const [moved] = next.splice(dragIndex, 1);
-        // Adjust insertion: if dropping on the right side, insert after
-        let insertAt = dropIndex > dragIndex ? dropIndex - 1 : dropIndex;
+        let insertAt = targetIndex > dragIndex ? targetIndex - 1 : targetIndex;
         if (dropSide === "right") insertAt += 1;
         next.splice(insertAt, 0, moved);
         return next;
@@ -1698,7 +1705,7 @@ function DesktopHome() {
       setDragIndex(null);
       setDropIndex(null);
     },
-    [dragIndex, dropIndex, dropSide],
+    [dragIndex, dropSide],
   );
 
   const handleDragEnd = useCallback(() => {
@@ -1841,15 +1848,15 @@ function DesktopHome() {
               draggable
               onDragStart={() => handleDragStart(index)}
               onDragOver={(e) => handleDragOver(e, index)}
-              onDrop={handleDrop}
+              onDrop={(e) => handleDrop(e, index)}
               onDragEnd={handleDragEnd}
               className={`relative animate-slide-in-right cursor-grab transition-all duration-200 active:cursor-grabbing ${isDragging ? "opacity-30 scale-[0.97]" : ""}`}
             >
               {showLeftLine && (
-                <div className="absolute -left-2 top-2 bottom-2 w-0.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-fade-in" />
+                <div className="absolute -left-4 top-1 bottom-1 w-4 rounded-lg bg-zinc-300/60 dark:bg-zinc-500/45 animate-fade-in shadow-[0_0_12px_rgba(161,161,170,0.3)] dark:shadow-[0_0_12px_rgba(161,161,170,0.15)]" />
               )}
               {showRightLine && (
-                <div className="absolute -right-2 top-2 bottom-2 w-0.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-fade-in" />
+                <div className="absolute -right-4 top-1 bottom-1 w-4 rounded-lg bg-zinc-300/60 dark:bg-zinc-500/45 animate-fade-in shadow-[0_0_12px_rgba(161,161,170,0.3)] dark:shadow-[0_0_12px_rgba(161,161,170,0.15)]" />
               )}
               {state === "collapsed" ? (
                 <CollapsedPanel
