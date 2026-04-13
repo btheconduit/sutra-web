@@ -279,8 +279,11 @@ function SearchSidebar({
 
   if (collapsed) {
     return (
-      <div
-        className="flex h-full w-12 shrink-0 flex-col items-center border-r border-zinc-200/40 bg-white/40 pt-4 backdrop-blur-2xl backdrop-saturate-150 transition-[width] duration-300 ease-out dark:border-zinc-700/30 dark:bg-zinc-950/30"
+      <button
+        onClick={onToggleCollapse}
+        aria-label="Expand sidebar (⌘B)"
+        title="Expand sidebar (⌘B)"
+        className="group flex h-full w-12 shrink-0 cursor-pointer flex-col items-center border-r border-zinc-200/40 bg-white/40 pt-4 backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 ease-out hover:bg-zinc-100/60 dark:border-zinc-700/30 dark:bg-zinc-950/30 dark:hover:bg-zinc-800/40"
       >
         <span className="mb-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -288,23 +291,13 @@ function SearchSidebar({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/sutra-brandmark-white.svg" alt="Sutra" width={24} height={24} className="hidden dark:block" />
         </span>
-        <button
-          onClick={onToggleCollapse}
-          aria-label="Expand sidebar"
-          title="Expand sidebar (⌘B)"
-          className="mb-3 text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-400"
-        >
+        <span className="mb-3 text-zinc-300 transition-colors group-hover:text-zinc-500 dark:text-zinc-600 dark:group-hover:text-zinc-400">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-        <button
-          onClick={() => { onToggleCollapse(); requestAnimationFrame(() => inputRef.current?.focus()); }}
-          aria-label="Search"
-          title="Search (F)"
-          className="text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-400"
-        >
+        </span>
+        <span className="text-zinc-300 transition-colors group-hover:text-zinc-500 dark:text-zinc-600 dark:group-hover:text-zinc-400">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        </button>
-      </div>
+        </span>
+      </button>
     );
   }
 
@@ -807,7 +800,7 @@ function WordPanel({
           {entry.vedantaMeaning && (
             <Section label="Vedantic meaning">{entry.vedantaMeaning}</Section>
           )}
-          {entry.root && <Section label="Root">{entry.root}</Section>}
+          {entry.root && <Section label="Root"><RootText text={entry.root} /></Section>}
           {entry.relatedTerms && entry.relatedTerms.length > 0 && (
             <div>
               <div className="mb-1 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
@@ -865,6 +858,21 @@ function Section({
         {children}
       </div>
     </div>
+  );
+}
+
+function RootText({ text }: { text: string }) {
+  const parts = text.split(/(√\S+)/);
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.startsWith("√") ? (
+          <em key={i}>{part.slice(1)}</em>
+        ) : (
+          <span key={i}>{part}</span>
+        ),
+      )}
+    </>
   );
 }
 
@@ -1256,7 +1264,7 @@ function MobileDetailView({
           {entry.vedantaMeaning && (
             <Section label="Vedantic meaning">{entry.vedantaMeaning}</Section>
           )}
-          {entry.root && <Section label="Root">{entry.root}</Section>}
+          {entry.root && <Section label="Root"><RootText text={entry.root} /></Section>}
           {entry.relatedTerms && entry.relatedTerms.length > 0 && (
             <div>
               <div className="mb-1.5 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
