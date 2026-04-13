@@ -16,8 +16,8 @@
 }
 
 .dark {
-  --background: #000000;
-  --foreground: #ededed;
+  --background: #0c0c0e;
+  --foreground: #e4e4e7;
 }
 
 body {
