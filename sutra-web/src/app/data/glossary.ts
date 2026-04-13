@@ -686,6 +686,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "advaita",
     definition:
       "Non-dual; without a second; without fear.",
+    vedantaMeaning:
+      "The teaching that Brahman alone is real and there is no second entity apart from it. Advaita does not deny the empirical world but reveals that the world has no independent reality separate from Brahman. The mahāvākya 'tat tvam asi' directly reveals this non-duality — that the essential nature of the individual (tvam) is identical with the whole (tat).",
   },
   {
     id: "advaya",
@@ -792,6 +794,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "ahaṅkāraḥ",
     definition:
       "Sense of self; self-image; ego.",
+    vedantaMeaning:
+      "The I-notion — the function of the antaḥkaraṇam that claims ownership and doership: 'I am the doer, I am the knower, this is mine.' Ahaṅkāra is the mechanism by which the limitless ātmā appears to be a particular individual. It is not the self but a thought-form (vṛtti) that attributes the qualities of the body-mind to ātmā and the qualities of ātmā to the body-mind — this is adhyāsa.",
     relatedTerms: ["manas", "buddhiḥ", "cittam", "antaḥkaraṇam"],
     tags: ["ego", "self-image", "identity", "I-sense", "individuality"],
   },
@@ -1618,6 +1622,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "antaḥkaraṇam",
     definition:
       "The mind; the instrument inside.",
+    vedantaMeaning:
+      "The inner instrument — the total mind with its four functions: manas (deliberation and doubt), buddhiḥ (determination and decision), ahaṅkāra (I-sense), and cittam (memory). The antaḥkaraṇam is inert (jaḍa) by nature but appears conscious due to the reflection of ātmā in it (cidābhāsa). It is the upādhi (limiting adjunct) that makes the limitless ātmā appear as a limited jīva.",
     relatedTerms: ["manas", "buddhiḥ", "ahaṅkāraḥ", "cittam"],
     tags: ["mind", "inner instrument", "psyche", "mental"],
   },
@@ -1810,6 +1816,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "anumānam",
     definition:
       "Inference - a pramāṇam.",
+    vedantaMeaning:
+      "Knowledge gained by reasoning from what is perceived to what is not directly perceived, based on a known invariable relationship (vyāpti). For example, inferring fire from smoke. While useful in worldly and philosophical reasoning, anumānam cannot independently reveal ātmā, since the self is the very basis of all inference and cannot be its own object.",
     relatedTerms: ["pramāṇam"],
   },
   {
@@ -1840,6 +1848,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "anupalabdhiḥ",
     definition:
       "Means of knowing that which is non-existent - a pramāṇam; non-recognition.",
+    vedantaMeaning:
+      "Non-apprehension — the pramāṇam that reveals the absence of something. One knows the pot is not on the table by looking and not seeing it. In Vedānta, this is relevant because mokṣa is understood as the absence of bondage (bandha-abhāva), not the gaining of something new. The recognition that there is no bondage is itself liberation.",
     relatedTerms: ["pramāṇam"],
   },
   {
@@ -2630,6 +2640,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "arthāpattiḥ",
     definition:
       "Presumption; assumption of a thing not itself perceived but implied by what is perceived - a pramāṇam.",
+    vedantaMeaning:
+      "Postulation — the means of knowledge by which one arrives at an otherwise unexplained fact. For example, if Devadatta is alive but not at home, one postulates he is elsewhere. In Vedānta, arthāpatti can support understanding — for instance, if Brahman is the cause of everything and is consciousness, one postulates that the material world is not separate from consciousness.",
     relatedTerms: ["pramāṇam"],
   },
   {
@@ -3461,6 +3473,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "avidyā",
     definition:
       "Ignorance.",
+    vedantaMeaning:
+      "Self-ignorance — not merely absence of knowledge, but a positive force of mis-apprehension that causes the self to be taken as limited. Avidyā has two powers: āvaraṇa (concealment of one's true nature) and vikṣepa (projection of what is not there). It is beginningless (anādi) but has an end — it is destroyed by self-knowledge (ātma-jñāna) alone.",
     relatedTerms: ["adhyāsa", "mithyā", "māyā", "vidyā", "jñānam", "mokṣa"],
     tags: ["ignorance", "delusion", "error", "not-knowing", "confusion", "bondage", "misunderstanding"],
   },
@@ -3899,6 +3913,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "bhaktiḥ",
     definition:
       "The recognition (that the Lord is giver of the fruits of action) which makes one a devotee; love without duality; devotion; committed love.",
+    vedantaMeaning:
+      "Devotion to Īśvara — in Vedānta, not mere emotional attachment but a mature understanding of one's relationship with the Lord. Bhakti includes the recognition of Īśvara as the giver of the fruits of action (karma-phala-dātā) and the trust that the Lord's order is just. In its highest form (parā-bhakti), bhakti becomes identical with jñāna — the recognition that there is no separation between the devotee and Brahman.",
     relatedTerms: ["īśvarah", "mokṣa", "karma", "śraddhā"],
     tags: ["devotion", "love", "worship", "faith", "surrender", "prayer"],
   },
@@ -4281,6 +4297,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "brahman",
     definition:
       "The truth of everything; the meaning of satyam jñānam anantam; one of four ṛtviḥs or priests employed at a Soma sacrifice.",
+    vedantaMeaning:
+      "The limitless, non-dual reality that is the cause and substrate of everything. Defined in the Taittirīya Upaniṣad as satyaṃ jñānam anantam — existence, awareness, and limitlessness. Brahman is not an object of knowledge but the very self of the knower. It is both the material and intelligent cause (abhinna-nimittopādāna-kāraṇam) of the universe.",
     relatedTerms: ["ātmā", "īśvarah", "sat", "satyam", "ānandaḥ", "jñānam", "māyā"],
     tags: ["absolute", "reality", "truth", "infinite", "god", "existence", "consciousness", "limitless", "whole"],
   },
@@ -4351,6 +4369,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "buddhiḥ",
     definition:
       "The intellect; reasoning; knowledge; recognition; will; deliberate thought.",
+    vedantaMeaning:
+      "The aspect of the antaḥkaraṇam whose function is determination (niścaya). Buddhi resolves the doubt raised by manas and arrives at a conclusion. It is the seat of knowledge and decision. In Vedānta, self-knowledge takes place in the buddhi — when the buddhi, informed by the teaching, recognizes 'I am Brahman,' that is mokṣa. The buddhi is the closest upādhi to ātmā.",
     relatedTerms: ["manas", "ahaṅkāraḥ", "cittam", "antaḥkaraṇam"],
     tags: ["intellect", "reason", "understanding", "thought", "intelligence", "mind", "discernment"],
   },
@@ -4661,6 +4681,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "citta",
     definition:
       "Perceived, observed; considered, meditated on.",
+    vedantaMeaning:
+      "As a function of the antaḥkaraṇam, citta refers to memory and recollection — the storehouse of impressions (saṃskāras) from past experiences. In Yoga, citta refers to the total mind-field. In Vedānta, citta-śuddhi (purity of mind) is an essential preparation for self-knowledge, achieved through karma-yoga and upāsanā.",
     relatedTerms: ["cittam"],
   },
   {
@@ -4756,6 +4778,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "damaḥ",
     definition:
       "Mastery; control of sense organs and organs of action.",
+    vedantaMeaning:
+      "Mastery over the sense organs and organs of action — the second of the six inner disciplines. While śama is the management of the internal mind, dama is the management of the external instruments. It is the capacity to not be compelled by sensory impulses, allowing the student to remain focused on the pursuit of knowledge rather than being pulled outward by attractions and aversions.",
     relatedTerms: ["samaḥ", "uparatih", "titikṣā", "śraddhā", "sādhanatuṣṭayam"],
     tags: ["sense-control", "restraint", "mastery", "discipline", "senses"],
   },
@@ -4944,6 +4968,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "dharmaḥ",
     definition:
       "Law; practice; custom; virtue; duty; propriety; order; attribute.",
+    vedantaMeaning:
+      "The order that governs all of creation — physical, psychological, and moral. In Vedānta, dharma includes both the ethical order (right action) and the cosmic order. Living in accordance with dharma purifies the mind and prepares it for self-knowledge. However, dharma belongs to the realm of action (karma) and cannot by itself produce mokṣa. Knowledge alone liberates; dharma supports the pursuit of knowledge.",
     relatedTerms: ["karma", "mokṣa", "vedaḥ"],
     tags: ["duty", "law", "virtue", "righteousness", "order", "ethics", "morality", "conduct"],
   },
@@ -5055,6 +5081,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "dhyānam",
     definition:
       "Religious meditation; abstract contemplation - one of the eight aṅgas of Patañjali's Yoga.",
+    vedantaMeaning:
+      "Meditation — in Vedānta, the sustained contemplation (nididhyāsana) on the truth revealed by the teaching. Unlike in Yoga philosophy, dhyāna in Vedānta is not a technique to produce a new experience but a means to internalize what has already been understood through śravaṇa and manana. It addresses habitual, emotional resistance to the knowledge 'I am Brahman.'",
   },
   {
     id: "dhyeyam",
@@ -5795,6 +5823,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "guṇah",
     definition:
       "Attribute; quality; particular modification; adjective; sattvaṃ rajas tamas as constituents of māyā; knot; the vowels a, e, o.",
+    vedantaMeaning:
+      "The three constituents of māyā — sattva (knowledge, clarity), rajas (activity, restlessness), and tamas (inertia, concealment). All material manifestation is a combination of these three. The guṇas belong to prakṛti/māyā, not to ātmā. Ātmā is nirguṇa — free from all guṇas. Understanding this distinction is essential to recognizing oneself as actionless, unchanging awareness.",
     relatedTerms: ["sattvam", "rajas", "tamas", "maya"],
     tags: ["quality", "attribute", "nature", "property", "constituent"],
   },
@@ -6181,6 +6211,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "īśvarah",
     definition:
       "Lord (Īśvarā); jagatkāraṇam; brahman manifest as the entire creation.",
+    vedantaMeaning:
+      "Brahman associated with māyā — the all-knowing, all-powerful cause of the creation, sustenance, and dissolution of the universe. Īśvara is not a being separate from Brahman but Brahman viewed from the standpoint of the empirical world. Just as the jīva is Brahman with the upādhi of avidyā, Īśvara is Brahman with the upādhi of māyā. When the upādhis are removed, jīva, Īśvara, and Brahman are one.",
     relatedTerms: ["brahman", "jīvah", "māyā", "jagatkāraṇam"],
     tags: ["god", "lord", "creator", "divine", "supreme"],
   },
@@ -6261,6 +6293,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jāgrat",
     definition:
       "Being awake, watching.",
+    vedantaMeaning:
+      "The waking state — in which the individual (called viśva) experiences the external world through the sense organs and mind. The Māṇḍūkya Upaniṣad analyzes this as the first quarter (pāda) of ātmā. The waking state is characterized by duality — a subject experiencing objects. Vedānta uses the analysis of the three states to show that ātmā is the invariable witness present in all three.",
   },
   {
     id: "jahallaksana",
@@ -6408,6 +6442,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jīvah",
     definition:
       "The person identified with the physical body; the individual.",
+    vedantaMeaning:
+      "The individual — ātmā as though limited by the upādhi of avidyā and the subtle body. The jīva is not a separate entity from Brahman but Brahman appearing as limited due to identification with the body-mind. The relationship between jīva and Īśvara is resolved in the mahāvākya: just as the space in a pot (ghaṭākāśa) is not different from total space (mahākāśa), the jīva is not different from Brahman.",
     relatedTerms: ["ātmā", "īśvarah", "avidyā", "sākṣī", "saṃsāra"],
     tags: ["individual", "person", "soul", "being", "embodied"],
   },
@@ -6452,6 +6488,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jñānam",
     definition:
       "Knowledge, abhidhā asaṃdigdhaṃ (not negatable and free from doubt).",
+    vedantaMeaning:
+      "Self-knowledge — the direct, immediate recognition that ātmā is Brahman. Jñāna is not information about Brahman but the removal of self-ignorance by the words of the Upaniṣads, unfolded by a teacher. It is not a mental state or experience that comes and goes, but a fact that, once known, cannot be unknown. Jñāna is the sole means to mokṣa — no action, meditation, or experience can substitute for it.",
     relatedTerms: ["brahman", "vidyā", "avidyā", "mokṣa"],
     tags: ["knowledge", "wisdom", "understanding", "knowing", "awareness", "clarity"],
   },
@@ -6483,6 +6521,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jñānayogaḥ",
     definition:
       "A life devoted to knowledge and free of life's roles; saṃnyāsaḥ.",
+    vedantaMeaning:
+      "The path of knowledge — a life wholly dedicated to self-inquiry through śravaṇa, manana, and nididhyāsana, typically in the context of sannyāsa. In the Gītā, Kṛṣṇa presents jñāna-yoga as the direct means to mokṣa for one whose mind has been prepared by karma-yoga. It is not mere study but the living pursuit of the truth 'I am Brahman' under the guidance of a teacher.",
   },
   {
     id: "jnanendriyah",
@@ -6777,6 +6817,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "karma",
     definition:
       "Nom. sing. karma. Action from free will; certain consequences of action; duty.",
+    vedantaMeaning:
+      "Action and its results. Every deliberate action produces a result (phala) governed by the law of dharma. Accumulated karma — puṇya (merit) and pāpa (demerit) — drives the cycle of saṃsāra. Vedānta teaches that no amount of karma can produce mokṣa, because action produces only finite results. Knowledge alone reveals that ātmā is ever-free and was never a doer (akartā).",
     relatedTerms: ["dharmaḥ", "saṃsāra", "mokṣa", "yogaḥ"],
     tags: ["action", "deed", "consequence", "cause", "effect", "result", "duty"],
   },
@@ -6801,6 +6843,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "karmayogaḥ",
     definition:
       "A life devoted to knowledge including performance of life's roles.",
+    vedantaMeaning:
+      "The yoga of action — performing one's duties with the attitude of offering to Īśvara (īśvarārpaṇa-buddhi) and accepting the results with equanimity as the Lord's grace (prasāda-buddhi). Karma-yoga does not produce mokṣa directly but purifies the mind (citta-śuddhi), making it fit for self-knowledge. In the Gītā, karma-yoga is the primary sādhana for preparing the mind for jñāna-yoga.",
   },
   {
     id: "karmendriyah",
@@ -7034,6 +7078,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "kośaḥ",
     definition:
       "Sheath (five of which as though cover ātmā); treasury; dictionary.",
+    vedantaMeaning:
+      "The five sheaths (pañcakośa) that seemingly cover ātmā: annamaya (food/physical), prāṇamaya (vital breath), manomaya (mind), vijñānamaya (intellect), and ānandamaya (bliss). The Taittirīya Upaniṣad uses the kośa model to guide the student inward — each sheath is progressively subtler, and ātmā is recognized as distinct from and pervading all five. The sheaths are not layers to be removed but misconceptions to be resolved.",
     relatedTerms: ["ātmā"],
   },
   {
@@ -7684,6 +7730,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "manas",
     definition:
       "Mind - doubt, desire, emotion, perception, ego, memory; see buddhiḥ.",
+    vedantaMeaning:
+      "The aspect of the antaḥkaraṇam whose function is saṅkalpa-vikalpa — deliberation, doubt, and emotional response. Manas receives sense data and oscillates between possibilities. It is the seat of desire (kāma) and volition. In Vedānta, the mind is not the self but an instrument — like the eye is an instrument of seeing, the mind is an instrument of thinking, illumined by consciousness (caitanyam).",
     relatedTerms: ["buddhiḥ", "ahaṅkāraḥ", "cittam", "antaḥkaraṇam"],
     tags: ["mind", "emotion", "desire", "doubt", "perception", "thinking"],
   },
@@ -7745,6 +7793,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "mantrah",
     definition:
       "Vedic mental prayer.",
+    vedantaMeaning:
+      "A sacred formula or verse from the Vedas, used in prayer, ritual, and contemplation. In Vedānta, mantras from the Upaniṣads — especially the mahāvākyas — function as the verbal means of knowledge (śabda-pramāṇam) that reveal the nature of ātmā. The power of a mantra lies not in its sound alone but in the meaning it unfolds when properly taught and contemplated.",
     tags: ["prayer", "chant", "sacred", "hymn", "invocation"],
   },
   {
@@ -7869,6 +7919,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "maya",
     definition:
       "At the end of compound Made of, consisting of, full of.",
+    vedantaMeaning:
+      "The beginningless power (śakti) of Brahman, composed of the three guṇas, which accounts for the appearance of the manifold universe. Māyā is neither real nor unreal (sadasadvilakṣaṇā) — it cannot be categorized as sat or asat. When associated with Īśvara it is called māyā; when associated with the jīva it is called avidyā.",
     relatedTerms: ["avidyā", "mithyā", "guṇah", "īśvarah", "brahman"],
     tags: ["illusion", "appearance", "power", "creation", "magic", "manifestation"],
   },
@@ -7951,6 +8003,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "mithyā",
     definition:
       "Existing only as dependent on something else; error.",
+    vedantaMeaning:
+      "That which cannot be categorized as either absolutely real (sat) or absolutely unreal (asat). The world is mithyā — it is experienced but has no independent existence apart from Brahman, just as a pot has no existence apart from clay. Mithyā is not 'illusion' or 'non-existent' — it is dependent reality, empirically valid but not ultimately real.",
     relatedTerms: ["avidyā", "adhyāsa", "māyā", "brahman", "satyam"],
     tags: ["dependent", "apparent", "illusion", "false", "unreal", "appearance"],
   },
@@ -8117,6 +8171,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "mumukṣutvam",
     definition:
       "The state of desiring mokṣaḥ.",
+    vedantaMeaning:
+      "An intense, burning desire for liberation — the fourth of the four qualifications. Mumukṣutvam is not casual spiritual interest but a clarity that freedom from self-limitation is the only pursuit that truly matters. It arises when a person, through viveka and vairāgya, recognizes that no amount of worldly achievement can resolve the fundamental sense of inadequacy.",
     relatedTerms: ["mokṣa", "viveka", "vairāgyam", "sādhanatuṣṭayam"],
     tags: ["desire", "liberation", "longing", "seeking", "freedom", "qualification"],
   },
@@ -8690,6 +8746,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "nirguṇaḥ",
     definition:
       "That which is free from all attributes.",
+    vedantaMeaning:
+      "Brahman as it truly is — free from all limiting attributes, guṇas, and form. Nirguṇa does not mean 'without any nature' but 'not limited by any quality.' Brahman is nirguṇa because it is not a product of māyā and the guṇas do not apply to it. The Upaniṣads negate all attributes (neti neti) to reveal Brahman as pure existence-consciousness, beyond all description.",
     relatedTerms: ["saguṇa", "brahman", "guṇah"],
     tags: ["attributeless", "formless", "unconditioned", "absolute", "without qualities"],
   },
@@ -9922,6 +9980,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "prajñā",
     definition:
       "Understanding; knowledge; wisdom; discernment.",
+    vedantaMeaning:
+      "In the context of the Māṇḍūkya Upaniṣad, prājña is the name of ātmā as identified with the deep sleep state — the third pāda. Prājña is the experiencer of causal ignorance, where all duality resolves into an undifferentiated state. The word also appears in the mahāvākya 'prajñānaṃ brahma' (Aitareya Upaniṣad), where prajñāna means consciousness itself — the nature of Brahman.",
     relatedTerms: ["prajñānam", "prajñāptiḥ", "jñānam", "buddhiḥ"],
     tags: ["wisdom", "understanding", "discernment", "insight", "intelligence"],
   },
@@ -10072,6 +10132,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "prakṛtiḥ",
     definition:
       "That which is available for and capable of creation; Nature consisting of the three guṇas; the natural condition or state of anything; origin; source. In Sāṅkhya philosophy active nature as distinguished from puruṣaḥ, the passive spirit or soul.",
+    vedantaMeaning:
+      "In Advaita Vedānta, prakṛti is understood as māyā or the causal matter of the universe, not as an independent reality alongside Brahman (as in Sāṅkhya). Prakṛti, composed of the three guṇas, is the material cause (upādāna-kāraṇam) of the universe — but it is not separate from Brahman. It is Brahman's own power of manifestation, which is mithyā.",
     relatedTerms: ["puruṣaḥ", "sāṅkhya"],
     tags: ["nature", "matter", "creation", "material", "origin", "source"],
   },
@@ -10104,6 +10166,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "pramāṇam",
     definition:
       "Means of knowledge; ajñāta jñāpakam.",
+    vedantaMeaning:
+      "A valid means of knowledge — that which reveals what was previously unknown and is not contradicted. Vedānta accepts six pramāṇas: pratyakṣam (perception), anumānam (inference), upamānam (comparison), arthāpattiḥ (postulation), anupalabdhiḥ (non-apprehension), and śabdaḥ (verbal testimony). For knowledge of Brahman, śabdapramāṇam — the words of the Upaniṣads — is the only valid means, since Brahman is not an object of perception or inference.",
     relatedTerms: ["pratyakṣam", "anumānam", "śabdaḥ", "upamānam", "arthāpattiḥ", "anupalabdhiḥ"],
     tags: ["knowledge", "means", "proof", "evidence", "epistemology", "valid knowledge"],
   },
@@ -10180,6 +10244,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "prāṇāyāmaḥ",
     definition:
       "Breathing practices - one of the eight aṅgas of Patañjali's Yoga.",
+    vedantaMeaning:
+      "Breath regulation — valued in Vedānta as a preparatory practice (sādhana) for calming the mind and making it fit for self-inquiry. Prāṇāyāma is mentioned in the Gītā alongside sense-control and other disciplines. It is not considered a direct means to mokṣa but a support for the quieting of rajas and the cultivation of sattva in the mind.",
   },
   {
     id: "pranidhanam",
@@ -10187,6 +10253,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "praṇidhānam",
     definition:
       "Respectful behavior with Īśvara in mind.",
+    vedantaMeaning:
+      "Surrender or devotion to Īśvara — offering one's actions, thoughts, and their results to the Lord. In the context of Yoga, Patañjali lists Īśvara-praṇidhāna as a means to samādhi. In Vedānta, this attitude is the heart of karma-yoga — acting with Īśvara in mind transforms ordinary action into a means of inner purification and prepares the mind for self-knowledge.",
   },
   {
     id: "pranin",
@@ -10613,6 +10681,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "pratyakṣam",
     definition:
       "Knowledge gained through direct perception - a pramāṇam.",
+    vedantaMeaning:
+      "Direct perception through the sense organs contacting their objects. It is the most immediate pramāṇam but is limited to revealing objects with attributes (saviśeṣa). Since Brahman is attributeless (nirviśeṣa) and not an object of the senses, pratyakṣam cannot operate as the means to self-knowledge.",
     relatedTerms: ["pramāṇam"],
   },
   {
@@ -11015,6 +11085,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "puruṣaḥ",
     definition:
       "Original source of creation; the Supreme Being; a man.",
+    vedantaMeaning:
+      "In Sāṅkhya, puruṣa is pure consciousness distinct from prakṛti. In Advaita Vedānta, the term refers to ātmā or Brahman — the conscious principle that is the basis of all experience. The Puruṣasūkta describes the entire creation as arising from puruṣa. Unlike in Sāṅkhya, Vedānta does not accept a real duality between puruṣa and prakṛti — they are Brahman and its power.",
     tags: ["spirit", "soul", "consciousness", "supreme", "being", "person"],
   },
   {
@@ -11145,6 +11217,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "rajas",
     definition:
       "Energy; ambition; enthusiasm; anxiety; the active guṇa.",
+    vedantaMeaning:
+      "The guṇa of activity, passion, and restlessness. A rājasika mind is driven by desire, ambition, and attachment to results. It projects outward, seeking fulfillment in objects and achievements. Rajas agitates the mind, making it difficult to sustain the quiet attention needed for self-inquiry. Karma-yoga is the primary means for transforming rajas into sattva.",
     relatedTerms: ["guṇah", "sattvam", "tamas"],
     tags: ["activity", "passion", "energy", "restlessness", "ambition", "desire"],
   },
@@ -11360,6 +11434,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "śabdaḥ",
     definition:
       "Sound; word; verbal means of knowledge - a pramāṇam.",
+    vedantaMeaning:
+      "As a pramāṇam, śabda refers to words — specifically the words of the Vedas — functioning as a valid, independent means of knowledge. Words operate by removing ignorance about an already-existing thing. The Upaniṣadic words do not create Brahman or produce a new state; they reveal what is already the case — that you are Brahman.",
     relatedTerms: ["pramāṇam"],
   },
   {
@@ -11412,6 +11488,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sādhanam",
     definition:
       "Means of accomplishment.",
+    vedantaMeaning:
+      "The means or discipline that prepares the mind for self-knowledge. In Vedānta, sādhana does not produce mokṣa — since mokṣa is already the nature of ātmā — but it removes the obstacles that prevent the recognition of what is already the case. The primary sādhana is śravaṇam (listening to the teaching), manana (reflection), and nididhyāsana (contemplation).",
     relatedTerms: ["sādhanatuṣṭayam", "viveka", "vairāgyam"],
     tags: ["practice", "means", "discipline", "preparation", "method"],
   },
@@ -11421,6 +11499,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sādhanatuṣṭayam",
     definition:
       "Fourfold qualifications which indicate a person ready for self-knowledge (nityānityavastuvivekaḥ, phalabhogarāgaḥ, śamādiṣaṭkasampatiḥ (śamah damaḥ uparamaḥ titikṣā samādhānam (śraddhā)), mumukṣuttam.",
+    vedantaMeaning:
+      "The four qualifications that make a person fit (adhikārī) for the pursuit of self-knowledge, as outlined in the Vivekacūḍāmaṇi: (1) viveka — discrimination between the eternal and the non-eternal, (2) vairāgya — dispassion toward the results of action here and hereafter, (3) śamādiṣaṭkasampatti — the six inner disciplines, and (4) mumukṣutvam — an intense desire for liberation. These are not arbitrary prerequisites but natural expressions of maturity.",
     relatedTerms: ["viveka", "vairāgyam", "mumukṣutvam", "samaḥ", "damaḥ", "uparatih", "titikṣā", "śraddhā"],
   },
   {
@@ -11481,6 +11561,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "saguṇa",
     definition:
       "Having attributes or qualities.",
+    vedantaMeaning:
+      "Brahman as described with attributes — omniscient, omnipotent, the creator and sustainer of the universe. Saguṇa Brahman is Īśvara — Brahman as understood from the standpoint of the empirical world. The distinction between nirguṇa and saguṇa is not a distinction between two Brahmans but two levels of teaching — saguṇa descriptions prepare the mind; nirguṇa teaching reveals the final truth.",
     relatedTerms: ["nirguṇaḥ", "brahman", "guṇah", "īśvarah"],
     tags: ["qualified", "with form", "attributes", "personal", "conditioned"],
   },
@@ -11602,6 +11684,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sākṣī",
     definition:
       "Witness.",
+    vedantaMeaning:
+      "The witness consciousness — ātmā as the unchanging awareness in whose presence all experiences (waking, dream, and deep sleep) are known. Sākṣī is not a 'watcher' in the sense of a subject observing objects, but the self-luminous consciousness that makes all knowing possible. It is never affected by what it witnesses, just as space is not affected by what it contains.",
     relatedTerms: ["ātmā", "caitanyam", "jīvah"],
     tags: ["witness", "observer", "awareness", "consciousness", "seer"],
   },
@@ -11690,6 +11774,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "samādhānam",
     definition:
       "Fixing the mind in contemplation on the true nature of self.",
+    vedantaMeaning:
+      "The capacity to hold the mind steadily on the teaching and on the nature of ātmā — the last of the six inner disciplines. In Vedānta, samādhāna is not a trance state but a focused, abiding attention to what the śāstra reveals. It is the mind's ability to dwell on the truth rather than being scattered by competing demands and distractions.",
   },
   {
     id: "samadhih",
@@ -11720,6 +11806,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "samaḥ",
     definition:
       "Management of the mind.",
+    vedantaMeaning:
+      "Mastery over the mind — the capacity to manage the mind so that it does not run unchecked after objects. Śama is the first of the six inner disciplines (śamādiṣaṭkasampatti). It is not the destruction of thought but the ability to bring the mind back to the teaching and to what is being inquired into. A mind without śama cannot sustain the attention needed for self-inquiry.",
     relatedTerms: ["damaḥ", "uparatih", "titikṣā", "śraddhā", "sādhanatuṣṭayam"],
     tags: ["mind-control", "equanimity", "calm", "discipline", "composure"],
   },
@@ -12157,6 +12245,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "saṃsāra",
     definition:
       "The cycle of becoming; the course of worldly life; the jīva's reality.",
+    vedantaMeaning:
+      "The beginningless cycle of birth, death, and rebirth driven by karma and sustained by self-ignorance. Saṃsāra is not a place but a condition — the experience of being a limited, wanting, mortal being. It is the direct consequence of adhyāsa. Since saṃsāra is rooted in ignorance alone, it is resolved by knowledge alone, not by action.",
     relatedTerms: ["mokṣa", "karma", "avidyā", "jīvah"],
     tags: ["cycle", "rebirth", "suffering", "bondage", "worldly", "transmigration"],
   },
@@ -12595,6 +12685,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sannyāsaḥ",
     definition:
       "Renunciation; the vow of non-injury; a life committed to knowledge and free of life's roles.",
+    vedantaMeaning:
+      "The life of renunciation — giving up all obligatory and desire-prompted actions for the single-pointed pursuit of self-knowledge. In the Gītā, Kṛṣṇa also speaks of an inner sannyāsa — the renunciation of the sense of doership and the results of action. Whether formal or internal, sannyāsa reflects the understanding that no action can produce what knowledge alone reveals.",
   },
   {
     id: "sannyasi",
@@ -12900,6 +12992,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sattvam",
     definition:
       "Inner disposition of enjoyment; antaḥkaraṇa; the virtuous guṇaḥ.",
+    vedantaMeaning:
+      "The guṇa of clarity, knowledge, and harmony. A sāttvika mind is transparent — it reflects consciousness most clearly, allowing the teaching to be heard and understood. Sattva is the quality most conducive to self-knowledge, but even sattva is a quality of māyā, not of ātmā. The goal is not to become purely sāttvika but to recognize oneself as beyond all guṇas.",
     relatedTerms: ["guṇah", "rajas", "tamas"],
     tags: ["purity", "clarity", "goodness", "virtue", "harmony", "balance", "light"],
   },
@@ -13114,6 +13208,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "smṛtiḥ",
     definition:
       "Memory; production of human authors; lawbooks.",
+    vedantaMeaning:
+      "Texts composed by authors based on the Vedas, including the Dharmaśāstras, Itihāsas (Mahābhārata, Rāmāyaṇa), and Purāṇas. Smṛti is a secondary authority — valid only insofar as it is consistent with śruti. Where smṛti contradicts śruti, śruti prevails. Smṛti is valuable in Vedānta for clarifying and elaborating what the Upaniṣads teach.",
   },
   {
     id: "snanam",
@@ -13256,6 +13352,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "śraddhā",
     definition:
       "Faith and trust in the pramāṇa and the guru.",
+    vedantaMeaning:
+      "Trust in the words of the teacher and the śāstra — not blind belief but a willingness to hold the teaching as provisionally true while investigating it. Śraddhā is listed among the six inner disciplines (śamādiṣaṭkasampatti). Without śraddhā, the student cannot give the teaching a fair hearing. As the Gītā states: śraddhāvān labhate jñānam — the one who has trust gains knowledge.",
     relatedTerms: ["samaḥ", "damaḥ", "uparatih", "titikṣā", "sādhanatuṣṭayam", "guruh"],
     tags: ["faith", "trust", "confidence", "belief", "conviction"],
   },
@@ -13355,6 +13453,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "śrutiḥ",
     definition:
       "The ear; Veda; hearing; śāstram.",
+    vedantaMeaning:
+      "The Veda, regarded as apauruṣeya (not authored by any person, including God). Śruti is the primary and independent authority in Vedānta. It reveals what cannot be known by any other means — the identity of ātmā and Brahman. The Upaniṣads, which form the end portion of the Vedas, are the śruti texts most directly relevant to self-knowledge.",
     relatedTerms: ["śāstram"],
   },
   {
@@ -13648,6 +13748,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "suṣuptiḥ",
     definition:
       "Deep sleep.",
+    vedantaMeaning:
+      "The deep sleep state — in which the individual (called prājña) resolves into causal ignorance. There is no experience of duality, no suffering, no sense of limitation. The Māṇḍūkya Upaniṣad identifies this as the third pāda. Deep sleep is significant because it reveals that ātmā continues to exist even when the mind is resolved — 'I slept well, I knew nothing' shows both the continuity of the witness and the presence of ignorance.",
   },
   {
     id: "sutaram",
@@ -13760,6 +13862,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "svapnaḥ",
     definition:
       "Sleep; sleeping.",
+    vedantaMeaning:
+      "The dream state — in which the individual (called taijasa) creates and experiences an entire world projected by the mind alone, without external objects. The Māṇḍūkya Upaniṣad identifies this as the second pāda. The dream state reveals that the mind can generate a convincing experience of duality from within itself — a key insight for understanding how waking duality is also dependent on consciousness.",
   },
   {
     id: "svar",
@@ -13940,6 +14044,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "taijasaḥ",
     definition:
       "Name of the dreamer - the shining one.",
+    vedantaMeaning:
+      "The name given to ātmā as identified with the dream state in the Māṇḍūkya Upaniṣad. Called 'the shining one' because in dream the mind alone illumines the entire dream world without external light or objects. Taijasa experiences the subtle, internally projected world. It is the second pāda — ātmā functioning through the subtle body alone.",
   },
   {
     id: "talu",
@@ -13954,6 +14060,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "tamas",
     definition:
       "Darkness; sorrow; dullness; the ignorance guṇa.",
+    vedantaMeaning:
+      "The guṇa of inertia, dullness, and concealment. A tāmasika mind is characterized by lethargy, confusion, negligence, and resistance to inquiry. Tamas conceals the nature of things, contributing to fundamental ignorance. In the creation model, tamas in each element produces the gross physical world. Tamas is overcome by rajas (activity), and rajas is refined into sattva through disciplined living.",
     relatedTerms: ["guṇah", "sattvam", "rajas"],
     tags: ["darkness", "inertia", "dullness", "ignorance", "laziness", "heaviness"],
   },
@@ -14237,6 +14345,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "titikṣā",
     definition:
       "Cheerful endurance; bearing opposites with equanimity.",
+    vedantaMeaning:
+      "The capacity to cheerfully endure the pairs of opposites — heat and cold, pleasure and pain, praise and blame — without being disturbed or seeking to retaliate. Titikṣā is one of the six inner disciplines. It is not suppression or indifference but a mature acceptance that allows the mind to remain available for self-inquiry even amidst life's inevitable discomforts.",
     relatedTerms: ["samaḥ", "damaḥ", "uparatih", "śraddhā", "sādhanatuṣṭayam"],
     tags: ["endurance", "patience", "forbearance", "tolerance", "resilience", "equanimity"],
   },
@@ -14331,6 +14441,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "turīyam",
     definition:
       "Fourth, a fourth part, quarter.",
+    vedantaMeaning:
+      "Not a fourth state but the substrate of all three states — the pure consciousness that is ātmā. Called 'turīya' (the fourth) only to distinguish it from waking, dream, and deep sleep, but it is not a state that comes and goes. The Māṇḍūkya Upaniṣad describes it as: not inward-knowing, not outward-knowing, not both, not a mass of knowing, not knowing, not not-knowing — it is ātmā, to be recognized.",
     relatedTerms: ["ātmā", "brahman", "caitanyam"],
     tags: ["fourth", "transcendent", "beyond", "pure consciousness", "awareness"],
   },
@@ -14704,6 +14816,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "upaniṣad",
     definition:
       "The definite, well ascertained knowledge that is self, which makes one recognize brahman and destroys all sorrow; revealed texts dealing with the self; that which is the most profound secret.",
+    vedantaMeaning:
+      "The end portions of the Vedas that reveal the nature of ātmā and Brahman. The word is traditionally derived as upa-ni-ṣad — that which destroys (ṣad) ignorance by bringing the student near (upa-ni) to the truth. The principal Upaniṣads commented upon by Śaṅkara form the prasthānatraya along with the Brahmasūtras and the Bhagavadgītā.",
     relatedTerms: ["brahman", "vedaḥ", "vedāntaḥ", "guruh"],
     tags: ["scripture", "teaching", "wisdom", "revelation", "self-knowledge", "text"],
   },
@@ -14750,6 +14864,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "uparatih",
     definition:
       "Stopping; not doing actions which distract or inhibit your growth.",
+    vedantaMeaning:
+      "Withdrawal from activities that do not support one's growth — one of the six inner disciplines. Uparati is sometimes understood as the natural withdrawal that follows śama and dama, and sometimes as strict adherence to one's svadharma. It is not escapism but a deliberate focusing of one's life around what truly matters — the pursuit of self-knowledge.",
     relatedTerms: ["samaḥ", "damaḥ", "titikṣā", "śraddhā", "sādhanatuṣṭayam"],
     tags: ["withdrawal", "restraint", "cessation", "renunciation", "discipline"],
   },
@@ -15128,6 +15244,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vairāgyam",
     definition:
       "Dispassion toward worldly gain.",
+    vedantaMeaning:
+      "Dispassion born of discrimination — the natural falling away of longing for the results of action, both in this world and in any other. Vairāgya is not suppression or aversion but a clear seeing that no finite result can deliver lasting fullness. It arises naturally from viveka and is the second of the four qualifications (sādhanatuṣṭayam).",
     relatedTerms: ["viveka", "mumukṣutvam", "sādhanatuṣṭayam", "mokṣa"],
     tags: ["dispassion", "detachment", "renunciation", "non-attachment", "letting go"],
   },
@@ -15476,6 +15594,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vedāntaḥ",
     definition:
       "Scriptures at the end of the Veda dealing with knowledge that is the self; that which says you are whole and you are the whole.",
+    vedantaMeaning:
+      "Literally 'the end of the Veda' — both in the sense of the concluding portion and the ultimate purport. Vedānta as a teaching tradition (sampradāya) unfolds the meaning of the Upaniṣads through a teacher who has understood them. The vision of Vedānta is that the individual (jīva) is non-different from the whole (Brahman) — this is not a philosophy to be believed but a fact to be recognized.",
     relatedTerms: ["vedaḥ", "upaniṣad", "brahman", "ātmā"],
     tags: ["philosophy", "self-knowledge", "scripture", "teaching", "wholeness"],
   },
@@ -15693,6 +15813,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vidyā",
     definition:
       "Knowledge.",
+    vedantaMeaning:
+      "Self-knowledge — the direct recognition of oneself as Brahman, which destroys avidyā. Vidyā is not intellectual information but the clear, doubt-free understanding (aparokṣa-jñāna) that removes the fundamental error of self-limitation. In the Upaniṣads, parā vidyā refers to knowledge of Brahman as distinct from aparā vidyā, all other forms of learning.",
     relatedTerms: ["avidyā", "jñānam", "brahman"],
     tags: ["knowledge", "wisdom", "learning", "understanding", "clarity"],
   },
@@ -16309,6 +16431,8 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "viśvaḥ",
     definition:
       "The name of the waker; complete.",
+    vedantaMeaning:
+      "The name given to ātmā as identified with the waking state in the Māṇḍūkya Upaniṣad. Viśva experiences the gross external world through the fourteen organs (five sense organs, five organs of action, and the fourfold mind). Viśva is the first pāda — not a separate self, but ātmā functioning through the waking body-mind.",
   },
   {
     id: "visvam",
