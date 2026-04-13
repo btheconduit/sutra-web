@@ -191,6 +191,17 @@ function useTheme() {
   return { dark, toggle };
 }
 
+function Tooltip({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <span className="group relative">
+      {children}
+      <span className="pointer-events-none absolute top-full right-0 mt-2 whitespace-nowrap rounded bg-zinc-800 px-2 py-1 text-[11px] text-zinc-200 opacity-0 shadow-md transition-opacity delay-0 group-hover:opacity-100 group-hover:delay-150 dark:bg-zinc-700 dark:text-zinc-100">
+        {label}
+      </span>
+    </span>
+  );
+}
+
 function TopBar({
   dark,
   onToggle,
@@ -202,24 +213,28 @@ function TopBar({
 }) {
   return (
     <div className="fixed top-5 right-5 z-20 flex items-center gap-3 rounded-lg border border-zinc-200/40 bg-white/40 px-3 py-2 backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-950/30">
-      <button
-        onClick={onInfoClick}
-        aria-label="About Sutra"
-        className="text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
-      >
-        <IconInfo />
-      </button>
-      <button
-        onClick={onToggle}
-        aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-        className="text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
-      >
-        {dark ? (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        ) : (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        )}
-      </button>
+      <Tooltip label="About (I)">
+        <button
+          onClick={onInfoClick}
+          aria-label="About Sutra"
+          className="text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
+        >
+          <IconInfo />
+        </button>
+      </Tooltip>
+      <Tooltip label={dark ? "Light mode (O)" : "Dark mode (O)"}>
+        <button
+          onClick={onToggle}
+          aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+          className="text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
+        >
+          {dark ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          )}
+        </button>
+      </Tooltip>
     </div>
   );
 }
@@ -284,7 +299,7 @@ function SearchSidebar({
         <button
           onClick={() => { onToggleCollapse(); requestAnimationFrame(() => inputRef.current?.focus()); }}
           aria-label="Search"
-          title="Search (/)"
+          title="Search (F)"
           className="text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-400"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -329,7 +344,7 @@ function SearchSidebar({
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
           ) : (
-            <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 rounded border border-zinc-200 bg-zinc-100/60 px-1.5 py-0.5 text-[10px] text-zinc-400 transition-opacity peer-focus:opacity-0 dark:border-zinc-700 dark:bg-zinc-800/60 dark:text-zinc-500">/</span>
+            <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 rounded border border-zinc-200 bg-zinc-100/60 px-1.5 py-0.5 text-[10px] text-zinc-400 transition-opacity peer-focus:opacity-0 dark:border-zinc-700 dark:bg-zinc-800/60 dark:text-zinc-500">F</span>
           )}
         </div>
 
@@ -438,12 +453,15 @@ function CollapsedPanel({
 }) {
   const devanagari = entry.devanagari || toDevanagari(entry.transliteration);
   return (
-    <div className="flex h-full w-16 shrink-0 flex-col items-center rounded-lg border border-zinc-200/80 bg-zinc-50 py-4 transition-all duration-300 ease-out dark:border-zinc-700/60 dark:bg-zinc-900/70">
-      <button
-        onClick={onRestore}
-        aria-label={`Restore ${entry.term}`}
-        className="flex flex-col items-center gap-3 pt-1"
-      >
+    <div
+      onClick={onRestore}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onRestore(); } }}
+      role="button"
+      tabIndex={0}
+      aria-label={`Restore ${entry.term}`}
+      className="flex h-full w-16 shrink-0 cursor-pointer flex-col items-center rounded-lg border border-zinc-200/80 bg-zinc-50 py-4 transition-all duration-300 ease-out hover:border-zinc-300 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/50 dark:border-zinc-700/60 dark:bg-zinc-900/70 dark:hover:border-zinc-600 dark:hover:bg-zinc-800/70"
+    >
+      <div className="flex flex-col items-center gap-3 pt-1">
         <span
           className="text-lg font-normal tracking-wide text-zinc-700 dark:text-zinc-300"
           style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
@@ -456,10 +474,10 @@ function CollapsedPanel({
         >
           {entry.term}
         </span>
-      </button>
+      </div>
       <div className="flex-1" />
       <button
-        onClick={onClose}
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
         aria-label={`Close ${entry.term}`}
         className={iconButtonClass}
       >
@@ -792,10 +810,10 @@ function WordPanel({
           {entry.root && <Section label="Root">{entry.root}</Section>}
           {entry.relatedTerms && entry.relatedTerms.length > 0 && (
             <div>
-              <div className="mb-1 text-xs tracking-wide text-zinc-400 dark:text-zinc-600">
+              <div className="mb-1 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
                 Related terms
               </div>
-              <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm leading-relaxed">
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-base leading-relaxed">
                 {entry.relatedTerms.map((term) => {
                   const linked = findByTerm(term);
                   if (linked) {
@@ -862,15 +880,23 @@ function IconInfo({ className }: { className?: string }) {
 }
 
 function InfoPanel({ onClose }: { onClose: () => void }) {
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [onClose]);
+
   return (
     <div className="animate-fade-in fixed inset-0 z-30 flex items-center justify-center bg-black/20 dark:bg-zinc-950/50" onClick={onClose}>
       <div
-        className="animate-slide-down mx-4 w-full max-w-md rounded-xl border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-950"
+        className="animate-slide-down mx-4 max-h-[85vh] w-full max-w-md overflow-y-auto rounded-xl border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-950"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-6 flex items-start justify-between">
           <h2 className="text-lg font-light text-zinc-900 dark:text-zinc-100">
-            About Sutra
+            About
           </h2>
           <button onClick={onClose} className={iconButtonClass}>
             <IconClose />
@@ -917,13 +943,27 @@ function InfoPanel({ onClose }: { onClose: () => void }) {
 
           <div>
             <h3 className="mb-1.5 text-xs tracking-wide text-zinc-400 dark:text-zinc-600">
-              Supporting this project
+              Source
             </h3>
             <p className="text-zinc-500 dark:text-zinc-400">
-              Sutra is offered freely as a service to students and practitioners.
-              This project is sustained entirely by donations. If you find it
-              useful in your study, consider contributing to help keep it available
-              for others.
+              Definitions reflect the traditional Vedantic usage as taught in
+              the sampradaya of Shankara&apos;s Advaita Vedanta — not academic
+              or dictionary Sanskrit. They are drawn from the glossary used by
+              Pujya Swami Dayananda Saraswati in his three-year course in
+              Vedanta and Sanskrit. The glossary (5th edition, 2013) was
+              compiled and edited by John Warne and is available through the
+              Arsha Vidya Gurukulam bookstore in Saylorsburg, Pennsylvania.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="mb-1.5 text-xs tracking-wide text-zinc-400 dark:text-zinc-600">
+              Search &amp; transliteration
+            </h3>
+            <p className="text-zinc-500 dark:text-zinc-400">
+              Search supports IAST transliteration (e.g. ātmā), common English
+              spellings (e.g. atma), and Devanāgarī. You can type without
+              diacritics and still find what you&apos;re looking for.
             </p>
           </div>
         </div>
@@ -1219,10 +1259,10 @@ function MobileDetailView({
           {entry.root && <Section label="Root">{entry.root}</Section>}
           {entry.relatedTerms && entry.relatedTerms.length > 0 && (
             <div>
-              <div className="mb-1.5 text-xs tracking-wide text-zinc-400 dark:text-zinc-600">
+              <div className="mb-1.5 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
                 Related terms
               </div>
-              <div className="flex flex-wrap gap-x-3 gap-y-2 text-sm leading-relaxed">
+              <div className="flex flex-wrap gap-x-3 gap-y-2 text-base leading-relaxed">
                 {entry.relatedTerms.map((term) => {
                   const linked = findByTerm(term);
                   if (linked) {
@@ -1309,6 +1349,29 @@ function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleR
   const handleBack = useCallback(() => {
     setActiveId(null);
   }, []);
+
+  // Global keyboard shortcuts
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement)?.tagName;
+      const isInput = tag === "INPUT" || tag === "TEXTAREA";
+
+      if (e.key === "i" && !isInput && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        setShowInfo((prev) => !prev);
+        return;
+      }
+
+      if (e.key === "o" && !isInput && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        toggle();
+        return;
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [toggle]);
 
   const handleSearchKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -1582,8 +1645,8 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
       const tag = (e.target as HTMLElement)?.tagName;
       const isInput = tag === "INPUT" || tag === "TEXTAREA";
 
-      // "/" — focus search (only when not typing in an input)
-      if (e.key === "/" && !isInput) {
+      // "f" — focus search (only when not typing in an input)
+      if (e.key === "f" && !isInput && !e.metaKey && !e.ctrlKey) {
         e.preventDefault();
         if (sidebarCollapsed && hasPanels) setSidebarCollapsed(false);
         requestAnimationFrame(() => inputRef.current?.focus());
@@ -1606,11 +1669,25 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
         }
         return;
       }
+
+      // "i" — toggle about modal (only when not typing)
+      if (e.key === "i" && !isInput && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        setShowInfo((prev) => !prev);
+        return;
+      }
+
+      // "o" — toggle dark mode (only when not typing)
+      if (e.key === "o" && !isInput && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        toggle();
+        return;
+      }
     }
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [hasPanels, sidebarCollapsed]);
+  }, [hasPanels, sidebarCollapsed, toggle]);
 
   const handleSelect = useCallback(
     (entry: GlossaryEntry) => {
