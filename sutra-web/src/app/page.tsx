@@ -467,6 +467,7 @@ function ColorPicker({
       {stickyColors.map((c, i) => (
         <button
           key={i}
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => onSelect(i)}
           className={`h-3.5 w-3.5 rounded-full transition-all ${c.dot} ${selected === i ? "ring-1.5 ring-offset-1 ring-zinc-400 dark:ring-zinc-500 dark:ring-offset-zinc-900 scale-110" : "opacity-60 hover:opacity-100"}`}
           aria-label={`Color ${i + 1}`}
@@ -547,7 +548,8 @@ function StickyNoteCard({
                 setEditing(false);
               }
             }}
-            onBlur={() => {
+            onBlur={(e) => {
+              if (e.currentTarget.parentElement?.contains(e.relatedTarget)) return;
               const trimmed = draft.trim();
               if (trimmed && trimmed !== note.text) onEdit(trimmed);
               else setDraft(note.text);
@@ -556,6 +558,20 @@ function StickyNoteCard({
             rows={2}
             className="w-full resize-none rounded bg-transparent text-xs leading-relaxed text-zinc-600 outline-none dark:text-zinc-300"
           />
+          <div className="mt-1.5 flex items-center justify-between md:hidden">
+            <ColorPicker selected={note.color} onSelect={(c) => onChangeColor(c)} />
+            <button
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => { onRemove(); setEditing(false); }}
+              className="flex items-center gap-1 text-[10px] text-zinc-400 dark:text-zinc-500"
+              aria-label="Delete note"
+            >
+              <svg width="10" height="10" viewBox="0 0 8 8" fill="none">
+                <path d="M1.5 1.5l5 5M6.5 1.5l-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              Delete
+            </button>
+          </div>
         </div>
       ) : (
         <div
@@ -831,9 +847,8 @@ function InfoPanel({ onClose }: { onClose: () => void }) {
 
         <div className="space-y-5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
           <p>
-            Sutra is a quiet lookup tool for Sanskrit terms used in Vedanta study.
-            Search any term, browse by category, or follow related terms to deepen
-            your understanding.
+            Sutra supports your Vedanta study by making Sanskrit terms easy to
+            look up, explore, and understand in context.
           </p>
 
           <div>
