@@ -740,7 +740,6 @@ function WordPanel({
           {entry.vedantaMeaning && (
             <Section label="Vedantic meaning">{entry.vedantaMeaning}</Section>
           )}
-          <Section label="Transliteration">{entry.transliteration}</Section>
           {entry.root && <Section label="Root">{entry.root}</Section>}
           {entry.relatedTerms && entry.relatedTerms.length > 0 && (
             <div>
