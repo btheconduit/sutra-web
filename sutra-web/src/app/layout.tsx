@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,6 +16,37 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Sutra",
   description: "A Sanskrit lookup tool for Vedanta study",
+  metadataBase: new URL("https://sutra.so"),
+  openGraph: {
+    title: "Sutra",
+    description: "A Sanskrit lookup tool for Vedanta study",
+    url: "https://sutra.so",
+    siteName: "Sutra",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Sutra — A Sanskrit lookup tool for Vedanta study",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sutra",
+    description: "A Sanskrit lookup tool for Vedanta study",
+    images: ["/og-image.png"],
+  },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0c0c0e" },
+  ],
 };
 
 export default function RootLayout({
@@ -34,9 +66,11 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`,
           }}
         />
-        <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async />
       </head>
-      <body className="h-full flex flex-col">{children}</body>
+      <body className="h-full flex flex-col">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
