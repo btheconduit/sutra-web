@@ -8,6 +8,7 @@ export interface GlossaryEntry {
   vedantaMeaning?: string;
   relatedTerms?: string[];
   tags?: string[];
+  aliases?: string[];
 }
 
 export const glossary: GlossaryEntry[] = [
@@ -905,6 +906,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "ājñā",
     definition:
       "Order, command.",
+    aliases: ["adnya"],
   },
   {
     id: "ajnata",
@@ -912,6 +914,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "ajñāta",
     definition:
       "Unknown; unexpected.",
+    aliases: ["adnyata"],
   },
   {
     id: "ajyam",
@@ -1787,6 +1790,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "anujñā",
     definition:
       "Consent; sanction; permission; command.",
+    aliases: ["anudnya"],
   },
   {
     id: "anukula",
@@ -2248,6 +2252,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "aparijñānam",
     definition:
       "Lack of clarity, ignorance.",
+    aliases: ["aparidnyanam"],
   },
   {
     id: "aparikhedah",
@@ -2431,6 +2436,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "āptajñānam",
     definition:
       "Common knowledge, generally known.",
+    aliases: ["aptadnyanam"],
   },
   {
     id: "aptakamasanyasah",
@@ -5306,6 +5312,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "durvijñeya",
     definition:
       "Difficult to understand; e.g. rasta.",
+    aliases: ["durvidnyeya"],
   },
   {
     id: "duskrtam",
@@ -6428,6 +6435,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jijñāsā",
     definition:
       "Desire for knowing; thirst for knowledge.",
+    aliases: ["jidnyasa"],
   },
   {
     id: "jijnasuh",
@@ -6435,6 +6443,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jijñāsuḥ",
     definition:
       "One who desires ātmavidyā.",
+    aliases: ["jidnyasuh"],
   },
   {
     id: "jivah",
@@ -6467,6 +6476,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jñā",
     definition:
       "To know (in all senses), to learn, become acquainted with. jānāti.",
+    aliases: ["dnya"],
   },
   {
     id: "jnanadhyasah",
@@ -6474,6 +6484,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jñānadhyāsaḥ",
     definition:
       "See saptavidādhyāsaḥ.",
+    aliases: ["dnyanaadhyasah"],
   },
   {
     id: "jnanakandah",
@@ -6481,6 +6492,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jñānakāṇḍaḥ",
     definition:
       "The part of the Vedas dealing with self-knowledge; Upaniṣads.",
+    aliases: ["dnyanakandah"],
   },
   {
     id: "jnanam",
@@ -6492,6 +6504,7 @@ export const glossary: GlossaryEntry[] = [
       "Self-knowledge — the direct, immediate recognition that ātmā is Brahman. Jñāna is not information about Brahman but the removal of self-ignorance by the words of the Upaniṣads, unfolded by a teacher. It is not a mental state or experience that comes and goes, but a fact that, once known, cannot be unknown. Jñāna is the sole means to mokṣa — no action, meditation, or experience can substitute for it.",
     relatedTerms: ["brahman", "vidyā", "avidyā", "mokṣa"],
     tags: ["knowledge", "wisdom", "understanding", "knowing", "awareness", "clarity"],
+    aliases: ["dnyanam"],
   },
   {
     id: "jnananistha",
@@ -6499,6 +6512,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jñānaniṣṭhā",
     definition:
       "Abiding in the knowledge that is limitless wholeness.",
+    aliases: ["dnyananistha"],
   },
   {
     id: "jnanasaktih",
@@ -6506,6 +6520,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jñānaśaktiḥ",
     definition:
       "Power to know.",
+    aliases: ["dnyanashakti"],
   },
   {
     id: "jnanasvarupam",
@@ -6514,6 +6529,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "The true nature of knowledge (i.e. cit).",
     relatedTerms: ["cit"],
+    aliases: ["dnyanasvarupam"],
   },
   {
     id: "jnanayogah",
@@ -6523,6 +6539,7 @@ export const glossary: GlossaryEntry[] = [
       "A life devoted to knowledge and free of life's roles; saṃnyāsaḥ.",
     vedantaMeaning:
       "The path of knowledge — a life wholly dedicated to self-inquiry through śravaṇa, manana, and nididhyāsana, typically in the context of sannyāsa. In the Gītā, Kṛṣṇa presents jñāna-yoga as the direct means to mokṣa for one whose mind has been prepared by karma-yoga. It is not mere study but the living pursuit of the truth 'I am Brahman' under the guidance of a teacher.",
+    aliases: ["dnyanayogah"],
   },
   {
     id: "jnanendriyah",
@@ -6530,6 +6547,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jñānendriyaḥ",
     definition:
       "The organs of perception: skin, tongue, eyes, ears, nose.",
+    aliases: ["dnyanaendriyah"],
   },
   {
     id: "jnani",
@@ -6538,6 +6556,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "The knower of brahman.",
     relatedTerms: ["brahman"],
+    aliases: ["dnyani"],
   },
   {
     id: "jnapaka",
@@ -6545,6 +6564,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jñāpaka",
     definition:
       "Making known; teaching. jñāpakah A teacher. jñāpakam Precept; suggestive rule.",
+    aliases: ["dnyapaka"],
   },
   {
     id: "jnaptih",
@@ -6552,6 +6572,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jñaptiḥ",
     definition:
       "Understanding; pure awareness; svarūpa of the knower.",
+    aliases: ["dnyaptih"],
   },
   {
     id: "jnata",
@@ -6559,6 +6580,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jñāta",
     definition:
       "Known, ascertained; comprehended.",
+    aliases: ["dnyata"],
   },
   {
     id: "jneya",
@@ -6566,6 +6588,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "jñeya",
     definition:
       "To be investigated or learned or understood; perceptible, cognizable.",
+    aliases: ["dnyeya"],
   },
   {
     id: "jvarah",
@@ -9280,6 +9303,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "paṇḍita",
     definition:
       "Learned; wise; paṇḍitaḥ Scholar; sage.",
+    aliases: ["pundit"],
   },
   {
     id: "panih",
@@ -9524,6 +9548,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "parijñānam",
     definition:
       "Thorough knowledge, complete acquaintance.",
+    aliases: ["paridnyanam"],
   },
   {
     id: "parikalpita",
@@ -9984,6 +10009,7 @@ export const glossary: GlossaryEntry[] = [
       "In the context of the Māṇḍūkya Upaniṣad, prājña is the name of ātmā as identified with the deep sleep state — the third pāda. Prājña is the experiencer of causal ignorance, where all duality resolves into an undifferentiated state. The word also appears in the mahāvākya 'prajñānaṃ brahma' (Aitareya Upaniṣad), where prajñāna means consciousness itself — the nature of Brahman.",
     relatedTerms: ["prajñānam", "prajñāptiḥ", "jñānam", "buddhiḥ"],
     tags: ["wisdom", "understanding", "discernment", "insight", "intelligence"],
+    aliases: ["pradnya"],
   },
   {
     id: "prajnanam",
@@ -9992,6 +10018,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "Intelligence, knowledge, wisdom.",
     relatedTerms: ["prajñā"],
+    aliases: ["pradnyanam"],
   },
   {
     id: "prajnaptih",
@@ -10000,6 +10027,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "Knowledge with or without knower, known, and knowledge; consciousness.",
     relatedTerms: ["prajñā"],
+    aliases: ["pradnyaptih"],
   },
   {
     id: "prak",
@@ -10504,6 +10532,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "Statement; declaration; statement of the proposition to be proved.",
     relatedTerms: ["prati", "pratijñānam"],
+    aliases: ["pratidnya"],
   },
   {
     id: "pratijnanam",
@@ -10512,6 +10541,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "Assertion, declaration; agreement.",
     relatedTerms: ["pratijñā"],
+    aliases: ["pratidnyanam"],
   },
   {
     id: "pratikah",
@@ -10651,6 +10681,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "pratyabhijñāna",
     definition:
       "Recognized.",
+    aliases: ["pratyabhidnyana"],
   },
   {
     id: "pratyagatma",
@@ -12137,6 +12168,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "saṃjñā",
     definition:
       "A name or noun having a special meaning; consciousness; knowledge; a technical term.",
+    aliases: ["samdnya"],
   },
   {
     id: "sammatih",
@@ -12377,6 +12409,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "saṃvijñānam",
     definition:
       "Agreement, consent; thorough understanding; perception, knowledge.",
+    aliases: ["samvidnyanam"],
   },
   {
     id: "samvit",
@@ -12861,6 +12894,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sarvajñaḥ",
     definition:
       "All-knowing.",
+    aliases: ["sarvadnyah"],
   },
   {
     id: "sarvanama",
@@ -15901,6 +15935,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vijñaḥ",
     definition:
       "Knowledge; intelligence; a wise man.",
+    aliases: ["vidnyah"],
   },
   {
     id: "vijnanam",
@@ -15908,6 +15943,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vijñānam",
     definition:
       "Knowledge, wisdom, intelligence.",
+    aliases: ["vidnyanam"],
   },
   {
     id: "vijnanamayakosah",
@@ -15915,6 +15951,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vijñānamayakośaḥ",
     definition:
       "Modification of intellect; intellect with five organs of perception - part of the subtle body.",
+    aliases: ["vidnyanamayakoshah"],
   },
   {
     id: "vijnaptih",
@@ -15922,6 +15959,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vijñaptih",
     definition:
       "Understanding; pure awareness; svarūpa of the knower.",
+    aliases: ["vidnyaptih"],
   },
   {
     id: "vijnatr",
@@ -15929,6 +15967,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vijñātṛ",
     definition:
       "The knower.",
+    aliases: ["vidnyatr"],
   },
   {
     id: "vijneya",
@@ -15936,6 +15975,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vijñeya",
     definition:
       "To be known; knowable, cognizable.",
+    aliases: ["vidnyeya"],
   },
   {
     id: "vikala",
@@ -16691,6 +16731,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vṛttijñānam",
     definition:
       "What takes place in the mind as a result of any cognition.",
+    aliases: ["vrttidnyanam"],
   },
   {
     id: "vrttivisesah",
@@ -16826,6 +16867,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vyāptijñānam",
     definition:
       "Knowledge of invariable concomittance.",
+    aliases: ["vyaptidnyanam"],
   },
   {
     id: "vyapya",
@@ -16987,6 +17029,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "yajñaḥ",
     definition:
       "Religious offering or ritual; sacrifice; devotional act.",
+    aliases: ["yadnyah"],
   },
   {
     id: "yajnopavitam",
@@ -16994,6 +17037,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "yajñopavītam",
     definition:
       "The sacred thread worn by the first three classes.",
+    aliases: ["yadnyopavitam"],
   },
   {
     id: "yajus",
