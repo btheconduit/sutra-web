@@ -1,0 +1,56 @@
+## Vercel Web Analytics Installation - Implementation Report
+
+Successfully installed and configured Vercel Web Analytics for the sutra-web project following the latest official documentation from https://vercel.com/docs/analytics/quickstart.
+
+### Changes Made
+
+1. **Package Installation**
+   - Installed `@vercel/analytics` version 2.0.1
+   - Updated package.json to include the new dependency
+   - Updated package-lock.json with the full dependency tree
+
+2. **Code Integration**
+   - Modified `src/app/layout.tsx` to import and include the Analytics component
+   - Added import statement: `import { Analytics } from "@vercel/analytics/next"`
+   - Added `<Analytics />` component inside the body element, following Next.js App Router best practices
+
+### Framework Context
+
+This project uses:
+- **Next.js 16.2.3** with the **App Router** pattern
+- The Analytics component was added to the root layout file (`src/app/layout.tsx`)
+- This follows the recommended approach for Next.js App Router as specified in the Vercel documentation
+
+### Verification Steps Completed
+
+✅ **Build Test**: Successfully ran `npm run build` - project compiles without errors
+✅ **Linting**: Ran `npm run lint` on layout.tsx - no new errors introduced
+✅ **Dependencies**: Verified package.json and package-lock.json are properly updated
+✅ **Code Quality**: Preserved existing code structure and formatting
+
+### Implementation Details
+
+The Analytics component was placed at the end of the body element, after the children content, which is the recommended placement according to Vercel's documentation. This ensures:
+- Analytics tracking initializes after page content loads
+- No impact on initial page render performance
+- Proper tracking of page views and user interactions
+
+### Next Steps for User
+
+To complete the setup:
+1. Deploy the application to Vercel
+2. Enable Web Analytics in the Vercel dashboard (Project Settings → Analytics)
+3. After deployment, analytics will automatically start tracking:
+   - Page views
+   - User sessions
+   - Geographic data
+   - Device and browser information
+4. Verify by checking the browser's Network tab for requests to `/_vercel/insights/*`
+
+### Files Modified
+
+- `sutra-web/package.json` - Added @vercel/analytics dependency
+- `sutra-web/package-lock.json` - Updated with new dependencies
+- `sutra-web/src/app/layout.tsx` - Added Analytics component import and usage
+
+All changes follow the official Vercel documentation and Next.js best practices.
