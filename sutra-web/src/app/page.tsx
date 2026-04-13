@@ -985,6 +985,79 @@ function useIsMobile(breakpoint = 768) {
   return isMobile;
 }
 
+// --- Shared state (persists across mobile/desktop transitions) ---
+
+type SharedEntryState = {
+  openEntries: GlossaryEntry[];
+  setOpenEntries: React.Dispatch<React.SetStateAction<GlossaryEntry[]>>;
+  notes: Record<string, StickyNote[]>;
+  handleAddNote: (id: string, text: string, color: number) => void;
+  handleRemoveNote: (id: string, index: number) => void;
+  handleChangeNoteColor: (id: string, index: number, color: number) => void;
+  handleEditNote: (id: string, index: number, text: string) => void;
+};
+
+function useNotes() {
+  const [notes, setNotes] = useState<Record<string, StickyNote[]>>({});
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("sutra-notes");
+      if (saved) {
+        const parsed = JSON.parse(saved) as Record<string, StickyNote[]>;
+        for (const key of Object.keys(parsed)) {
+          parsed[key] = parsed[key].map((n) => n.id ? n : { ...n, id: nextNoteId() });
+        }
+        setNotes(parsed);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  const handleAddNote = useCallback((id: string, text: string, color: number) => {
+    setNotes((prev) => {
+      const next = { ...prev, [id]: [...(prev[id] || []), { id: nextNoteId(), text, color }] };
+      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const handleRemoveNote = useCallback((id: string, index: number) => {
+    setNotes((prev) => {
+      const arr = [...(prev[id] || [])];
+      arr.splice(index, 1);
+      const next = { ...prev };
+      if (arr.length === 0) delete next[id];
+      else next[id] = arr;
+      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const handleChangeNoteColor = useCallback((id: string, index: number, color: number) => {
+    setNotes((prev) => {
+      const arr = [...(prev[id] || [])];
+      if (!arr[index]) return prev;
+      arr[index] = { ...arr[index], color };
+      const next = { ...prev, [id]: arr };
+      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const handleEditNote = useCallback((id: string, index: number, text: string) => {
+    setNotes((prev) => {
+      const arr = [...(prev[id] || [])];
+      if (!arr[index]) return prev;
+      arr[index] = { ...arr[index], text };
+      const next = { ...prev, [id]: arr };
+      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  return { notes, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote };
+}
+
 // --- Mobile detail view ---
 
 function MobileDetailView({
@@ -1032,6 +1105,14 @@ function MobileDetailView({
           className="flex items-center gap-1.5 overflow-x-auto px-3 py-2.5 scrollbar-none"
           style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}
         >
+          {/* Brandmark — tap to go home */}
+          <button onClick={onBack} aria-label="Back to search" className="shrink-0 pr-1">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/sutra-brandmark-black.svg" alt="Sutra" width={20} height={20} className="block dark:hidden" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/sutra-brandmark-white.svg" alt="Sutra" width={20} height={20} className="hidden dark:block" />
+          </button>
+
           {/* Search button */}
           <button
             onClick={onBack}
@@ -1137,15 +1218,13 @@ function MobileDetailView({
 
 // --- Mobile app ---
 
-function MobileHome() {
+function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote }: SharedEntryState) {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>("core");
   const [showInfo, setShowInfo] = useState(false);
-  const [openEntries, setOpenEntries] = useState<GlossaryEntry[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { dark, toggle } = useTheme();
-  const [notes, setNotes] = useState<Record<string, StickyNote[]>>({});
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   const results = useMemo(() => searchGlossary(query), [query]);
@@ -1154,61 +1233,6 @@ function MobileHome() {
   useEffect(() => {
     setHighlightedIndex(-1);
   }, [results]);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("sutra-notes");
-      if (saved) {
-        const parsed = JSON.parse(saved) as Record<string, StickyNote[]>;
-        for (const key of Object.keys(parsed)) {
-          parsed[key] = parsed[key].map((n) => n.id ? n : { ...n, id: nextNoteId() });
-        }
-        setNotes(parsed);
-      }
-    } catch { /* ignore */ }
-  }, []);
-
-  const handleAddNote = useCallback((id: string, text: string, color: number) => {
-    setNotes((prev) => {
-      const next = { ...prev, [id]: [...(prev[id] || []), { id: nextNoteId(), text, color }] };
-      localStorage.setItem("sutra-notes", JSON.stringify(next));
-      return next;
-    });
-  }, []);
-
-  const handleRemoveNote = useCallback((id: string, index: number) => {
-    setNotes((prev) => {
-      const arr = [...(prev[id] || [])];
-      arr.splice(index, 1);
-      const next = { ...prev };
-      if (arr.length === 0) delete next[id];
-      else next[id] = arr;
-      localStorage.setItem("sutra-notes", JSON.stringify(next));
-      return next;
-    });
-  }, []);
-
-  const handleChangeNoteColor = useCallback((id: string, index: number, color: number) => {
-    setNotes((prev) => {
-      const arr = [...(prev[id] || [])];
-      if (!arr[index]) return prev;
-      arr[index] = { ...arr[index], color };
-      const next = { ...prev, [id]: arr };
-      localStorage.setItem("sutra-notes", JSON.stringify(next));
-      return next;
-    });
-  }, []);
-
-  const handleEditNote = useCallback((id: string, index: number, text: string) => {
-    setNotes((prev) => {
-      const arr = [...(prev[id] || [])];
-      if (!arr[index]) return prev;
-      arr[index] = { ...arr[index], text };
-      const next = { ...prev, [id]: arr };
-      localStorage.setItem("sutra-notes", JSON.stringify(next));
-      return next;
-    });
-  }, []);
 
   const handleSelect = useCallback((entry: GlossaryEntry) => {
     setOpenEntries((prev) => {
@@ -1328,7 +1352,7 @@ function MobileHome() {
               if (e.target.value.length > 0) setSelectedCategory(null);
             }}
             onKeyDown={handleSearchKeyDown}
-            placeholder="Search terms..."
+            placeholder="Find a term (e.g. adhyāsa, freedom, atma)"
             className="w-full rounded-lg border border-zinc-200/60 bg-zinc-50/80 px-4 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-200 focus:border-zinc-300 focus:bg-white focus:shadow-[0_0_0_3px_rgba(161,161,170,0.08)] dark:border-zinc-700/40 dark:bg-zinc-900/60 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-600 dark:focus:bg-zinc-900"
           />
           {query.length > 0 && (
@@ -1467,18 +1491,21 @@ function MobileHome() {
 
 export default function Home() {
   const isMobile = useIsMobile();
+  const [openEntries, setOpenEntries] = useState<GlossaryEntry[]>([]);
+  const notesBundle = useNotes();
+
+  const shared: SharedEntryState = { openEntries, setOpenEntries, ...notesBundle };
 
   if (isMobile === null) return null;
-  if (isMobile) return <MobileHome />;
+  if (isMobile) return <MobileHome {...shared} />;
 
-  return <DesktopHome />;
+  return <DesktopHome {...shared} />;
 }
 
-function DesktopHome() {
+function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote }: SharedEntryState) {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>("core");
   const [showInfo, setShowInfo] = useState(false);
-  const [openEntries, setOpenEntries] = useState<GlossaryEntry[]>([]);
   const [panelStates, setPanelStates] = useState<Record<string, PanelState>>(
     {},
   );
@@ -1486,7 +1513,6 @@ function DesktopHome() {
   const panelContainerRef = useRef<HTMLDivElement>(null);
   const panelRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const { dark, toggle } = useTheme();
-  const [notes, setNotes] = useState<Record<string, StickyNote[]>>({});
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
   const [dropSide, setDropSide] = useState<"left" | "right">("left");
@@ -1539,61 +1565,6 @@ function DesktopHome() {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [hasPanels, sidebarCollapsed]);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("sutra-notes");
-      if (saved) {
-        const parsed = JSON.parse(saved) as Record<string, StickyNote[]>;
-        for (const key of Object.keys(parsed)) {
-          parsed[key] = parsed[key].map((n) => n.id ? n : { ...n, id: nextNoteId() });
-        }
-        setNotes(parsed);
-      }
-    } catch { /* ignore */ }
-  }, []);
-
-  const handleAddNote = useCallback((id: string, text: string, color: number) => {
-    setNotes((prev) => {
-      const next = { ...prev, [id]: [...(prev[id] || []), { id: nextNoteId(), text, color }] };
-      localStorage.setItem("sutra-notes", JSON.stringify(next));
-      return next;
-    });
-  }, []);
-
-  const handleRemoveNote = useCallback((id: string, index: number) => {
-    setNotes((prev) => {
-      const arr = [...(prev[id] || [])];
-      arr.splice(index, 1);
-      const next = { ...prev };
-      if (arr.length === 0) delete next[id];
-      else next[id] = arr;
-      localStorage.setItem("sutra-notes", JSON.stringify(next));
-      return next;
-    });
-  }, []);
-
-  const handleChangeNoteColor = useCallback((id: string, index: number, color: number) => {
-    setNotes((prev) => {
-      const arr = [...(prev[id] || [])];
-      if (!arr[index]) return prev;
-      arr[index] = { ...arr[index], color };
-      const next = { ...prev, [id]: arr };
-      localStorage.setItem("sutra-notes", JSON.stringify(next));
-      return next;
-    });
-  }, []);
-
-  const handleEditNote = useCallback((id: string, index: number, text: string) => {
-    setNotes((prev) => {
-      const arr = [...(prev[id] || [])];
-      if (!arr[index]) return prev;
-      arr[index] = { ...arr[index], text };
-      const next = { ...prev, [id]: arr };
-      localStorage.setItem("sutra-notes", JSON.stringify(next));
-      return next;
-    });
-  }, []);
 
   const handleSelect = useCallback(
     (entry: GlossaryEntry) => {
