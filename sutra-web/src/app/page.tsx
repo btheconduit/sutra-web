@@ -959,9 +959,514 @@ function CategoryTermCards({
   );
 }
 
+// --- Mobile detection ---
+
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
+    setIsMobile(mq.matches);
+    function onChange(e: MediaQueryListEvent) {
+      setIsMobile(e.matches);
+    }
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [breakpoint]);
+
+  return isMobile;
+}
+
+// --- Mobile detail view ---
+
+function MobileDetailView({
+  entry,
+  openEntries,
+  onBack,
+  onSwitchTo,
+  onClose,
+  onSelectTerm,
+  notes,
+  onAddNote,
+  onRemoveNote,
+  onChangeNoteColor,
+  onEditNote,
+}: {
+  entry: GlossaryEntry;
+  openEntries: GlossaryEntry[];
+  onBack: () => void;
+  onSwitchTo: (entry: GlossaryEntry) => void;
+  onClose: (id: string) => void;
+  onSelectTerm: (entry: GlossaryEntry) => void;
+  notes: StickyNote[];
+  onAddNote: (id: string, text: string, color: number) => void;
+  onRemoveNote: (id: string, index: number) => void;
+  onChangeNoteColor: (id: string, index: number, color: number) => void;
+  onEditNote: (id: string, index: number, text: string) => void;
+}) {
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  // Scroll active tab into view
+  useEffect(() => {
+    const container = tabsRef.current;
+    if (!container) return;
+    const active = container.querySelector("[data-active='true']") as HTMLElement | null;
+    if (active) {
+      active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, [entry.id]);
+
+  return (
+    <div className="flex min-h-full flex-col bg-white dark:bg-black">
+      <div className="sticky top-0 z-10 border-b border-zinc-100 bg-white/80 backdrop-blur-xl dark:border-zinc-800/60 dark:bg-black/80">
+        <div
+          ref={tabsRef}
+          className="flex items-center gap-1.5 overflow-x-auto px-3 py-2.5 scrollbar-none"
+          style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}
+        >
+          {/* Search button */}
+          <button
+            onClick={onBack}
+            className="flex shrink-0 items-center gap-1.5 rounded-full border border-zinc-200/60 px-3 py-1.5 text-xs text-zinc-400 transition-all hover:border-zinc-300 hover:text-zinc-600 dark:border-zinc-700/40 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-300"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Search
+          </button>
+
+          {/* Open term tabs */}
+          {openEntries.map((e) => {
+            const isActive = e.id === entry.id;
+            return (
+              <div
+                key={e.id}
+                data-active={isActive}
+                className={`flex shrink-0 items-center gap-1 rounded-full border px-3 py-1.5 text-xs transition-all ${
+                  isActive
+                    ? "border-zinc-300 bg-zinc-100 text-zinc-800 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200"
+                    : "border-zinc-200/60 text-zinc-400 hover:border-zinc-300 hover:text-zinc-600 dark:border-zinc-700/40 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-300"
+                }`}
+              >
+                <button
+                  onClick={() => onSwitchTo(e)}
+                  className="max-w-[7rem] truncate"
+                >
+                  {e.term}
+                </button>
+                <button
+                  onClick={(ev) => { ev.stopPropagation(); onClose(e.id); }}
+                  className="ml-0.5 rounded-full p-0.5 opacity-60 transition-opacity hover:opacity-100"
+                  aria-label={`Close ${e.term}`}
+                >
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 2.5l5 5M7.5 2.5l-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="flex-1 px-5 pt-6 pb-8">
+        <div className="mb-8">
+          <div className="font-mono text-4xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">
+            {entry.devanagari || toDevanagari(entry.term)}
+          </div>
+          <div className="mt-2 text-lg text-zinc-400 dark:text-zinc-500">
+            {entry.term}
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <Section label="Definition">{entry.definition}</Section>
+          {entry.vedantaMeaning && (
+            <Section label="Vedantic meaning">{entry.vedantaMeaning}</Section>
+          )}
+          <Section label="Transliteration">{entry.transliteration}</Section>
+          {entry.root && <Section label="Root">{entry.root}</Section>}
+          {entry.relatedTerms && entry.relatedTerms.length > 0 && (
+            <div>
+              <div className="mb-1.5 text-xs tracking-wide text-zinc-400 dark:text-zinc-600">
+                Related terms
+              </div>
+              <div className="flex flex-wrap gap-x-3 gap-y-2 text-sm leading-relaxed">
+                {entry.relatedTerms.map((term) => {
+                  const linked = findByTerm(term);
+                  if (linked) {
+                    return (
+                      <button
+                        key={term}
+                        onClick={() => onSelectTerm(linked)}
+                        className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-900 dark:text-zinc-300 dark:decoration-zinc-600 dark:hover:text-zinc-100"
+                      >
+                        {term}
+                      </button>
+                    );
+                  }
+                  return (
+                    <span key={term} className="text-zinc-400 dark:text-zinc-500">
+                      {term}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-8 border-t border-zinc-100 pt-6 dark:border-zinc-800/60">
+          <NotesArea
+            entryId={entry.id}
+            notes={notes}
+            onAdd={onAddNote}
+            onRemove={onRemoveNote}
+            onChangeColor={onChangeNoteColor}
+            onEdit={onEditNote}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// --- Mobile app ---
+
+function MobileHome() {
+  const [query, setQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>("core");
+  const [showInfo, setShowInfo] = useState(false);
+  const [openEntries, setOpenEntries] = useState<GlossaryEntry[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { dark, toggle } = useTheme();
+  const [notes, setNotes] = useState<Record<string, StickyNote[]>>({});
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+
+  const results = useMemo(() => searchGlossary(query), [query]);
+  const activeEntry = openEntries.find((e) => e.id === activeId) || null;
+
+  useEffect(() => {
+    setHighlightedIndex(-1);
+  }, [results]);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("sutra-notes");
+      if (saved) {
+        const parsed = JSON.parse(saved) as Record<string, StickyNote[]>;
+        for (const key of Object.keys(parsed)) {
+          parsed[key] = parsed[key].map((n) => n.id ? n : { ...n, id: nextNoteId() });
+        }
+        setNotes(parsed);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  const handleAddNote = useCallback((id: string, text: string, color: number) => {
+    setNotes((prev) => {
+      const next = { ...prev, [id]: [...(prev[id] || []), { id: nextNoteId(), text, color }] };
+      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const handleRemoveNote = useCallback((id: string, index: number) => {
+    setNotes((prev) => {
+      const arr = [...(prev[id] || [])];
+      arr.splice(index, 1);
+      const next = { ...prev };
+      if (arr.length === 0) delete next[id];
+      else next[id] = arr;
+      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const handleChangeNoteColor = useCallback((id: string, index: number, color: number) => {
+    setNotes((prev) => {
+      const arr = [...(prev[id] || [])];
+      if (!arr[index]) return prev;
+      arr[index] = { ...arr[index], color };
+      const next = { ...prev, [id]: arr };
+      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const handleEditNote = useCallback((id: string, index: number, text: string) => {
+    setNotes((prev) => {
+      const arr = [...(prev[id] || [])];
+      if (!arr[index]) return prev;
+      arr[index] = { ...arr[index], text };
+      const next = { ...prev, [id]: arr };
+      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const handleSelect = useCallback((entry: GlossaryEntry) => {
+    setOpenEntries((prev) => {
+      if (prev.some((e) => e.id === entry.id)) return prev;
+      return [...prev, entry];
+    });
+    setActiveId(entry.id);
+    setQuery("");
+  }, []);
+
+  const handleClose = useCallback((id: string) => {
+    setOpenEntries((prev) => {
+      const next = prev.filter((e) => e.id !== id);
+      if (activeId === id) {
+        // Switch to the previous tab, or go back to search
+        const closedIndex = prev.findIndex((e) => e.id === id);
+        if (next.length === 0) {
+          setActiveId(null);
+        } else {
+          const newIndex = Math.min(closedIndex, next.length - 1);
+          setActiveId(next[newIndex].id);
+        }
+      }
+      return next;
+    });
+  }, [activeId]);
+
+  const handleBack = useCallback(() => {
+    setActiveId(null);
+  }, []);
+
+  const handleSearchKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (results.length === 0) return;
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setHighlightedIndex((prev) => (prev < results.length - 1 ? prev + 1 : 0));
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : results.length - 1));
+      } else if (e.key === "Enter" && highlightedIndex >= 0) {
+        e.preventDefault();
+        handleSelect(results[highlightedIndex]);
+      }
+    },
+    [results, highlightedIndex, handleSelect],
+  );
+
+  const categoryEntries = useMemo(() => {
+    if (!selectedCategory) return [];
+    const cat = categories.find((c) => c.id === selectedCategory);
+    if (!cat) return [];
+    return cat.termIds
+      .map((id) => glossary.find((e) => e.id === id))
+      .filter((e): e is GlossaryEntry => e !== undefined);
+  }, [selectedCategory]);
+
+  // Detail view
+  if (activeEntry) {
+    return (
+      <>
+        {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
+        <MobileDetailView
+          entry={activeEntry}
+          openEntries={openEntries}
+          onBack={handleBack}
+          onSwitchTo={(e) => setActiveId(e.id)}
+          onClose={handleClose}
+          onSelectTerm={handleSelect}
+          notes={notes[activeEntry.id] || []}
+          onAddNote={handleAddNote}
+          onRemoveNote={handleRemoveNote}
+          onChangeNoteColor={handleChangeNoteColor}
+          onEditNote={handleEditNote}
+        />
+      </>
+    );
+  }
+
+  // Browse view
+  return (
+    <div className="flex min-h-full flex-col bg-white font-sans dark:bg-black">
+      {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
+
+      <div className="sticky top-0 z-10 border-b border-zinc-100/80 bg-white/80 px-4 pb-3 pt-4 backdrop-blur-xl dark:border-zinc-800/40 dark:bg-black/80">
+        <div className="mb-3 flex items-center justify-between">
+          <Wordmark width={80} />
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowInfo(true)}
+              aria-label="About Sutra"
+              className="text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
+            >
+              <IconInfo />
+            </button>
+            <button
+              onClick={toggle}
+              aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+              className="text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
+            >
+              {dark ? (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className="relative">
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              if (e.target.value.length > 0) setSelectedCategory(null);
+            }}
+            onKeyDown={handleSearchKeyDown}
+            placeholder="Search terms..."
+            className="w-full rounded-lg border border-zinc-200/60 bg-zinc-50/80 px-4 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-200 focus:border-zinc-300 focus:bg-white focus:shadow-[0_0_0_3px_rgba(161,161,170,0.08)] dark:border-zinc-700/40 dark:bg-zinc-900/60 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-600 dark:focus:bg-zinc-900"
+          />
+          {query.length > 0 && (
+            <button
+              onClick={() => { setQuery(""); inputRef.current?.focus(); }}
+              aria-label="Clear search"
+              className="absolute top-1/2 right-3 -translate-y-1/2 text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          )}
+        </div>
+
+        {/* Open term tabs */}
+        {openEntries.length > 0 && (
+          <div
+            className="mt-2.5 flex gap-1.5 overflow-x-auto scrollbar-none"
+            style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}
+          >
+            {openEntries.map((e) => (
+              <div
+                key={e.id}
+                className="flex shrink-0 items-center gap-1 rounded-full border border-zinc-200/60 px-2.5 py-1 text-xs text-zinc-400 transition-all hover:border-zinc-300 hover:text-zinc-600 dark:border-zinc-700/40 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-300"
+              >
+                <button
+                  onClick={() => setActiveId(e.id)}
+                  className="max-w-[7rem] truncate"
+                >
+                  {e.term}
+                </button>
+                <button
+                  onClick={() => handleClose(e.id)}
+                  className="ml-0.5 rounded-full p-0.5 opacity-60 transition-opacity hover:opacity-100"
+                  aria-label={`Close ${e.term}`}
+                >
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 2.5l5 5M7.5 2.5l-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="flex-1 px-4 pt-4 pb-8">
+        {/* Search results */}
+        {query.length > 0 && results.length > 0 && (
+          <div className="animate-fade-in space-y-1">
+            {results.map((entry, index) => (
+              <button
+                key={entry.id}
+                onClick={() => handleSelect(entry)}
+                className={`w-full rounded-lg px-4 py-3 text-left transition-colors ${index === highlightedIndex ? "bg-zinc-50 dark:bg-zinc-900/50" : "hover:bg-zinc-50 dark:hover:bg-zinc-900/50"}`}
+              >
+                <div className="flex items-baseline gap-2">
+                  <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                    {entry.term}
+                  </span>
+                  <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+                    {entry.devanagari || toDevanagari(entry.term)}
+                  </span>
+                </div>
+                <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
+                  {entry.definition.length > 80 ? entry.definition.slice(0, 80) + "…" : entry.definition}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {query.length > 0 && results.length === 0 && (
+          <p className="animate-fade-in px-4 pt-6 text-sm text-zinc-400 dark:text-zinc-500">
+            No results for &ldquo;{query}&rdquo;
+          </p>
+        )}
+
+        {/* Categories */}
+        {query.length === 0 && (
+          <div className="space-y-4">
+            <div className="flex flex-wrap gap-1.5">
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
+                  className={`rounded-full border px-3 py-1.5 text-xs transition-all duration-200 ${
+                    selectedCategory === cat.id
+                      ? "border-zinc-400 bg-zinc-100 text-zinc-800 dark:border-zinc-500 dark:bg-zinc-800 dark:text-zinc-200"
+                      : "border-zinc-200 text-zinc-400 hover:border-zinc-300 hover:text-zinc-600 dark:border-zinc-700/60 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:text-zinc-300"
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            {selectedCategory && (
+              <div className="animate-fade-in">
+                {(() => {
+                  const cat = categories.find((c) => c.id === selectedCategory);
+                  return cat ? (
+                    <>
+                      <p className="mb-3 text-xs text-zinc-400 dark:text-zinc-600">
+                        {cat.description}
+                      </p>
+                      <div className="grid grid-cols-2 gap-2.5">
+                        {categoryEntries.map((entry) => (
+                          <button
+                            key={entry.id}
+                            onClick={() => handleSelect(entry)}
+                            className="rounded-lg border border-zinc-200 px-3.5 py-3 text-left transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:border-zinc-700 dark:hover:bg-zinc-900/50"
+                          >
+                            <div className="font-mono text-sm text-zinc-400 dark:text-zinc-500">
+                              {entry.devanagari || toDevanagari(entry.term)}
+                            </div>
+                            <div className="mt-0.5 text-sm text-zinc-700 dark:text-zinc-200">
+                              {entry.term}
+                            </div>
+                            <div className="mt-1 text-[11px] leading-snug text-zinc-400 dark:text-zinc-600">
+                              {entry.definition.length > 60 ? entry.definition.slice(0, 60) + "…" : entry.definition}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  ) : null;
+                })()}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // --- Main ---
 
 export default function Home() {
+  const isMobile = useIsMobile();
+
+  if (isMobile === null) return null;
+  if (isMobile) return <MobileHome />;
+
+  return <DesktopHome />;
+}
+
+function DesktopHome() {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>("core");
   const [showInfo, setShowInfo] = useState(false);
