@@ -302,7 +302,7 @@ function SearchSidebar({
         </div>
 
         {results.length > 0 && (
-          <ul className="animate-slide-down absolute top-full z-10 mt-1.5 w-full overflow-hidden rounded-lg border border-zinc-200/40 bg-white/50 shadow-lg backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-900/40 dark:shadow-zinc-950/50">
+          <ul className="animate-slide-down absolute top-full z-10 mt-1.5 w-full overflow-hidden rounded-lg border border-zinc-200/40 bg-white/50 shadow-lg backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-900/40 dark:shadow-zinc-950/30">
             {results.map((entry, index) => (
               <li key={entry.id} className={index > 0 ? "border-t border-zinc-100 dark:border-zinc-800/60" : ""}>
                 <button
@@ -447,11 +447,12 @@ function nextNoteId() {
 }
 
 const stickyColors = [
-  { bg: "bg-amber-50 border-amber-200/80 dark:bg-amber-950/30 dark:border-amber-800/40", dot: "bg-amber-300 dark:bg-amber-700" },
-  { bg: "bg-sky-50 border-sky-200/80 dark:bg-sky-950/30 dark:border-sky-800/40", dot: "bg-sky-300 dark:bg-sky-700" },
-  { bg: "bg-rose-50 border-rose-200/80 dark:bg-rose-950/30 dark:border-rose-800/40", dot: "bg-rose-300 dark:bg-rose-700" },
-  { bg: "bg-emerald-50 border-emerald-200/80 dark:bg-emerald-950/30 dark:border-emerald-800/40", dot: "bg-emerald-300 dark:bg-emerald-700" },
-  { bg: "bg-violet-50 border-violet-200/80 dark:bg-violet-950/30 dark:border-violet-800/40", dot: "bg-violet-300 dark:bg-violet-700" },
+  { bg: "bg-zinc-50 border-zinc-200/80 dark:bg-zinc-800/20 dark:border-zinc-700/30", dot: "bg-zinc-300 dark:bg-zinc-500/70" },
+  { bg: "bg-amber-50 border-amber-200/80 dark:bg-amber-950/20 dark:border-amber-800/30", dot: "bg-amber-300 dark:bg-amber-600/70" },
+  { bg: "bg-sky-50 border-sky-200/80 dark:bg-sky-950/20 dark:border-sky-800/30", dot: "bg-sky-300 dark:bg-sky-600/70" },
+  { bg: "bg-rose-50 border-rose-200/80 dark:bg-rose-950/20 dark:border-rose-800/30", dot: "bg-rose-300 dark:bg-rose-600/70" },
+  { bg: "bg-emerald-50 border-emerald-200/80 dark:bg-emerald-950/20 dark:border-emerald-800/30", dot: "bg-emerald-300 dark:bg-emerald-600/70" },
+  { bg: "bg-violet-50 border-violet-200/80 dark:bg-violet-950/20 dark:border-violet-800/30", dot: "bg-violet-300 dark:bg-violet-600/70" },
 ];
 
 function ColorPicker({
@@ -698,7 +699,7 @@ function WordPanel({
 
   return (
     <div
-      className={`${expanded ? "w-[32rem]" : "w-80"} flex h-full shrink-0 flex-col rounded-lg border border-zinc-200 bg-white transition-all duration-300 ease-out hover:border-zinc-300 hover:shadow-md dark:border-zinc-700/60 dark:bg-zinc-900/50 dark:hover:border-zinc-600/60 dark:hover:shadow-zinc-950/40`}
+      className={`${expanded ? "w-[32rem]" : "w-80"} flex h-full shrink-0 flex-col rounded-lg border border-zinc-200 bg-white transition-all duration-300 ease-out hover:border-zinc-300 hover:shadow-md dark:border-zinc-700/60 dark:bg-zinc-900/50 dark:hover:border-zinc-600/60 dark:hover:shadow-zinc-950/25`}
     >
       <div className="flex-1 overflow-y-auto p-6">
         <div className="mb-6 flex items-start justify-between">
@@ -814,7 +815,7 @@ function IconInfo({ className }: { className?: string }) {
 
 function InfoPanel({ onClose }: { onClose: () => void }) {
   return (
-    <div className="animate-fade-in fixed inset-0 z-30 flex items-center justify-center bg-black/20 dark:bg-black/50" onClick={onClose}>
+    <div className="animate-fade-in fixed inset-0 z-30 flex items-center justify-center bg-black/20 dark:bg-zinc-950/50" onClick={onClose}>
       <div
         className="animate-slide-down mx-4 w-full max-w-md rounded-xl border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-950"
         onClick={(e) => e.stopPropagation()}
@@ -1024,8 +1025,8 @@ function MobileDetailView({
   }, [entry.id]);
 
   return (
-    <div className="flex min-h-full flex-col bg-white dark:bg-black">
-      <div className="sticky top-0 z-10 border-b border-zinc-100 bg-white/80 backdrop-blur-xl dark:border-zinc-800/60 dark:bg-black/80">
+    <div className="flex min-h-full flex-col bg-white dark:bg-zinc-950">
+      <div className="sticky top-0 z-10 border-b border-zinc-100 bg-white/80 backdrop-blur-xl dark:border-zinc-800/60 dark:bg-zinc-950/80">
         <div
           ref={tabsRef}
           className="flex items-center gap-1.5 overflow-x-auto px-3 py-2.5 scrollbar-none"
@@ -1289,10 +1290,10 @@ function MobileHome() {
 
   // Browse view
   return (
-    <div className="flex min-h-full flex-col bg-white font-sans dark:bg-black">
+    <div className="flex min-h-full flex-col bg-white font-sans dark:bg-zinc-950">
       {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
 
-      <div className="sticky top-0 z-10 border-b border-zinc-100/80 bg-white/80 px-4 pb-3 pt-4 backdrop-blur-xl dark:border-zinc-800/40 dark:bg-black/80">
+      <div className="sticky top-0 z-10 border-b border-zinc-100/80 bg-white/80 px-4 pb-3 pt-4 backdrop-blur-xl dark:border-zinc-800/40 dark:bg-zinc-950/80">
         <div className="mb-3 flex items-center justify-between">
           <Wordmark width={80} />
           <div className="flex items-center gap-3">
@@ -1715,7 +1716,7 @@ function DesktopHome() {
   // Landing state — no panels open
   if (!hasPanels) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-start bg-white font-sans dark:bg-black">
+      <div className="flex flex-1 flex-col items-center justify-start bg-white font-sans dark:bg-zinc-950">
         <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} />
         {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
         <main className="flex w-full max-w-2xl flex-col items-center px-6 pt-32 pb-16">
@@ -1747,7 +1748,7 @@ function DesktopHome() {
             />
 
             {results.length > 0 && (
-              <ul className="animate-slide-down absolute top-full z-10 mt-2 w-full overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-700/60 dark:bg-zinc-900 dark:shadow-zinc-950/50">
+              <ul className="animate-slide-down absolute top-full z-10 mt-2 w-full overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-700/60 dark:bg-zinc-900 dark:shadow-zinc-950/30">
                 {results.map((entry, index) => (
                   <li key={entry.id} className={index > 0 ? "border-t border-zinc-100 dark:border-zinc-800/60" : ""}>
                     <button
@@ -1805,7 +1806,7 @@ function DesktopHome() {
 
   // Panel state — search sidebar + horizontal panels
   return (
-    <div className="relative flex h-full min-h-0 flex-1 overflow-hidden bg-white font-sans dark:bg-black">
+    <div className="relative flex h-full min-h-0 flex-1 overflow-hidden bg-white font-sans dark:bg-zinc-950">
       <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} />
       {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
 
