@@ -57,23 +57,40 @@ function IconClose({ className }: { className?: string }) {
 // --- Utilities ---
 
 function normalize(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/[āà]/g, "a")
-    .replace(/[īì]/g, "i")
-    .replace(/[ūù]/g, "u")
-    .replace(/[ṛṝ]/g, "r")
-    .replace(/[ṣś]/g, "s")
-    .replace(/[ṇṅñ]/g, "n")
-    .replace(/[ṭ]/g, "t")
-    .replace(/[ḍ]/g, "d")
-    .replace(/[ṃ]/g, "m")
-    .replace(/[ḥ]/g, "h");
+  return (
+    s
+      .toLowerCase()
+      // Strip IAST diacritics
+      .replace(/[āà]/g, "a")
+      .replace(/[īì]/g, "i")
+      .replace(/[ūù]/g, "u")
+      .replace(/[ṛṝ]/g, "r")
+      .replace(/[ṣś]/g, "s")
+      .replace(/[ṇṅñ]/g, "n")
+      .replace(/[ṭ]/g, "t")
+      .replace(/[ḍ]/g, "d")
+      .replace(/[ṃ]/g, "m")
+      .replace(/[ḥ]/g, "h")
+      // Collapse common English transliteration variants
+      .replace(/sh/g, "s")
+      .replace(/ch/g, "c")
+      .replace(/aa/g, "a")
+      .replace(/ee/g, "i")
+      .replace(/oo/g, "u")
+      .replace(/w/g, "v")
+      .replace(/ri/g, "r")
+      .replace(/gy/g, "jn")
+      .replace(/gn/g, "jn")
+  );
 }
 
 function findByTerm(term: string): GlossaryEntry | undefined {
   const n = normalize(term);
-  return glossary.find((e) => normalize(e.term) === n);
+  return glossary.find(
+    (e) =>
+      normalize(e.term) === n ||
+      (e.aliases?.some((a) => normalize(a) === n) ?? false),
+  );
 }
 
 function searchGlossary(query: string): GlossaryEntry[] {
@@ -85,6 +102,7 @@ function searchGlossary(query: string): GlossaryEntry[] {
 
   for (const entry of glossary) {
     const term = normalize(entry.term);
+    const aliases = entry.aliases ? entry.aliases.map(normalize) : [];
     const def = normalize(entry.definition);
     const vedanta = entry.vedantaMeaning ? normalize(entry.vedantaMeaning) : "";
     const tags = entry.tags ? entry.tags.map(normalize) : [];
@@ -98,6 +116,20 @@ function searchGlossary(query: string): GlossaryEntry[] {
       score = 80;
     } else if (term.includes(q)) {
       score = 60;
+    }
+
+    // Alias matching (just below term matching)
+    if (score === 0 && aliases.length > 0) {
+      for (const alias of aliases) {
+        if (alias === q) {
+          score = 95;
+          break;
+        } else if (alias.startsWith(q)) {
+          score = Math.max(score, 75);
+        } else if (alias.includes(q)) {
+          score = Math.max(score, 55);
+        }
+      }
     }
 
     // Tag matching — exact word match against curated keywords
