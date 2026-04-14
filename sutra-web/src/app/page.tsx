@@ -256,7 +256,10 @@ function AuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose
     setError("");
     const { error: err } = await supabase.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: true },
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: window.location.origin,
+      },
     });
     if (err) setError(err.message);
     else setSent(true);
@@ -346,7 +349,10 @@ function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; o
     setError("");
     const { error: err } = await supabase.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: true },
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: window.location.origin,
+      },
     });
     if (err) setError(err.message);
     else setSent(true);
