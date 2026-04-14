@@ -996,7 +996,7 @@ function InfoPanel({ onClose }: { onClose: () => void }) {
   return (
     <div className="animate-fade-in fixed inset-0 z-30 flex items-center justify-center bg-black/20 dark:bg-zinc-950/50" onClick={onClose}>
       <div
-        className="animate-slide-down mx-4 max-h-[85vh] w-full max-w-md overflow-y-auto rounded-xl border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-950"
+        className="animate-slide-down mx-4 max-h-[85dvh] w-full max-w-md overflow-y-auto rounded-xl border border-zinc-200 bg-white p-8 pb-[max(2rem,env(safe-area-inset-bottom))] shadow-lg dark:border-zinc-800 dark:bg-zinc-950"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-6 flex items-start justify-between">
@@ -1458,9 +1458,19 @@ function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleR
     });
   }, [activeId]);
 
+  const [focusOnBack, setFocusOnBack] = useState(false);
+
   const handleBack = useCallback(() => {
     setActiveId(null);
+    setFocusOnBack(true);
   }, []);
+
+  useEffect(() => {
+    if (focusOnBack && !activeEntry) {
+      inputRef.current?.focus();
+      setFocusOnBack(false);
+    }
+  }, [focusOnBack, activeEntry]);
 
   // Global keyboard shortcuts
   useEffect(() => {
