@@ -1284,6 +1284,22 @@ function MobileDetailView({
   onEditNote: (id: string, index: number, text: string) => void;
 }) {
   const tabsRef = useRef<HTMLDivElement>(null);
+  const touchRef = useRef<{ x: number; y: number } | null>(null);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (!touchRef.current) return;
+    const dx = e.changedTouches[0].clientX - touchRef.current.x;
+    const dy = e.changedTouches[0].clientY - touchRef.current.y;
+    touchRef.current = null;
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    const idx = openEntries.findIndex((o) => o.id === entry.id);
+    if (dx < 0 && idx < openEntries.length - 1) onSwitchTo(openEntries[idx + 1]);
+    else if (dx > 0 && idx > 0) onSwitchTo(openEntries[idx - 1]);
+  }, [entry.id, openEntries, onSwitchTo]);
 
   // Scroll active tab into view
   useEffect(() => {
@@ -1352,7 +1368,7 @@ function MobileDetailView({
         </div>
       </div>
 
-      <div className="flex-1 px-5 pt-6 pb-8">
+      <div className="flex-1 px-5 pt-6 pb-8" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <div className="mb-8">
           <div className="font-mono text-4xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">
             {entry.devanagari || toDevanagari(entry.term)}
