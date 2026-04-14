@@ -358,7 +358,7 @@ function SearchSidebar({
         </div>
 
         {results.length > 0 && (
-          <ul className="animate-slide-down absolute top-full z-10 mt-1.5 w-full overflow-hidden rounded-lg border border-zinc-200/40 bg-white/50 shadow-lg backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-900/40 dark:shadow-zinc-950/30">
+          <ul className="animate-slide-down absolute top-full z-10 mt-1.5 w-full max-h-[calc(100vh-10rem)] overflow-y-auto rounded-lg border border-zinc-200/40 bg-white/50 shadow-lg backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-900/40 dark:shadow-zinc-950/30">
             {results.map((entry, index) => (
               <li key={entry.id} className={index > 0 ? "border-t border-zinc-100 dark:border-zinc-800/60" : ""}>
                 <button
