@@ -7937,11 +7937,20 @@ export const glossary: GlossaryEntry[] = [
       "A fish.",
   },
   {
-    id: "maya",
-    term: "maya",
-    transliteration: "maya",
+    id: "maya-suffix",
+    term: "-maya",
+    transliteration: "-maya",
     definition:
-      "At the end of compound Made of, consisting of, full of.",
+      "At the end of compound: made of, consisting of, full of.",
+    tags: ["suffix", "compound"],
+  },
+  {
+    id: "maya",
+    term: "māyā",
+    devanagari: "माया",
+    transliteration: "māyā",
+    definition:
+      "Illusion; the power of appearance; that which measures out or creates forms.",
     vedantaMeaning:
       "The beginningless power (śakti) of Brahman, composed of the three guṇas, which accounts for the appearance of the manifold universe. Māyā is neither real nor unreal (sadasadvilakṣaṇā) — it cannot be categorized as sat or asat. When associated with Īśvara it is called māyā; when associated with the jīva it is called avidyā.",
     relatedTerms: ["avidyā", "mithyā", "guṇah", "īśvarah", "brahman"],

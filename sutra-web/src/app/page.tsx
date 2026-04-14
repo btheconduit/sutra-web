@@ -4,6 +4,22 @@ import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { glossary, type GlossaryEntry } from "./data/glossary";
 import { toDevanagari } from "./data/devanagari";
 import { categories, type Category } from "./data/categories";
+type MwEntry = { senses: string[]; lex?: string; etymology?: string };
+type MwData = Record<string, MwEntry>;
+
+let mwDataCache: MwData | null = null;
+let mwDataPromise: Promise<MwData> | null = null;
+
+function loadMwData(): Promise<MwData> {
+  if (mwDataCache) return Promise.resolve(mwDataCache);
+  if (!mwDataPromise) {
+    mwDataPromise = import("./data/mw-enrichment.json").then((mod) => {
+      mwDataCache = mod.default as MwData;
+      return mwDataCache;
+    });
+  }
+  return mwDataPromise;
+}
 
 // --- Brand ---
 
@@ -796,11 +812,11 @@ function WordPanel({
         </div>
 
         <div className="space-y-6">
-          <Section label="Definition">{entry.definition}</Section>
+          <Section label="Definition"><DefinitionText text={entry.definition} /></Section>
+          {entry.root && <Section label="Root"><RootText text={entry.root} /></Section>}
           {entry.vedantaMeaning && (
             <Section label="Vedantic meaning">{entry.vedantaMeaning}</Section>
           )}
-          {entry.root && <Section label="Root"><RootText text={entry.root} /></Section>}
           {entry.relatedTerms && entry.relatedTerms.length > 0 && (
             <div>
               <div className="mb-1 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
@@ -832,6 +848,7 @@ function WordPanel({
               </div>
             </div>
           )}
+          <MwSection entryId={entry.id} />
         </div>
       </div>
 
@@ -873,6 +890,86 @@ function RootText({ text }: { text: string }) {
         ),
       )}
     </>
+  );
+}
+
+function DefinitionText({ text }: { text: string }) {
+  const parts = text.split(/;\s*/);
+  if (parts.length <= 1) return <>{text}</>;
+  return (
+    <ol className="list-none space-y-1.5 pl-0">
+      {parts.map((part, i) => (
+        <li key={i} className="flex gap-2">
+          <span className="shrink-0 text-zinc-300 dark:text-zinc-600">{i + 1}.</span>
+          <span>{part.replace(/\.$/, "")}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function MwSection({ entryId }: { entryId: string }) {
+  const [open, setOpen] = useState(false);
+  const [data, setData] = useState<MwEntry | null>(null);
+  const [hasData, setHasData] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    loadMwData().then((mw) => {
+      const entry = mw[entryId] ?? null;
+      setData(entry);
+      setHasData(entry !== null);
+    });
+  }, [entryId]);
+
+  if (hasData === false || hasData === null) return null;
+
+  return (
+    <div className="border-t border-zinc-100 pt-4 dark:border-zinc-800/40">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center gap-1.5 text-sm tracking-wide text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-600 dark:hover:text-zinc-400"
+      >
+        <svg
+          className={`h-3 w-3 shrink-0 transition-transform duration-200 ${open ? "rotate-90" : ""}`}
+          viewBox="0 0 12 12"
+          fill="currentColor"
+        >
+          <path d="M4.5 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        Extended meanings
+      </button>
+      {open && data && (
+        <div className="mt-3 space-y-3 animate-slide-down">
+          {(data.lex || data.etymology) && (
+            <div className="flex flex-wrap gap-x-4 gap-y-1">
+              {data.lex && (
+                <div>
+                  <span className="text-xs tracking-wide text-zinc-300 dark:text-zinc-600">Grammar </span>
+                  <span className="text-sm text-zinc-500 dark:text-zinc-400">{data.lex}</span>
+                </div>
+              )}
+              {data.etymology && (
+                <div>
+                  <span className="text-xs tracking-wide text-zinc-300 dark:text-zinc-600">Etymology </span>
+                  <span className="text-sm text-zinc-500 dark:text-zinc-400 italic">{data.etymology}</span>
+                </div>
+              )}
+            </div>
+          )}
+          <ol className="list-none space-y-1 pl-0">
+            {data.senses.map((sense, i) => (
+              <li key={i} className="flex gap-2 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+                <span className="shrink-0 text-zinc-300 dark:text-zinc-600">{i + 1}.</span>
+                <span>{sense}</span>
+              </li>
+            ))}
+          </ol>
+          <div className="mt-3 text-[11px] text-zinc-300 dark:text-zinc-700">
+            Monier-Williams, 1899
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -961,6 +1058,12 @@ function InfoPanel({ onClose }: { onClose: () => void }) {
               Vedanta and Sanskrit. The glossary (5th edition, 2013) was
               compiled and edited by John Warne and is available through the
               Arsha Vidya Gurukulam bookstore in Saylorsburg, Pennsylvania.
+            </p>
+            <p className="mt-2 text-zinc-500 dark:text-zinc-400">
+              Extended definitions and etymological data are from{" "}
+              <em>A Sanskrit-English Dictionary</em> by Sir Monier Monier-Williams (1899),
+              digitized by the Cologne Digital Sanskrit Dictionaries project.
+              Licensed under CC BY-NC-SA 3.0.
             </p>
           </div>
 
@@ -1260,11 +1363,11 @@ function MobileDetailView({
         </div>
 
         <div className="space-y-6">
-          <Section label="Definition">{entry.definition}</Section>
+          <Section label="Definition"><DefinitionText text={entry.definition} /></Section>
+          {entry.root && <Section label="Root"><RootText text={entry.root} /></Section>}
           {entry.vedantaMeaning && (
             <Section label="Vedantic meaning">{entry.vedantaMeaning}</Section>
           )}
-          {entry.root && <Section label="Root"><RootText text={entry.root} /></Section>}
           {entry.relatedTerms && entry.relatedTerms.length > 0 && (
             <div>
               <div className="mb-1.5 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
@@ -1293,6 +1396,7 @@ function MobileDetailView({
               </div>
             </div>
           )}
+          <MwSection entryId={entry.id} />
         </div>
 
         <div className="mt-8 border-t border-zinc-100 pt-6 dark:border-zinc-800/60">
