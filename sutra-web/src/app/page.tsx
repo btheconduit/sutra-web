@@ -4,6 +4,8 @@ import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { glossary, type GlossaryEntry } from "./data/glossary";
 import { toDevanagari } from "./data/devanagari";
 import { categories, type Category } from "./data/categories";
+import { supabase } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 type MwEntry = { senses: string[]; lex?: string; etymology?: string };
 type MwData = Record<string, MwEntry>;
 
@@ -207,6 +209,224 @@ function useTheme() {
   return { dark, toggle };
 }
 
+// --- Auth ---
+
+function useAuth() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return { user, loading };
+}
+
+function formatJoinDate(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+}
+
+function AuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose: () => void; noteCount: number }) {
+  const [email, setEmail] = useState("");
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+  const [signingOut, setSigningOut] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [onClose]);
+
+  async function handleSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    const { error: err } = await supabase.auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: true },
+    });
+    if (err) setError(err.message);
+    else setSent(true);
+  }
+
+  async function handleSignOut() {
+    setSigningOut(true);
+    await supabase.auth.signOut();
+    onClose();
+  }
+
+  if (user) {
+    return (
+      <div ref={ref} className="absolute top-full right-0 mt-2 w-64 rounded-lg border border-zinc-200/60 bg-white/90 p-4 shadow-lg backdrop-blur-xl dark:border-zinc-700/40 dark:bg-zinc-900/90">
+        <p className="truncate text-sm font-medium text-zinc-700 dark:text-zinc-200">{user.email}</p>
+        <div className="mt-3 flex gap-4">
+          <div>
+            <p className="text-lg font-semibold leading-tight text-zinc-800 dark:text-zinc-100">{noteCount}</p>
+            <p className="text-[10px] uppercase tracking-wide text-zinc-400 dark:text-zinc-500">{noteCount === 1 ? "note" : "notes"}</p>
+          </div>
+          <div>
+            <p className="text-lg font-semibold leading-tight text-zinc-800 dark:text-zinc-100">{formatJoinDate(user.created_at)}</p>
+            <p className="text-[10px] uppercase tracking-wide text-zinc-400 dark:text-zinc-500">joined</p>
+          </div>
+        </div>
+        <button
+          onClick={handleSignOut}
+          disabled={signingOut}
+          className="mt-4 w-full rounded-md border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
+        >
+          {signingOut ? "Signing out…" : "Sign out"}
+        </button>
+      </div>
+    );
+  }
+
+  if (sent) {
+    return (
+      <div ref={ref} className="absolute top-full right-0 mt-2 w-64 rounded-lg border border-zinc-200/60 bg-white/90 p-4 shadow-lg backdrop-blur-xl dark:border-zinc-700/40 dark:bg-zinc-900/90">
+        <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
+          Check your email for a sign-in link.
+        </p>
+        <button
+          onClick={() => { setSent(false); setEmail(""); }}
+          className="mt-2 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
+        >
+          Try a different email
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div ref={ref} className="absolute top-full right-0 mt-2 w-64 rounded-lg border border-zinc-200/60 bg-white/90 p-4 shadow-lg backdrop-blur-xl dark:border-zinc-700/40 dark:bg-zinc-900/90">
+      <form onSubmit={handleSignIn}>
+        <label className="mb-1.5 block text-xs text-zinc-500 dark:text-zinc-400">
+          Sign in with email
+        </label>
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+          className="w-full rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-800 outline-none transition-colors placeholder:text-zinc-300 focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
+        />
+        {error && <p className="mt-1.5 text-xs text-red-500">{error}</p>}
+        <button
+          type="submit"
+          className="mt-2.5 w-full rounded-md bg-zinc-800 px-3 py-1.5 text-xs text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
+        >
+          Continue
+        </button>
+      </form>
+    </div>
+  );
+}
+
+function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose: () => void; noteCount: number }) {
+  const [email, setEmail] = useState("");
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+  const [signingOut, setSigningOut] = useState(false);
+
+  async function handleSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    const { error: err } = await supabase.auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: true },
+    });
+    if (err) setError(err.message);
+    else setSent(true);
+  }
+
+  async function handleSignOut() {
+    setSigningOut(true);
+    await supabase.auth.signOut();
+    onClose();
+  }
+
+  if (user) {
+    return (
+      <div>
+        <p className="truncate text-sm font-medium text-zinc-700 dark:text-zinc-200">{user.email}</p>
+        <div className="mt-3 flex gap-4">
+          <div>
+            <p className="text-lg font-semibold leading-tight text-zinc-800 dark:text-zinc-100">{noteCount}</p>
+            <p className="text-[10px] uppercase tracking-wide text-zinc-400 dark:text-zinc-500">{noteCount === 1 ? "note" : "notes"}</p>
+          </div>
+          <div>
+            <p className="text-lg font-semibold leading-tight text-zinc-800 dark:text-zinc-100">{formatJoinDate(user.created_at)}</p>
+            <p className="text-[10px] uppercase tracking-wide text-zinc-400 dark:text-zinc-500">joined</p>
+          </div>
+        </div>
+        <button
+          onClick={handleSignOut}
+          disabled={signingOut}
+          className="mt-4 w-full rounded-md border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
+        >
+          {signingOut ? "Signing out…" : "Sign out"}
+        </button>
+      </div>
+    );
+  }
+
+  if (sent) {
+    return (
+      <div>
+        <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
+          Check your email for a sign-in link.
+        </p>
+        <button
+          onClick={() => { setSent(false); setEmail(""); }}
+          className="mt-1.5 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
+        >
+          Try a different email
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <form onSubmit={handleSignIn}>
+        <label className="mb-1.5 block text-xs text-zinc-500 dark:text-zinc-400">
+          Sign in with email
+        </label>
+        <div className="flex gap-2">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            className="min-w-0 flex-1 rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-800 outline-none transition-colors placeholder:text-zinc-300 focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
+          />
+          <button
+            type="submit"
+            className="shrink-0 rounded-md bg-zinc-800 px-4 py-1.5 text-xs text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          >
+            Continue
+          </button>
+        </div>
+        {error && <p className="mt-1.5 text-xs text-red-500">{error}</p>}
+      </form>
+    </div>
+  );
+}
+
 function Tooltip({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <span className="group relative">
@@ -222,11 +442,17 @@ function TopBar({
   dark,
   onToggle,
   onInfoClick,
+  user,
+  noteCount,
 }: {
   dark: boolean;
   onToggle: () => void;
   onInfoClick: () => void;
+  user: User | null;
+  noteCount: number;
 }) {
+  const [showAuth, setShowAuth] = useState(false);
+
   return (
     <div className="fixed top-5 right-5 z-20 flex items-center gap-3 rounded-lg border border-zinc-200/40 bg-white/40 px-3 py-2 leading-none backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-950/30">
       <Tooltip label="About (I)">
@@ -251,6 +477,19 @@ function TopBar({
           )}
         </button>
       </Tooltip>
+      <div className="h-3 w-px bg-zinc-200/60 dark:bg-zinc-700/40" />
+      <div className="relative">
+        <Tooltip label={user ? "Account" : "Sign in"}>
+          <button
+            onClick={() => setShowAuth(!showAuth)}
+            aria-label={user ? "Account" : "Sign in"}
+            className={`flex items-center transition-colors ${user ? "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200" : "text-zinc-300 hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"}`}
+          >
+            <IconUser />
+          </button>
+        </Tooltip>
+        {showAuth && <AuthDropdown user={user} onClose={() => setShowAuth(false)} noteCount={noteCount} />}
+      </div>
     </div>
   );
 }
@@ -984,6 +1223,15 @@ function IconInfo({ className }: { className?: string }) {
   );
 }
 
+function IconUser({ className }: { className?: string }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
+      <circle cx="8" cy="5.5" r="2.5" stroke="currentColor" strokeWidth="1.2" />
+      <path d="M2.5 14c0-3 2.5-4.5 5.5-4.5s5.5 1.5 5.5 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function InfoPanel({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -1193,6 +1441,7 @@ type SharedEntryState = {
   handleRemoveNote: (id: string, index: number) => void;
   handleChangeNoteColor: (id: string, index: number, color: number) => void;
   handleEditNote: (id: string, index: number, text: string) => void;
+  user: User | null;
 };
 
 function useNotes() {
@@ -1432,10 +1681,11 @@ function MobileDetailView({
 
 // --- Mobile app ---
 
-function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote }: SharedEntryState) {
+function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote, user }: SharedEntryState) {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>("core");
   const [showInfo, setShowInfo] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { dark, toggle } = useTheme();
@@ -1586,6 +1836,20 @@ function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleR
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
               )}
             </button>
+            <div className="relative">
+              <button
+                onClick={() => setShowAuth(!showAuth)}
+                aria-label={user ? "Account" : "Sign in"}
+                className={`transition-colors ${user ? "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200" : "text-zinc-300 hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"}`}
+              >
+                <IconUser />
+              </button>
+              {showAuth && (
+                <div className="absolute top-full right-0 z-50 mt-3 w-64 rounded-lg border border-zinc-200/60 bg-white/95 p-4 shadow-lg backdrop-blur-xl dark:border-zinc-700/40 dark:bg-zinc-900/95">
+                  <MobileAuthDropdown user={user} onClose={() => setShowAuth(false)} noteCount={Object.values(notes).reduce((sum, arr) => sum + arr.length, 0)} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -1740,8 +2004,9 @@ export default function Home() {
   const isMobile = useIsMobile();
   const [openEntries, setOpenEntries] = useState<GlossaryEntry[]>([]);
   const notesBundle = useNotes();
+  const { user } = useAuth();
 
-  const shared: SharedEntryState = { openEntries, setOpenEntries, ...notesBundle };
+  const shared: SharedEntryState = { openEntries, setOpenEntries, ...notesBundle, user };
 
   if (isMobile === null) return null;
   if (isMobile) return <MobileHome {...shared} />;
@@ -1749,7 +2014,7 @@ export default function Home() {
   return <DesktopHome {...shared} />;
 }
 
-function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote }: SharedEntryState) {
+function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote, user }: SharedEntryState) {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>("core");
   const [showInfo, setShowInfo] = useState(false);
@@ -1976,7 +2241,7 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
   if (!hasPanels) {
     return (
       <div className="flex flex-1 flex-col items-center justify-start bg-white font-sans dark:bg-zinc-950">
-        <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} />
+        <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={Object.values(notes).reduce((sum, arr) => sum + arr.length, 0)} />
         {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
         <main className="flex w-full max-w-2xl flex-col items-center px-6 pt-32 pb-16">
           <div className="mb-10 flex flex-col items-center">
@@ -2066,7 +2331,7 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
   // Panel state — search sidebar + horizontal panels
   return (
     <div className="relative flex h-full min-h-0 flex-1 overflow-hidden bg-white font-sans dark:bg-zinc-950">
-      <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} />
+      <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={Object.values(notes).reduce((sum, arr) => sum + arr.length, 0)} />
       {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
 
       {/* Sidebar overlays the panel area for glass effect */}
