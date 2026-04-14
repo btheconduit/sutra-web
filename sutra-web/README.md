@@ -1,8 +1,6 @@
-# Sutra
+# sutra-web
 
-A Sanskrit lookup tool for Vedanta study.
-
-Live at [sutra.so](https://sutra.so)
+The Next.js application for [sutra.so](https://sutra.so). See the [project README](../README.md) for details.
 
 ## Development
 

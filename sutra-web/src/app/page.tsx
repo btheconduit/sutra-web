@@ -341,7 +341,7 @@ function SearchSidebar({
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder="Find a term (e.g. adhyāsa, freedom, atma)"
+            placeholder="Find a term (e.g. sat, cit, ānanda)"
             className="peer w-full rounded-lg border border-zinc-200/40 bg-white/30 px-3.5 py-2.5 pr-8 text-sm text-zinc-900 placeholder-zinc-400 outline-none backdrop-blur-md transition-all duration-300 focus:border-zinc-300 focus:bg-white/50 focus:shadow-[0_0_0_3px_rgba(161,161,170,0.12)] dark:border-zinc-700/30 dark:bg-zinc-800/20 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-500 dark:focus:bg-zinc-800/40 dark:focus:shadow-[0_0_0_3px_rgba(161,161,170,0.08)]"
           />
           {query.length > 0 ? (
@@ -812,10 +812,10 @@ function WordPanel({
         </div>
 
         <div className="space-y-6">
-          <Section label="Definition"><DefinitionText text={entry.definition} /></Section>
+          <Section label="Definition" tooltip="From the Vedanta glossary used by Swami Dayananda Saraswati, reflecting traditional usage in the Advaita Vedanta teaching tradition."><DefinitionText text={entry.definition} /></Section>
           {entry.root && <Section label="Root"><RootText text={entry.root} /></Section>}
           {entry.vedantaMeaning && (
-            <Section label="Vedantic meaning">{entry.vedantaMeaning}</Section>
+            <Section label="Vedantic meaning" tooltip="Meaning as understood within the living tradition of Advaita Vedanta, rooted in the teachings of the ancient rishis and the works of Ādi Śaṅkarācārya.">{entry.vedantaMeaning}</Section>
           )}
           {entry.relatedTerms && entry.relatedTerms.length > 0 && (
             <div>
@@ -862,19 +862,43 @@ function WordPanel({
 function Section({
   label,
   children,
+  tooltip,
 }: {
   label: string;
   children: React.ReactNode;
+  tooltip?: string;
 }) {
   return (
     <div>
-      <div className="mb-1 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
+      <div className="relative mb-1 flex items-center gap-1.5 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
         {label}
+        {tooltip && <SourceTooltip text={tooltip} />}
       </div>
       <div className="text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
         {children}
       </div>
     </div>
+  );
+}
+
+function SourceTooltip({ text }: { text: string }) {
+  const [show, setShow] = useState(false);
+  return (
+    <span
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+      onTouchStart={() => setShow((s) => !s)}
+    >
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" className="cursor-help text-zinc-300 transition-colors hover:text-zinc-400 dark:text-zinc-600 dark:hover:text-zinc-500">
+        <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M8 7v4M8 5.5v-.01" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      </svg>
+      {show && (
+        <span className="animate-fade-in absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-xs leading-relaxed font-normal tracking-normal text-zinc-500 shadow-lg dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
+          {text}
+        </span>
+      )}
+    </span>
   );
 }
 
@@ -1048,16 +1072,20 @@ function InfoPanel({ onClose }: { onClose: () => void }) {
 
           <div>
             <h3 className="mb-1.5 text-xs tracking-wide text-zinc-400 dark:text-zinc-600">
-              Source
+              Definition source
             </h3>
             <p className="text-zinc-500 dark:text-zinc-400">
-              Definitions reflect the traditional Vedantic usage as taught in
-              the sampradaya of Shankara&apos;s Advaita Vedanta — not academic
-              or dictionary Sanskrit. They are drawn from the glossary used by
-              Pujya Swami Dayananda Saraswati in his three-year course in
-              Vedanta and Sanskrit. The glossary (5th edition, 2013) was
-              compiled and edited by John Warne and is available through the
-              Arsha Vidya Gurukulam bookstore in Saylorsburg, Pennsylvania.
+              Definitions reflect the traditional Vedantic usage — meanings
+              rooted in the teachings of the ancient rishis and the
+              commentarial works of Ādi Śaṅkarācārya, as transmitted through
+              the living tradition of Advaita Vedanta.
+            </p>
+            <p className="mt-2 text-zinc-500 dark:text-zinc-400">
+              The primary glossary is from Pujya Swami Dayananda
+              Saraswati&apos;s three-year course in Vedanta and Sanskrit,
+              compiled and edited by John Warne (5th edition, 2013), available
+              through the Arsha Vidya Gurukulam bookstore in Saylorsburg,
+              Pennsylvania.
             </p>
             <p className="mt-2 text-zinc-500 dark:text-zinc-400">
               Extended definitions and etymological data are from{" "}
@@ -1076,6 +1104,19 @@ function InfoPanel({ onClose }: { onClose: () => void }) {
               spellings (e.g. atma), and Devanāgarī. You can type without
               diacritics and still find what you&apos;re looking for.
             </p>
+          </div>
+
+          <div className="border-t border-zinc-100 pt-5 dark:border-zinc-800/60">
+            <p className="text-zinc-500 dark:text-zinc-400">
+              Sutra is still evolving. If something feels unclear, useful,
+              missing, or worth improving, I&apos;d love to hear from you.
+            </p>
+            <a
+              href="mailto:hello@sutra.so"
+              className="mt-2 inline-block text-zinc-900 underline decoration-zinc-300 underline-offset-2 transition-colors hover:decoration-zinc-500 dark:text-zinc-200 dark:decoration-zinc-700 dark:hover:decoration-zinc-400"
+            >
+              hello@sutra.so
+            </a>
           </div>
         </div>
       </div>
@@ -1379,10 +1420,10 @@ function MobileDetailView({
         </div>
 
         <div className="space-y-6">
-          <Section label="Definition"><DefinitionText text={entry.definition} /></Section>
+          <Section label="Definition" tooltip="From the Vedanta glossary used by Swami Dayananda Saraswati, reflecting traditional usage in the Advaita Vedanta teaching tradition."><DefinitionText text={entry.definition} /></Section>
           {entry.root && <Section label="Root"><RootText text={entry.root} /></Section>}
           {entry.vedantaMeaning && (
-            <Section label="Vedantic meaning">{entry.vedantaMeaning}</Section>
+            <Section label="Vedantic meaning" tooltip="Meaning as understood within the living tradition of Advaita Vedanta, rooted in the teachings of the ancient rishis and the works of Ādi Śaṅkarācārya.">{entry.vedantaMeaning}</Section>
           )}
           {entry.relatedTerms && entry.relatedTerms.length > 0 && (
             <div>
@@ -1599,7 +1640,7 @@ function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleR
               if (e.target.value.length > 0) setSelectedCategory(null);
             }}
             onKeyDown={handleSearchKeyDown}
-            placeholder="Find a term (e.g. adhyāsa, freedom, atma)"
+            placeholder="Find a term (e.g. sat, cit, ānanda)"
             className="w-full rounded-lg border border-zinc-200/60 bg-zinc-50/80 px-4 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-200 focus:border-zinc-300 focus:bg-white focus:shadow-[0_0_0_3px_rgba(161,161,170,0.08)] dark:border-zinc-700/40 dark:bg-zinc-900/60 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-600 dark:focus:bg-zinc-900"
           />
           {query.length > 0 && (
@@ -2002,7 +2043,7 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
                 if (e.target.value.length > 0) setSelectedCategory(null);
               }}
               onKeyDown={handleSearchKeyDown}
-              placeholder="Find a term (e.g. adhyāsa, freedom, atma)"
+              placeholder="Find a term (e.g. sat, cit, ānanda)"
               className="w-full rounded-xl border border-zinc-200 bg-zinc-50/80 px-5 py-3.5 text-base text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-300 focus:border-zinc-400 focus:bg-white focus:shadow-[0_0_0_3px_rgba(161,161,170,0.1)] dark:border-zinc-700/60 dark:bg-zinc-900/60 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-500 dark:focus:bg-zinc-900 dark:focus:shadow-[0_0_0_3px_rgba(161,161,170,0.08)]"
             />
 
