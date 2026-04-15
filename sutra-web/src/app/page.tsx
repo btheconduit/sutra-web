@@ -1617,6 +1617,7 @@ function useNotes(userId: string | undefined) {
 
   useEffect(() => {
     let cancelled = false;
+    setNotes({});
     setInitialized(false);
     (async () => {
       // Load from localStorage
