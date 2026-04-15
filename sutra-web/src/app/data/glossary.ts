@@ -17216,3 +17216,7 @@ export const glossary: GlossaryEntry[] = [
       "United, joined.",
   },
 ];
+
+export const glossaryById = new Map<string, GlossaryEntry>(
+  glossary.map((e) => [e.id, e])
+);

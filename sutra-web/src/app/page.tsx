@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
-import { glossary, type GlossaryEntry } from "./data/glossary";
+import { glossary, glossaryById, type GlossaryEntry } from "./data/glossary";
 import { toDevanagari } from "./data/devanagari";
 import { categories, type Category } from "./data/categories";
 import { supabase } from "@/lib/supabase";
@@ -387,14 +387,14 @@ function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; o
   if (user) {
     return (
       <div>
-        <p className="truncate text-xs text-zinc-600 dark:text-zinc-300">{user.email}</p>
-        <p className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500">
+        <p className="truncate text-sm text-zinc-600 dark:text-zinc-300">{user.email}</p>
+        <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-500">
           {noteCount} {noteCount === 1 ? "note" : "notes"} · joined {formatJoinDate(user.created_at)}
         </p>
         <button
           onClick={handleSignOut}
           disabled={signingOut}
-          className="mt-3 text-[11px] text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+          className="mt-4 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
         >
           {signingOut ? "Signing out…" : "Sign out"}
         </button>
@@ -405,21 +405,12 @@ function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; o
   if (sent) {
     return (
       <div>
-        <div className="flex items-start justify-between">
-          <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
-            Check your email for a sign-in link.
-          </p>
-          <button
-            onClick={onClose}
-            className="ml-2 shrink-0 text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
-            aria-label="Close"
-          >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M9 3L3 9M3 3l6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-          </button>
-        </div>
+        <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+          Check your email for a sign-in link.
+        </p>
         <button
           onClick={() => { setSent(false); setEmail(""); }}
-          className="mt-1.5 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
+          className="mt-3 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
         >
           Try a different email
         </button>
@@ -430,28 +421,26 @@ function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; o
   return (
     <div>
       <form onSubmit={handleSignIn}>
-        <label className="mb-1.5 block text-xs text-zinc-500 dark:text-zinc-400">
+        <label className="mb-2 block text-sm text-zinc-500 dark:text-zinc-400">
           Sign in or create account
         </label>
-        <div className="flex gap-2">
-          <input
-            type="email"
-            required
-            autoFocus
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="min-w-0 flex-1 rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-800 outline-none transition-colors placeholder:text-zinc-300 focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
-          />
-          <button
-            type="submit"
-            className="shrink-0 rounded-md bg-zinc-800 px-4 py-1.5 text-xs text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
-          >
-            Continue
-          </button>
-        </div>
-        {error && <p className="mt-1.5 text-xs text-red-500">{error}</p>}
-        <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500">
+        <input
+          type="email"
+          required
+          autoFocus
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+          className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 text-base text-zinc-800 outline-none transition-colors placeholder:text-zinc-300 focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
+        />
+        <button
+          type="submit"
+          className="mt-3 w-full rounded-lg bg-zinc-800 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
+        >
+          Continue
+        </button>
+        {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
+        <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">
           We&apos;ll email you a magic link to sign in.
         </p>
       </form>
@@ -563,7 +552,7 @@ function SearchSidebar({
     const cat = categories.find((c) => c.id === selectedCategory);
     if (!cat) return [];
     return cat.termIds
-      .map((id) => glossary.find((e) => e.id === id))
+      .map((id) => glossaryById.get(id))
       .filter((e): e is GlossaryEntry => e !== undefined);
   }, [selectedCategory]);
 
@@ -942,15 +931,18 @@ function NotesArea({
   const [draftColor, setDraftColor] = useState(0);
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const addingRef = useRef(false);
   useEffect(() => {
     if (composing) textareaRef.current?.focus();
   }, [composing]);
 
   function tryAdd() {
-    if (!draft.trim()) return;
+    if (!draft.trim() || addingRef.current) return;
+    addingRef.current = true;
     if (!user) {
       localStorage.setItem(`sutra-pending-note-${entryId}`, JSON.stringify({ text: draft.trim(), color: draftColor }));
       setShowSignInPrompt(true);
+      addingRef.current = false;
       return;
     }
     onAdd(entryId, draft.trim(), draftColor);
@@ -958,6 +950,7 @@ function NotesArea({
     setDraftColor(0);
     setComposing(false);
     setShowSignInPrompt(false);
+    queueMicrotask(() => { addingRef.current = false; });
   }
 
   return (
@@ -1497,7 +1490,7 @@ function CategoryTermCards({
   onSelect: (entry: GlossaryEntry) => void;
 }) {
   const entries = category.termIds
-    .map((id) => glossary.find((e) => e.id === id))
+    .map((id) => glossaryById.get(id))
     .filter((e): e is GlossaryEntry => e !== undefined);
 
   if (entries.length === 0) return null;
@@ -1559,10 +1552,7 @@ async function upsertNotesToSupabase(userId: string, notes: Record<string, Stick
       updated_at: new Date().toISOString(),
     }))
   );
-  if (rows.length === 0) {
-    await supabase.from("notes").delete().eq("user_id", userId);
-    return;
-  }
+  if (rows.length === 0) return;
   await supabase.from("notes").upsert(rows, { onConflict: "user_id,id" });
 }
 
@@ -1606,8 +1596,8 @@ function untrackDeletedNote(noteId: string) {
 
 async function deleteNoteFromSupabase(userId: string, noteId: string) {
   if (!supabase) return;
-  await supabase.from("notes").delete().eq("user_id", userId).eq("id", noteId);
-  untrackDeletedNote(noteId);
+  const { error } = await supabase.from("notes").delete().eq("user_id", userId).eq("id", noteId);
+  if (!error) untrackDeletedNote(noteId);
 }
 
 function useNotes(userId: string | undefined) {
@@ -1657,6 +1647,10 @@ function useNotes(userId: string | undefined) {
         }
         localStorage.setItem(storageKey, JSON.stringify(local));
         upsertNotesToSupabase(userId, local);
+        // Flush any locally-tracked deletions to Supabase
+        for (const noteId of deletedIds) {
+          deleteNoteFromSupabase(userId, noteId);
+        }
       }
 
       if (!cancelled) {
@@ -2026,15 +2020,30 @@ function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleR
     const cat = categories.find((c) => c.id === selectedCategory);
     if (!cat) return [];
     return cat.termIds
-      .map((id) => glossary.find((e) => e.id === id))
+      .map((id) => glossaryById.get(id))
       .filter((e): e is GlossaryEntry => e !== undefined);
   }, [selectedCategory]);
+
+  const noteCount = Object.values(notes).reduce((sum, arr) => sum + arr.length, 0);
+
+  const authModal = showAuth ? (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowAuth(false)}>
+      <div
+        className="w-full max-w-lg animate-fade-in rounded-t-2xl border-t border-zinc-200/60 bg-white px-6 pb-8 pt-6 shadow-xl dark:border-zinc-700/40 dark:bg-zinc-900"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-zinc-200 dark:bg-zinc-700" />
+        <MobileAuthDropdown user={user} onClose={() => setShowAuth(false)} noteCount={noteCount} />
+      </div>
+    </div>
+  ) : null;
 
   // Detail view
   if (activeEntry) {
     return (
       <>
         {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
+        {authModal}
         <MobileDetailView
           entry={activeEntry}
           openEntries={openEntries}
@@ -2058,6 +2067,7 @@ function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleR
   return (
     <div className="flex min-h-full flex-col bg-white font-sans dark:bg-zinc-950">
       {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
+      {authModal}
 
       <div className="sticky top-0 z-10 border-b border-zinc-100/80 bg-white/80 px-4 pb-3 pt-4 backdrop-blur-xl dark:border-zinc-800/40 dark:bg-zinc-950/80">
         <div className="mb-3 flex items-center justify-between">
@@ -2081,20 +2091,13 @@ function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleR
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
               )}
             </button>
-            <div className="relative">
-              <button
-                onClick={() => setShowAuth(!showAuth)}
-                aria-label={user ? "Account" : "Sign in"}
-                className={`transition-colors ${user ? "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200" : "text-zinc-300 hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"}`}
-              >
-                <IconUser />
-              </button>
-              {showAuth && (
-                <div className="absolute top-full right-0 z-50 mt-3 w-64 rounded-lg border border-zinc-200/60 bg-white/95 p-4 shadow-lg backdrop-blur-xl dark:border-zinc-700/40 dark:bg-zinc-900/95">
-                  <MobileAuthDropdown user={user} onClose={() => setShowAuth(false)} noteCount={Object.values(notes).reduce((sum, arr) => sum + arr.length, 0)} />
-                </div>
-              )}
-            </div>
+            <button
+              onClick={() => setShowAuth(!showAuth)}
+              aria-label={user ? "Account" : "Sign in"}
+              className={`transition-colors ${user ? "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200" : "text-zinc-300 hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"}`}
+            >
+              <IconUser />
+            </button>
           </div>
         </div>
 
@@ -2245,10 +2248,51 @@ function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleR
 
 // --- Main ---
 
+function loadOpenEntries(key: string): GlossaryEntry[] {
+  try {
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      const ids = JSON.parse(saved) as string[];
+      return ids
+        .map((id) => glossaryById.get(id))
+        .filter((e): e is GlossaryEntry => e !== undefined);
+    }
+  } catch { /* ignore */ }
+  return [];
+}
+
 export default function Home() {
   const isMobile = useIsMobile();
-  const [openEntries, setOpenEntries] = useState<GlossaryEntry[]>([]);
   const { user } = useAuth();
+  const prevUserRef = useRef<string | undefined>(undefined);
+  const [openEntries, setOpenEntries] = useState<GlossaryEntry[]>(() => loadOpenEntries("sutra-open-entries"));
+
+  // User-scoped board persistence: save on logout, restore on login, wipe display on transition
+  useEffect(() => {
+    const prevUserId = prevUserRef.current;
+    const currentUserId = user?.id;
+
+    // Clear display on logout (persist effect already keeps the user-scoped key current)
+    if (prevUserId && !currentUserId) {
+      setOpenEntries([]);
+    }
+
+    // Restore board for incoming user on login
+    if (!prevUserId && currentUserId) {
+      const restored = loadOpenEntries(`sutra-open-entries-${currentUserId}`);
+      if (restored.length > 0) setOpenEntries(restored);
+    }
+
+    prevUserRef.current = currentUserId;
+  }, [user?.id]);
+
+  // Persist current board state (always to generic key, and to user key if signed in)
+  useEffect(() => {
+    const ids = openEntries.map((e) => e.id);
+    localStorage.setItem("sutra-open-entries", JSON.stringify(ids));
+    if (user?.id) localStorage.setItem(`sutra-open-entries-${user.id}`, JSON.stringify(ids));
+  }, [openEntries, user?.id]);
+
   const notesBundle = useNotes(user?.id);
 
   // Recover any pending notes stashed before sign-in (wait for notes to initialize first)
@@ -2288,9 +2332,33 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
   const [showInfo, setShowInfo] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const handleSignInClick = useCallback(() => setShowAuth(true), []);
-  const [panelStates, setPanelStates] = useState<Record<string, PanelState>>(
-    {},
-  );
+  const [panelStates, setPanelStates] = useState<Record<string, PanelState>>(() => {
+    const key = user?.id ? `sutra-panel-states-${user.id}` : "sutra-panel-states";
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved) return JSON.parse(saved) as Record<string, PanelState>;
+    } catch { /* ignore */ }
+    return {};
+  });
+
+  // Restore user-scoped panel states when auth resolves
+  const prevPanelUserRef = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    const prev = prevPanelUserRef.current;
+    const current = user?.id;
+    if (!prev && current) {
+      try {
+        const saved = localStorage.getItem(`sutra-panel-states-${current}`);
+        if (saved) setPanelStates(JSON.parse(saved) as Record<string, PanelState>);
+      } catch { /* ignore */ }
+    }
+    prevPanelUserRef.current = current;
+  }, [user?.id]);
+
+  useEffect(() => {
+    localStorage.setItem("sutra-panel-states", JSON.stringify(panelStates));
+    if (user?.id) localStorage.setItem(`sutra-panel-states-${user.id}`, JSON.stringify(panelStates));
+  }, [panelStates, user?.id]);
   const inputRef = useRef<HTMLInputElement>(null);
   const panelContainerRef = useRef<HTMLDivElement>(null);
   const panelRefs = useRef<Map<string, HTMLDivElement>>(new Map());
