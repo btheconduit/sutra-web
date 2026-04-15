@@ -1649,7 +1649,7 @@ function useNotes(userId: string | undefined) {
         upsertNotesToSupabase(userId, local);
         // Flush any locally-tracked deletions to Supabase
         for (const noteId of deletedIds) {
-          deleteNoteFromSupabase(userId, noteId);
+          await deleteNoteFromSupabase(userId, noteId);
         }
       }
 
@@ -2342,9 +2342,8 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
   const [showAuth, setShowAuth] = useState(false);
   const handleSignInClick = useCallback(() => setShowAuth(true), []);
   const [panelStates, setPanelStates] = useState<Record<string, PanelState>>(() => {
-    const key = user?.id ? `sutra-panel-states-${user.id}` : "sutra-panel-states";
     try {
-      const saved = localStorage.getItem(key);
+      const saved = localStorage.getItem("sutra-panel-states");
       if (saved) return JSON.parse(saved) as Record<string, PanelState>;
     } catch { /* ignore */ }
     return {};
@@ -2368,6 +2367,7 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
     localStorage.setItem("sutra-panel-states", JSON.stringify(panelStates));
     if (user?.id) localStorage.setItem(`sutra-panel-states-${user.id}`, JSON.stringify(panelStates));
   }, [panelStates, user?.id]);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const panelContainerRef = useRef<HTMLDivElement>(null);
   const panelRefs = useRef<Map<string, HTMLDivElement>>(new Map());
