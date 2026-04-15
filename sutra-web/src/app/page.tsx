@@ -316,7 +316,7 @@ function AuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose
     <div ref={ref} className="absolute top-full right-0 mt-2 w-64 rounded-lg border border-zinc-200/60 bg-white/90 p-4 shadow-lg backdrop-blur-xl dark:border-zinc-700/40 dark:bg-zinc-900/90">
       <form onSubmit={handleSignIn}>
         <label className="mb-1.5 block text-xs text-zinc-500 dark:text-zinc-400">
-          Sign in or create an account
+          Sign in with email
         </label>
         <input
           type="email"
@@ -409,7 +409,7 @@ function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; o
     <div>
       <form onSubmit={handleSignIn}>
         <label className="mb-1.5 block text-xs text-zinc-500 dark:text-zinc-400">
-          Sign in or create an account
+          Sign in with email
         </label>
         <div className="flex gap-2">
           <input
