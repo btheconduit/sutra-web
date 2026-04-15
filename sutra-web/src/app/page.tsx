@@ -2307,16 +2307,18 @@ export default function Home() {
     for (const key of keys) {
       try {
         const raw = localStorage.getItem(key);
-        if (!raw) continue;
+        if (!raw) { localStorage.removeItem(key); continue; }
         const pending = JSON.parse(raw) as { text: string; color: number };
         const entryId = key.slice(prefix.length);
-        if (pending.text) {
+        const existing = notesBundle.notes[entryId] || [];
+        const isDuplicate = existing.some((n) => n.text === pending.text);
+        if (pending.text && !isDuplicate) {
           notesBundle.handleAddNote(entryId, pending.text, pending.color);
         }
         localStorage.removeItem(key);
       } catch { /* ignore */ }
     }
-  }, [user, notesBundle.initialized, notesBundle.handleAddNote]);
+  }, [user, notesBundle.initialized, notesBundle.handleAddNote, notesBundle.notes]);
 
   const shared: SharedEntryState = { openEntries, setOpenEntries, ...notesBundle, user };
 
