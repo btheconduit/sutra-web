@@ -2298,6 +2298,13 @@ export default function Home() {
   // Recover any pending notes stashed before sign-in (wait for notes to initialize first)
   useEffect(() => {
     if (!user || !notesBundle.initialized) return;
+    // Read current notes from localStorage to deduplicate without adding notes to deps
+    const storageKey = `sutra-notes-${user.id}`;
+    let saved: Record<string, StickyNote[]> = {};
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) saved = JSON.parse(raw) as Record<string, StickyNote[]>;
+    } catch { /* ignore */ }
     const prefix = "sutra-pending-note-";
     const keys = [];
     for (let i = 0; i < localStorage.length; i++) {
@@ -2310,7 +2317,7 @@ export default function Home() {
         if (!raw) { localStorage.removeItem(key); continue; }
         const pending = JSON.parse(raw) as { text: string; color: number };
         const entryId = key.slice(prefix.length);
-        const existing = notesBundle.notes[entryId] || [];
+        const existing = saved[entryId] || [];
         const isDuplicate = existing.some((n) => n.text === pending.text);
         if (pending.text && !isDuplicate) {
           notesBundle.handleAddNote(entryId, pending.text, pending.color);
@@ -2318,7 +2325,7 @@ export default function Home() {
         localStorage.removeItem(key);
       } catch { /* ignore */ }
     }
-  }, [user, notesBundle.initialized, notesBundle.handleAddNote, notesBundle.notes]);
+  }, [user, notesBundle.initialized, notesBundle.handleAddNote]);
 
   const shared: SharedEntryState = { openEntries, setOpenEntries, ...notesBundle, user };
 
