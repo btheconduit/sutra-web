@@ -216,6 +216,11 @@ function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setLoading(false);
@@ -245,15 +250,20 @@ function AuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
+      if (sent) return;
       if (ref.current && !ref.current.contains(e.target as Node)) onClose();
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [onClose]);
+  }, [onClose, sent]);
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    if (!supabase) {
+      setError("Sign-in is not available");
+      return;
+    }
     const { error: err } = await supabase.auth.signInWithOtp({
       email,
       options: {
@@ -267,28 +277,21 @@ function AuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose
 
   async function handleSignOut() {
     setSigningOut(true);
-    await supabase.auth.signOut();
+    await supabase?.auth.signOut();
     onClose();
   }
 
   if (user) {
     return (
-      <div ref={ref} className="absolute top-full right-0 mt-2 w-64 rounded-lg border border-zinc-200/60 bg-white/90 p-4 shadow-lg backdrop-blur-xl dark:border-zinc-700/40 dark:bg-zinc-900/90">
-        <p className="truncate text-sm font-medium text-zinc-700 dark:text-zinc-200">{user.email}</p>
-        <div className="mt-3 flex gap-4">
-          <div>
-            <p className="text-lg font-semibold leading-tight text-zinc-800 dark:text-zinc-100">{noteCount}</p>
-            <p className="text-[10px] uppercase tracking-wide text-zinc-400 dark:text-zinc-500">{noteCount === 1 ? "note" : "notes"}</p>
-          </div>
-          <div>
-            <p className="text-lg font-semibold leading-tight text-zinc-800 dark:text-zinc-100">{formatJoinDate(user.created_at)}</p>
-            <p className="text-[10px] uppercase tracking-wide text-zinc-400 dark:text-zinc-500">joined</p>
-          </div>
-        </div>
+      <div ref={ref} className="absolute top-full right-0 mt-2 w-56 rounded-lg border border-zinc-200/60 bg-white/90 p-3.5 shadow-lg backdrop-blur-xl dark:border-zinc-700/40 dark:bg-zinc-900/90">
+        <p className="truncate text-xs text-zinc-600 dark:text-zinc-300">{user.email}</p>
+        <p className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500">
+          {noteCount} {noteCount === 1 ? "note" : "notes"} · joined {formatJoinDate(user.created_at)}
+        </p>
         <button
           onClick={handleSignOut}
           disabled={signingOut}
-          className="mt-4 w-full rounded-md border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
+          className="mt-3 text-[11px] text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
         >
           {signingOut ? "Signing out…" : "Sign out"}
         </button>
@@ -299,9 +302,18 @@ function AuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose
   if (sent) {
     return (
       <div ref={ref} className="absolute top-full right-0 mt-2 w-64 rounded-lg border border-zinc-200/60 bg-white/90 p-4 shadow-lg backdrop-blur-xl dark:border-zinc-700/40 dark:bg-zinc-900/90">
-        <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
-          Check your email for a sign-in link.
-        </p>
+        <div className="flex items-start justify-between">
+          <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
+            Check your email for a sign-in link.
+          </p>
+          <button
+            onClick={onClose}
+            className="ml-2 shrink-0 text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+            aria-label="Close"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M9 3L3 9M3 3l6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+          </button>
+        </div>
         <button
           onClick={() => { setSent(false); setEmail(""); }}
           className="mt-2 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
@@ -316,11 +328,12 @@ function AuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose
     <div ref={ref} className="absolute top-full right-0 mt-2 w-64 rounded-lg border border-zinc-200/60 bg-white/90 p-4 shadow-lg backdrop-blur-xl dark:border-zinc-700/40 dark:bg-zinc-900/90">
       <form onSubmit={handleSignIn}>
         <label className="mb-1.5 block text-xs text-zinc-500 dark:text-zinc-400">
-          Sign in with email
+          Sign in or create account
         </label>
         <input
           type="email"
           required
+          autoFocus
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
@@ -333,6 +346,9 @@ function AuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose
         >
           Continue
         </button>
+        <p className="mt-2 text-center text-[11px] text-zinc-400 dark:text-zinc-500">
+          We&apos;ll email you a magic link to sign in.
+        </p>
       </form>
     </div>
   );
@@ -347,6 +363,10 @@ function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; o
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    if (!supabase) {
+      setError("Sign-in is not available");
+      return;
+    }
     const { error: err } = await supabase.auth.signInWithOtp({
       email,
       options: {
@@ -360,28 +380,21 @@ function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; o
 
   async function handleSignOut() {
     setSigningOut(true);
-    await supabase.auth.signOut();
+    await supabase?.auth.signOut();
     onClose();
   }
 
   if (user) {
     return (
       <div>
-        <p className="truncate text-sm font-medium text-zinc-700 dark:text-zinc-200">{user.email}</p>
-        <div className="mt-3 flex gap-4">
-          <div>
-            <p className="text-lg font-semibold leading-tight text-zinc-800 dark:text-zinc-100">{noteCount}</p>
-            <p className="text-[10px] uppercase tracking-wide text-zinc-400 dark:text-zinc-500">{noteCount === 1 ? "note" : "notes"}</p>
-          </div>
-          <div>
-            <p className="text-lg font-semibold leading-tight text-zinc-800 dark:text-zinc-100">{formatJoinDate(user.created_at)}</p>
-            <p className="text-[10px] uppercase tracking-wide text-zinc-400 dark:text-zinc-500">joined</p>
-          </div>
-        </div>
+        <p className="truncate text-xs text-zinc-600 dark:text-zinc-300">{user.email}</p>
+        <p className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500">
+          {noteCount} {noteCount === 1 ? "note" : "notes"} · joined {formatJoinDate(user.created_at)}
+        </p>
         <button
           onClick={handleSignOut}
           disabled={signingOut}
-          className="mt-4 w-full rounded-md border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
+          className="mt-3 text-[11px] text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
         >
           {signingOut ? "Signing out…" : "Sign out"}
         </button>
@@ -392,9 +405,18 @@ function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; o
   if (sent) {
     return (
       <div>
-        <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
-          Check your email for a sign-in link.
-        </p>
+        <div className="flex items-start justify-between">
+          <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
+            Check your email for a sign-in link.
+          </p>
+          <button
+            onClick={onClose}
+            className="ml-2 shrink-0 text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+            aria-label="Close"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M9 3L3 9M3 3l6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+          </button>
+        </div>
         <button
           onClick={() => { setSent(false); setEmail(""); }}
           className="mt-1.5 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
@@ -409,12 +431,13 @@ function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; o
     <div>
       <form onSubmit={handleSignIn}>
         <label className="mb-1.5 block text-xs text-zinc-500 dark:text-zinc-400">
-          Sign in with email
+          Sign in or create account
         </label>
         <div className="flex gap-2">
           <input
             type="email"
             required
+            autoFocus
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
@@ -428,6 +451,9 @@ function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; o
           </button>
         </div>
         {error && <p className="mt-1.5 text-xs text-red-500">{error}</p>}
+        <p className="mt-2 text-[11px] text-zinc-400 dark:text-zinc-500">
+          We&apos;ll email you a magic link to sign in.
+        </p>
       </form>
     </div>
   );
@@ -450,14 +476,17 @@ function TopBar({
   onInfoClick,
   user,
   noteCount,
+  showAuth,
+  setShowAuth,
 }: {
   dark: boolean;
   onToggle: () => void;
   onInfoClick: () => void;
   user: User | null;
   noteCount: number;
+  showAuth: boolean;
+  setShowAuth: (v: boolean) => void;
 }) {
-  const [showAuth, setShowAuth] = useState(false);
 
   return (
     <div className="fixed top-5 right-5 z-20 flex items-center gap-3 rounded-lg border border-zinc-200/40 bg-white/40 px-3 py-2 leading-none backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-950/30">
@@ -896,6 +925,8 @@ function NotesArea({
   onRemove,
   onChangeColor,
   onEdit,
+  user,
+  onSignInClick,
 }: {
   entryId: string;
   notes: StickyNote[];
@@ -903,15 +934,31 @@ function NotesArea({
   onRemove: (id: string, index: number) => void;
   onChangeColor: (id: string, index: number, color: number) => void;
   onEdit: (id: string, index: number, text: string) => void;
+  user: User | null;
+  onSignInClick: () => void;
 }) {
   const [composing, setComposing] = useState(false);
   const [draft, setDraft] = useState("");
   const [draftColor, setDraftColor] = useState(0);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
   useEffect(() => {
     if (composing) textareaRef.current?.focus();
   }, [composing]);
+
+  function tryAdd() {
+    if (!draft.trim()) return;
+    if (!user) {
+      localStorage.setItem(`sutra-pending-note-${entryId}`, JSON.stringify({ text: draft.trim(), color: draftColor }));
+      setShowSignInPrompt(true);
+      return;
+    }
+    onAdd(entryId, draft.trim(), draftColor);
+    setDraft("");
+    setDraftColor(0);
+    setComposing(false);
+    setShowSignInPrompt(false);
+  }
 
   return (
     <div className="space-y-2">
@@ -930,38 +977,42 @@ function NotesArea({
           <textarea
             ref={textareaRef}
             value={draft}
-            onChange={(e) => setDraft(e.target.value)}
+            onChange={(e) => {
+              setDraft(e.target.value);
+              if (showSignInPrompt) setShowSignInPrompt(false);
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                if (draft.trim()) {
-                  onAdd(entryId, draft.trim(), draftColor);
-                  setDraft("");
-                  setDraftColor(0);
-                  setComposing(false);
-                }
+                tryAdd();
               }
               if (e.key === "Escape") {
                 setDraft("");
                 setComposing(false);
+                setShowSignInPrompt(false);
               }
             }}
             placeholder="Write a note..."
             rows={2}
             className={`w-full resize-none rounded border px-3 py-2 text-xs leading-relaxed text-zinc-700 outline-none transition-colors dark:text-zinc-200 ${stickyColors[draftColor % stickyColors.length].bg}`}
           />
+          {showSignInPrompt && (
+            <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-400 dark:text-zinc-500">
+              <button
+                type="button"
+                onClick={onSignInClick}
+                className="underline transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
+              >
+                Sign in
+              </button>
+              {" "}to save this note.
+            </p>
+          )}
           <div className="mt-2 flex items-center gap-3">
             <ColorPicker selected={draftColor} onSelect={setDraftColor} />
             <div className="ml-auto flex items-center gap-2">
               <button
-                onClick={() => {
-                  if (draft.trim()) {
-                    onAdd(entryId, draft.trim(), draftColor);
-                    setDraft("");
-                    setDraftColor(0);
-                    setComposing(false);
-                  }
-                }}
+                onClick={tryAdd}
                 className="rounded px-2 py-0.5 text-xs font-medium text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
               >
                 Add
@@ -970,6 +1021,7 @@ function NotesArea({
                 onClick={() => {
                   setDraft("");
                   setComposing(false);
+                  setShowSignInPrompt(false);
                 }}
                 className="rounded px-2 py-0.5 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
               >
@@ -1002,6 +1054,8 @@ function WordPanel({
   onRemoveNote,
   onChangeNoteColor,
   onEditNote,
+  user,
+  onSignInClick,
 }: {
   entry: GlossaryEntry;
   panelState: "default" | "expanded";
@@ -1014,6 +1068,8 @@ function WordPanel({
   onRemoveNote: (id: string, index: number) => void;
   onChangeNoteColor: (id: string, index: number, color: number) => void;
   onEditNote: (id: string, index: number, text: string) => void;
+  user: User | null;
+  onSignInClick: () => void;
 }) {
   const expanded = panelState === "expanded";
 
@@ -1098,7 +1154,7 @@ function WordPanel({
       </div>
 
       <div className="shrink-0 border-t border-zinc-100 px-6 py-4 dark:border-zinc-800/60">
-        <NotesArea entryId={entry.id} notes={notes} onAdd={onAddNote} onRemove={onRemoveNote} onChangeColor={onChangeNoteColor} onEdit={onEditNote} />
+        <NotesArea entryId={entry.id} notes={notes} onAdd={onAddNote} onRemove={onRemoveNote} onChangeColor={onChangeNoteColor} onEdit={onEditNote} user={user} onSignInClick={onSignInClick} />
       </div>
     </div>
   );
@@ -1491,65 +1547,196 @@ type SharedEntryState = {
   user: User | null;
 };
 
-function useNotes() {
+async function upsertNotesToSupabase(userId: string, notes: Record<string, StickyNote[]>) {
+  if (!supabase) return;
+  const rows = Object.entries(notes).flatMap(([entryId, arr]) =>
+    arr.map((n) => ({
+      id: n.id,
+      user_id: userId,
+      entry_id: entryId,
+      text: n.text,
+      color: n.color,
+      updated_at: new Date().toISOString(),
+    }))
+  );
+  if (rows.length === 0) {
+    await supabase.from("notes").delete().eq("user_id", userId);
+    return;
+  }
+  await supabase.from("notes").upsert(rows, { onConflict: "user_id,id" });
+}
+
+async function fetchNotesFromSupabase(userId: string): Promise<Record<string, StickyNote[]>> {
+  if (!supabase) return {};
+  const { data, error } = await supabase
+    .from("notes")
+    .select("id, entry_id, text, color")
+    .eq("user_id", userId);
+  if (error || !data) return {};
+  const result: Record<string, StickyNote[]> = {};
+  for (const row of data) {
+    const arr = result[row.entry_id] || [];
+    arr.push({ id: row.id, text: row.text, color: row.color });
+    result[row.entry_id] = arr;
+  }
+  return result;
+}
+
+const DELETED_NOTES_KEY = "sutra-deleted-notes";
+
+function getDeletedNoteIds(): Set<string> {
+  try {
+    const raw = localStorage.getItem(DELETED_NOTES_KEY);
+    return raw ? new Set(JSON.parse(raw) as string[]) : new Set();
+  } catch { return new Set(); }
+}
+
+function trackDeletedNote(noteId: string) {
+  const ids = getDeletedNoteIds();
+  ids.add(noteId);
+  localStorage.setItem(DELETED_NOTES_KEY, JSON.stringify([...ids]));
+}
+
+function untrackDeletedNote(noteId: string) {
+  const ids = getDeletedNoteIds();
+  ids.delete(noteId);
+  if (ids.size === 0) localStorage.removeItem(DELETED_NOTES_KEY);
+  else localStorage.setItem(DELETED_NOTES_KEY, JSON.stringify([...ids]));
+}
+
+async function deleteNoteFromSupabase(userId: string, noteId: string) {
+  if (!supabase) return;
+  await supabase.from("notes").delete().eq("user_id", userId).eq("id", noteId);
+  untrackDeletedNote(noteId);
+}
+
+function useNotes(userId: string | undefined) {
+  const storageKey = userId ? `sutra-notes-${userId}` : "sutra-notes";
   const [notes, setNotes] = useState<Record<string, StickyNote[]>>({});
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("sutra-notes");
-      if (saved) {
-        const parsed = JSON.parse(saved) as Record<string, StickyNote[]>;
-        for (const key of Object.keys(parsed)) {
-          parsed[key] = parsed[key].map((n) => n.id ? n : { ...n, id: nextNoteId() });
+    let cancelled = false;
+    setInitialized(false);
+    (async () => {
+      // Load from localStorage
+      let local: Record<string, StickyNote[]> = {};
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) {
+          const parsed = JSON.parse(saved) as Record<string, StickyNote[]>;
+          for (const key of Object.keys(parsed)) {
+            parsed[key] = parsed[key].map((n) => n.id ? n : { ...n, id: nextNoteId() });
+          }
+          local = parsed;
+        } else if (userId) {
+          // Migrate anonymous notes into user-specific key
+          const legacy = localStorage.getItem("sutra-notes");
+          if (legacy) {
+            const anon = JSON.parse(legacy) as Record<string, StickyNote[]>;
+            for (const key of Object.keys(anon)) {
+              local[key] = anon[key].map((n) => n.id ? n : { ...n, id: nextNoteId() });
+            }
+            localStorage.removeItem("sutra-notes");
+          }
         }
-        setNotes(parsed);
+      } catch { /* ignore */ }
+
+      // Merge with Supabase when signed in
+      if (userId) {
+        const remote = await fetchNotesFromSupabase(userId);
+        const deletedIds = getDeletedNoteIds();
+        for (const [entryId, remoteNotes] of Object.entries(remote)) {
+          const localNotes = local[entryId] || [];
+          const localIds = new Set(localNotes.map((n) => n.id));
+          const newFromServer = remoteNotes.filter((n) => !localIds.has(n.id) && !deletedIds.has(n.id));
+          if (newFromServer.length > 0) {
+            local[entryId] = [...localNotes, ...newFromServer];
+          }
+        }
+        localStorage.setItem(storageKey, JSON.stringify(local));
+        upsertNotesToSupabase(userId, local);
       }
-    } catch { /* ignore */ }
-  }, []);
+
+      if (!cancelled) {
+        // Merge with any notes added while the fetch was in-flight
+        setNotes((prev) => {
+          const merged = { ...local };
+          for (const [entryId, arr] of Object.entries(prev)) {
+            const localIds = new Set((merged[entryId] || []).map((n) => n.id));
+            const newFromPrev = arr.filter((n) => !localIds.has(n.id));
+            if (newFromPrev.length > 0) {
+              merged[entryId] = [...(merged[entryId] || []), ...newFromPrev];
+            }
+          }
+          return merged;
+        });
+        setInitialized(true);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [storageKey, userId]);
+
+  const persist = useCallback((data: Record<string, StickyNote[]>) => {
+    localStorage.setItem(storageKey, JSON.stringify(data));
+    if (userId) upsertNotesToSupabase(userId, data);
+  }, [storageKey, userId]);
 
   const handleAddNote = useCallback((id: string, text: string, color: number) => {
+    let next: Record<string, StickyNote[]>;
     setNotes((prev) => {
-      const next = { ...prev, [id]: [...(prev[id] || []), { id: nextNoteId(), text, color }] };
-      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      next = { ...prev, [id]: [...(prev[id] || []), { id: nextNoteId(), text, color }] };
       return next;
     });
-  }, []);
+    // persist outside updater so side effects only run once
+    queueMicrotask(() => { if (next) persist(next); });
+  }, [persist]);
 
   const handleRemoveNote = useCallback((id: string, index: number) => {
+    let next: Record<string, StickyNote[]>;
+    let removed: StickyNote | undefined;
     setNotes((prev) => {
       const arr = [...(prev[id] || [])];
-      arr.splice(index, 1);
-      const next = { ...prev };
+      removed = arr.splice(index, 1)[0];
+      next = { ...prev };
       if (arr.length === 0) delete next[id];
       else next[id] = arr;
-      localStorage.setItem("sutra-notes", JSON.stringify(next));
       return next;
     });
-  }, []);
+    queueMicrotask(() => {
+      if (next) persist(next);
+      if (userId && removed) {
+        trackDeletedNote(removed.id);
+        deleteNoteFromSupabase(userId, removed.id);
+      }
+    });
+  }, [persist, userId]);
 
   const handleChangeNoteColor = useCallback((id: string, index: number, color: number) => {
+    let next: Record<string, StickyNote[]> | undefined;
     setNotes((prev) => {
       const arr = [...(prev[id] || [])];
       if (!arr[index]) return prev;
       arr[index] = { ...arr[index], color };
-      const next = { ...prev, [id]: arr };
-      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      next = { ...prev, [id]: arr };
       return next;
     });
-  }, []);
+    queueMicrotask(() => { if (next) persist(next); });
+  }, [persist]);
 
   const handleEditNote = useCallback((id: string, index: number, text: string) => {
+    let next: Record<string, StickyNote[]> | undefined;
     setNotes((prev) => {
       const arr = [...(prev[id] || [])];
       if (!arr[index]) return prev;
       arr[index] = { ...arr[index], text };
-      const next = { ...prev, [id]: arr };
-      localStorage.setItem("sutra-notes", JSON.stringify(next));
+      next = { ...prev, [id]: arr };
       return next;
     });
-  }, []);
+    queueMicrotask(() => { if (next) persist(next); });
+  }, [persist]);
 
-  return { notes, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote };
+  return { notes, initialized, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote };
 }
 
 // --- Mobile detail view ---
@@ -1566,6 +1753,8 @@ function MobileDetailView({
   onRemoveNote,
   onChangeNoteColor,
   onEditNote,
+  user,
+  onSignInClick,
 }: {
   entry: GlossaryEntry;
   openEntries: GlossaryEntry[];
@@ -1578,6 +1767,8 @@ function MobileDetailView({
   onRemoveNote: (id: string, index: number) => void;
   onChangeNoteColor: (id: string, index: number, color: number) => void;
   onEditNote: (id: string, index: number, text: string) => void;
+  user: User | null;
+  onSignInClick: () => void;
 }) {
   const tabsRef = useRef<HTMLDivElement>(null);
   const touchRef = useRef<{ x: number; y: number } | null>(null);
@@ -1719,6 +1910,8 @@ function MobileDetailView({
             onRemove={onRemoveNote}
             onChangeColor={onChangeNoteColor}
             onEdit={onEditNote}
+            user={user}
+            onSignInClick={onSignInClick}
           />
         </div>
       </div>
@@ -1737,6 +1930,8 @@ function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleR
   const inputRef = useRef<HTMLInputElement>(null);
   const { dark, toggle } = useTheme();
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+
+  const handleSignInClick = useCallback(() => setShowAuth(true), []);
 
   const results = useMemo(() => searchGlossary(query), [query]);
   const activeEntry = openEntries.find((e) => e.id === activeId) || null;
@@ -1851,6 +2046,8 @@ function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleR
           onRemoveNote={handleRemoveNote}
           onChangeNoteColor={handleChangeNoteColor}
           onEditNote={handleEditNote}
+          user={user}
+          onSignInClick={handleSignInClick}
         />
       </>
     );
@@ -2050,8 +2247,31 @@ function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleR
 export default function Home() {
   const isMobile = useIsMobile();
   const [openEntries, setOpenEntries] = useState<GlossaryEntry[]>([]);
-  const notesBundle = useNotes();
   const { user } = useAuth();
+  const notesBundle = useNotes(user?.id);
+
+  // Recover any pending notes stashed before sign-in (wait for notes to initialize first)
+  useEffect(() => {
+    if (!user || !notesBundle.initialized) return;
+    const prefix = "sutra-pending-note-";
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith(prefix)) keys.push(key);
+    }
+    for (const key of keys) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const pending = JSON.parse(raw) as { text: string; color: number };
+        const entryId = key.slice(prefix.length);
+        if (pending.text) {
+          notesBundle.handleAddNote(entryId, pending.text, pending.color);
+        }
+        localStorage.removeItem(key);
+      } catch { /* ignore */ }
+    }
+  }, [user, notesBundle.initialized, notesBundle.handleAddNote]);
 
   const shared: SharedEntryState = { openEntries, setOpenEntries, ...notesBundle, user };
 
@@ -2065,6 +2285,8 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>("core");
   const [showInfo, setShowInfo] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+  const handleSignInClick = useCallback(() => setShowAuth(true), []);
   const [panelStates, setPanelStates] = useState<Record<string, PanelState>>(
     {},
   );
@@ -2288,7 +2510,7 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
   if (!hasPanels) {
     return (
       <div className="flex flex-1 flex-col items-center justify-start bg-white font-sans dark:bg-zinc-950">
-        <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={Object.values(notes).reduce((sum, arr) => sum + arr.length, 0)} />
+        <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={Object.values(notes).reduce((sum, arr) => sum + arr.length, 0)} showAuth={showAuth} setShowAuth={setShowAuth} />
         {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
         <main className="flex w-full max-w-2xl flex-col items-center px-6 pt-32 pb-16">
           <div className="mb-10 flex flex-col items-center">
@@ -2378,7 +2600,7 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
   // Panel state — search sidebar + horizontal panels
   return (
     <div className="relative flex h-full min-h-0 flex-1 overflow-hidden bg-white font-sans dark:bg-zinc-950">
-      <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={Object.values(notes).reduce((sum, arr) => sum + arr.length, 0)} />
+      <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={Object.values(notes).reduce((sum, arr) => sum + arr.length, 0)} showAuth={showAuth} setShowAuth={setShowAuth} />
       {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
 
       {/* Sidebar overlays the panel area for glass effect */}
@@ -2456,6 +2678,8 @@ function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handle
                   onRemoveNote={handleRemoveNote}
                   onChangeNoteColor={handleChangeNoteColor}
                   onEditNote={handleEditNote}
+                  user={user}
+                  onSignInClick={handleSignInClick}
                 />
               )}
             </div>

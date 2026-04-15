@@ -16,6 +16,7 @@ Sutra is a Sanskrit lookup tool for Vedanta study.
 
 It helps users quickly:
 - search Sanskrit terms
+- discover relations between terms
 - understand their meaning in context
 - return to study without distraction
 
@@ -48,19 +49,17 @@ Avoid:
 
 ---
 
-## Functional Scope (V1)
+## Functional Scope
 
-Build only:
+Core:
 
 1. Search input
 2. Search results list
 3. Word detail view
-
-Optional (if simple):
-- Save word locally (no auth required)
+4. Personal notes on entries (per-user, via Supabase auth)
+5. Magic link sign-in (via Supabase)
 
 Do NOT build:
-- accounts
 - social features
 - AI-generated content
 - complex filtering systems
