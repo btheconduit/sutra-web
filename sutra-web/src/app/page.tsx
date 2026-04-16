@@ -248,6 +248,8 @@ function formatJoinDate(iso: string) {
 function AuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose: () => void; noteCount: number }) {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
   const [signingOut, setSigningOut] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -270,13 +272,24 @@ function AuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose
     }
     const { error: err } = await supabase.auth.signInWithOtp({
       email,
-      options: {
-        shouldCreateUser: true,
-        emailRedirectTo: window.location.origin,
-      },
+      options: { shouldCreateUser: true, emailRedirectTo: window.location.origin },
     });
     if (err) setError(err.message);
     else setSent(true);
+  }
+
+  async function handleVerifyOtp(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (!supabase) return;
+    setVerifying(true);
+    const { error: err } = await supabase.auth.verifyOtp({
+      email,
+      token: otp.trim(),
+      type: "email",
+    });
+    setVerifying(false);
+    if (err) setError(err.message);
   }
 
   async function handleSignOut() {
@@ -308,7 +321,7 @@ function AuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose
       <div ref={ref} className="absolute top-full right-0 mt-2 w-64 rounded-lg border border-zinc-200/60 bg-white/90 p-4 shadow-lg backdrop-blur-xl dark:border-zinc-700/40 dark:bg-zinc-900/90">
         <div className="flex items-start justify-between">
           <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
-            Check your email for a sign-in link.
+            Check your email for a sign-in link, or enter the code below.
           </p>
           <button
             onClick={onClose}
@@ -318,8 +331,30 @@ function AuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M9 3L3 9M3 3l6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
           </button>
         </div>
+        <form onSubmit={handleVerifyOtp} className="mt-3">
+          <input
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={8}
+            required
+            autoFocus
+            value={otp}
+            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+            placeholder="00000000"
+            className="w-full rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-center text-sm tracking-widest text-zinc-800 outline-none transition-colors placeholder:text-zinc-300 focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
+          />
+          {error && <p className="mt-1.5 text-xs text-red-500">{error}</p>}
+          <button
+            type="submit"
+            disabled={otp.length < 6 || otp.length > 8 || verifying}
+            className="mt-2 w-full rounded-md bg-zinc-800 px-3 py-1.5 text-xs text-white transition-colors hover:bg-zinc-700 disabled:opacity-40 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          >
+            {verifying ? "Verifying…" : "Verify code"}
+          </button>
+        </form>
         <button
-          onClick={() => { setSent(false); setEmail(""); }}
+          onClick={() => { setSent(false); setEmail(""); setOtp(""); setError(""); }}
           className="mt-2 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
         >
           Try a different email
@@ -361,6 +396,8 @@ function AuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose
 function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose: () => void; noteCount: number }) {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
   const [signingOut, setSigningOut] = useState(false);
 
@@ -373,13 +410,24 @@ function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; o
     }
     const { error: err } = await supabase.auth.signInWithOtp({
       email,
-      options: {
-        shouldCreateUser: true,
-        emailRedirectTo: window.location.origin,
-      },
+      options: { shouldCreateUser: true, emailRedirectTo: window.location.origin },
     });
     if (err) setError(err.message);
     else setSent(true);
+  }
+
+  async function handleVerifyOtp(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (!supabase) return;
+    setVerifying(true);
+    const { error: err } = await supabase.auth.verifyOtp({
+      email,
+      token: otp.trim(),
+      type: "email",
+    });
+    setVerifying(false);
+    if (err) setError(err.message);
   }
 
   async function handleSignOut() {
@@ -410,10 +458,32 @@ function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; o
     return (
       <div>
         <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
-          Check your email for a sign-in link.
+          Check your email for a sign-in link, or enter the code below.
         </p>
+        <form onSubmit={handleVerifyOtp} className="mt-4">
+          <input
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={8}
+            required
+            autoFocus
+            value={otp}
+            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+            placeholder="00000000"
+            className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 text-center text-base tracking-widest text-zinc-800 outline-none transition-colors placeholder:text-zinc-300 focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
+          />
+          {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
+          <button
+            type="submit"
+            disabled={otp.length < 6 || otp.length > 8 || verifying}
+            className="mt-3 w-full rounded-lg bg-zinc-800 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-40 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          >
+            {verifying ? "Verifying…" : "Verify code"}
+          </button>
+        </form>
         <button
-          onClick={() => { setSent(false); setEmail(""); }}
+          onClick={() => { setSent(false); setEmail(""); setOtp(""); setError(""); }}
           className="mt-3 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
         >
           Try a different email
