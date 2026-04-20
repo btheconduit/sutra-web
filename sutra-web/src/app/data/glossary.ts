@@ -4882,7 +4882,7 @@ export const glossary: GlossaryEntry[] = [
     term: "dātṛ",
     transliteration: "dātṛ",
     definition:
-      "Giving. Nom. sing. dātā Giver; donor.",
+      "Giving; giver; donor.",
   },
   {
     id: "daya",
@@ -5136,7 +5136,7 @@ export const glossary: GlossaryEntry[] = [
     term: "dik",
     transliteration: "dik",
     definition:
-      "Nom. sing. of diś. Deity of the ear – hearing.",
+      "Deity of the ear — hearing.",
     relatedTerms: ["diś"],
   },
   {
@@ -5447,7 +5447,7 @@ export const glossary: GlossaryEntry[] = [
     term: "dyo",
     transliteration: "dyo",
     definition:
-      "Nom. sing. The sky; heaven; brightness.",
+      "The sky; heaven; brightness.",
   },
   {
     id: "dyotana",
@@ -6886,7 +6886,7 @@ export const glossary: GlossaryEntry[] = [
     term: "karma",
     transliteration: "karma",
     definition:
-      "Nom. sing. karma. Action from free will; certain consequences of action; duty.",
+      "Action from free will; certain consequences of action; duty.",
     vedantaMeaning:
       "Action and its results. Every deliberate action produces a result (phala) governed by the law of dharma. Accumulated karma — puṇya (merit) and pāpa (demerit) — drives the cycle of saṃsāra. Vedānta teaches that no amount of karma can produce mokṣa, because action produces only finite results. Knowledge alone reveals that ātmā is ever-free and was never a doer (akartā).",
     relatedTerms: ["dharmaḥ", "saṃsāra", "mokṣa", "yogaḥ"],
@@ -10363,7 +10363,7 @@ export const glossary: GlossaryEntry[] = [
     term: "prāṇin",
     transliteration: "prāṇin",
     definition:
-      "Nom. sing. prāṇī Man; a living creature, having prāṇaḥ.",
+      "A living creature; one who has prāṇaḥ.",
     relatedTerms: ["prāṇaḥ"],
   },
   {
