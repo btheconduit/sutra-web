@@ -7,7 +7,7 @@ import { toDevanagari } from "../data/devanagari";
 import { categories } from "../data/categories";
 import type { StickyNote, SharedEntryState } from "../types";
 import { searchGlossary } from "../lib/search";
-import { findByTerm } from "../lib/search";
+import { findByTerm, getRelatedTerms } from "../lib/search";
 import { useTheme } from "../hooks";
 import { IconInfo, IconUser, Wordmark } from "./Icons";
 import { NotesArea } from "./Notes";
@@ -141,34 +141,37 @@ function MobileDetailView({
           {entry.vedantaMeaning && (
             <Section label="Vedantic meaning" tooltip="Meaning as understood within the living tradition of Advaita Vedanta, rooted in the teachings of the ancient rishis and the works of Ādi Śaṅkarācārya.">{entry.vedantaMeaning}</Section>
           )}
-          {entry.relatedTerms && entry.relatedTerms.length > 0 && (
-            <div>
-              <div className="mb-1.5 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
-                Related terms
-              </div>
-              <div className="flex flex-wrap gap-x-3 gap-y-2 text-base leading-relaxed">
-                {entry.relatedTerms.map((term) => {
-                  const linked = findByTerm(term);
-                  if (linked) {
+          {(() => {
+            const allRelated = getRelatedTerms(entry);
+            return allRelated.length > 0 ? (
+              <div>
+                <div className="mb-1.5 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
+                  Related terms
+                </div>
+                <div className="flex flex-wrap gap-x-3 gap-y-2 text-base leading-relaxed">
+                  {allRelated.map((term) => {
+                    const linked = findByTerm(term);
+                    if (linked) {
+                      return (
+                        <button
+                          key={term}
+                          onClick={() => onSelectTerm(linked)}
+                          className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-900 dark:text-zinc-300 dark:decoration-zinc-600 dark:hover:text-zinc-100"
+                        >
+                          {term}
+                        </button>
+                      );
+                    }
                     return (
-                      <button
-                        key={term}
-                        onClick={() => onSelectTerm(linked)}
-                        className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-900 dark:text-zinc-300 dark:decoration-zinc-600 dark:hover:text-zinc-100"
-                      >
+                      <span key={term} className="text-zinc-400 dark:text-zinc-500">
                         {term}
-                      </button>
+                      </span>
                     );
-                  }
-                  return (
-                    <span key={term} className="text-zinc-400 dark:text-zinc-500">
-                      {term}
-                    </span>
-                  );
-                })}
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            ) : null;
+          })()}
           <MwSection entryId={entry.id} />
         </div>
 

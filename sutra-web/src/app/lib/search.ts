@@ -1,4 +1,5 @@
-import { glossary, type GlossaryEntry } from "../data/glossary";
+import { glossary, glossaryById, type GlossaryEntry } from "../data/glossary";
+import cooccurrence from "../data/sources/cooccurrence.json";
 
 export function normalize(s: string): string {
   return (
@@ -35,6 +36,60 @@ export function findByTerm(term: string): GlossaryEntry | undefined {
       normalize(e.term) === n ||
       (e.aliases?.some((a) => normalize(a) === n) ?? false),
   );
+}
+
+// Build a normalized-term → entry lookup for fast matching
+const normalizedTermMap = new Map<string, GlossaryEntry>();
+for (const entry of glossary) {
+  const n = normalize(entry.term);
+  if (n.length >= 3 && !normalizedTermMap.has(n)) normalizedTermMap.set(n, entry);
+  if (entry.aliases) {
+    for (const alias of entry.aliases) {
+      const na = normalize(alias);
+      if (na.length >= 3 && !normalizedTermMap.has(na)) normalizedTermMap.set(na, entry);
+    }
+  }
+}
+
+/** Merge manually curated relatedTerms with terms found in definition/vedantaMeaning text */
+export function getRelatedTerms(entry: GlossaryEntry): string[] {
+  const manual = entry.relatedTerms ?? [];
+  const seen = new Set(manual.map(normalize));
+  seen.add(normalize(entry.term));
+
+  const textToScan = [entry.vedantaMeaning, entry.definition]
+    .filter(Boolean)
+    .join(" ");
+
+  const words = textToScan
+    .replace(/[—–\-().,;:!?'"]/g, " ")
+    .split(/\s+/)
+    .filter(Boolean);
+
+  const discovered: string[] = [];
+
+  for (const word of words) {
+    const n = normalize(word);
+    if (n.length < 3 || seen.has(n)) continue;
+    const match = normalizedTermMap.get(n);
+    if (match && match.id !== entry.id) {
+      discovered.push(match.term);
+      seen.add(n);
+    }
+  }
+
+  // Third tier: co-occurrence from source texts
+  const coTerms = (cooccurrence as Record<string, string[]>)[entry.id] ?? [];
+  for (const coId of coTerms) {
+    const coEntry = glossaryById.get(coId);
+    if (!coEntry) continue;
+    const n = normalize(coEntry.term);
+    if (seen.has(n)) continue;
+    discovered.push(coEntry.term);
+    seen.add(n);
+  }
+
+  return [...manual, ...discovered];
 }
 
 export function searchGlossary(query: string): GlossaryEntry[] {
