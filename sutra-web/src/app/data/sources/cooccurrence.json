@@ -1,0 +1,1371 @@
+{
+  "bhadra": [
+    "mita"
+  ],
+  "brahma": [
+    "brahman",
+    "para",
+    "rnam",
+    "krta",
+    "anya",
+    "sara",
+    "siva",
+    "arsa"
+  ],
+  "sara": [
+    "para",
+    "brahman",
+    "tika",
+    "antar",
+    "aksara",
+    "brahma",
+    "siva",
+    "rnam"
+  ],
+  "mita": [
+    "dina",
+    "bhadra",
+    "brahman",
+    "sesa",
+    "matr",
+    "amita"
+  ],
+  "siva": [
+    "chalam",
+    "cala",
+    "brahma",
+    "sara",
+    "alam",
+    "rnam",
+    "brahman",
+    "arsa"
+  ],
+  "brahman": [
+    "brahma",
+    "para",
+    "sara",
+    "bala",
+    "rnam",
+    "arsa",
+    "anya",
+    "mita"
+  ],
+  "chalam": [
+    "cala",
+    "alam",
+    "siva",
+    "brahma"
+  ],
+  "alam": [
+    "chalam",
+    "cala",
+    "siva",
+    "agra",
+    "lamba",
+    "brahma",
+    "arsa",
+    "bala"
+  ],
+  "cala": [
+    "chalam",
+    "alam",
+    "siva",
+    "brahma",
+    "rnam",
+    "acala",
+    "alata"
+  ],
+  "alpa": [
+    "maya",
+    "stha"
+  ],
+  "para": [
+    "sara",
+    "brahman",
+    "param",
+    "brahma",
+    "dina",
+    "atha",
+    "nana",
+    "arsa"
+  ],
+  "apata": [
+    "sara",
+    "jara"
+  ],
+  "maya": [
+    "angi",
+    "sita",
+    "alpa",
+    "sara",
+    "dina",
+    "kara",
+    "preta",
+    "anya"
+  ],
+  "priya": [
+    "sara",
+    "bahu",
+    "stha"
+  ],
+  "amara": [
+    "stha",
+    "sara",
+    "sesa",
+    "arsa"
+  ],
+  "sesa": [
+    "sara",
+    "amara",
+    "nana",
+    "mita",
+    "rnam",
+    "visvam",
+    "brahman",
+    "bahu"
+  ],
+  "nana": [
+    "ajna",
+    "tika",
+    "para",
+    "hotr",
+    "agnih",
+    "nama",
+    "sara",
+    "sesa"
+  ],
+  "bala": [
+    "rnam",
+    "gami",
+    "brahman",
+    "lina",
+    "bahu",
+    "sala",
+    "brahma",
+    "virat"
+  ],
+  "mala": [
+    "nana",
+    "tattvamasi",
+    "tattvam"
+  ],
+  "rnam": [
+    "purna",
+    "brahma",
+    "sara",
+    "bala",
+    "brahman",
+    "siva",
+    "para",
+    "sesa"
+  ],
+  "aditi": [
+    "para",
+    "milita"
+  ],
+  "visvam": [
+    "svami",
+    "sesa",
+    "idam"
+  ],
+  "svami": [
+    "visvam"
+  ],
+  "arsa": [
+    "para",
+    "brahman",
+    "brahma",
+    "sara",
+    "amara",
+    "nana",
+    "bala",
+    "rnam"
+  ],
+  "gami": [
+    "bala",
+    "rnam"
+  ],
+  "krsna": [
+    "arsa"
+  ],
+  "svaha": [
+    "rnam"
+  ],
+  "angi": [
+    "maya",
+    "stha",
+    "bala",
+    "dina",
+    "nistha"
+  ],
+  "lina": [
+    "bala",
+    "vili",
+    "brahma",
+    "vilina"
+  ],
+  "bahu": [
+    "bahuvrihi",
+    "bala",
+    "dina",
+    "santa",
+    "bahudha",
+    "sara",
+    "priya",
+    "sesa"
+  ],
+  "stha": [
+    "nistha",
+    "sara",
+    "amara",
+    "angi",
+    "karma",
+    "nama",
+    "alpa",
+    "priya"
+  ],
+  "ajna": [
+    "nana",
+    "manah",
+    "para",
+    "sara",
+    "bala",
+    "arsa",
+    "bahu",
+    "stha"
+  ],
+  "milita": [
+    "aditi",
+    "matr",
+    "param"
+  ],
+  "matr": [
+    "matra",
+    "yatra",
+    "sala",
+    "mita",
+    "ajna",
+    "milita",
+    "antara",
+    "antar"
+  ],
+  "param": [
+    "para",
+    "sara",
+    "nana",
+    "milita",
+    "agra",
+    "anatma"
+  ],
+  "sala": [
+    "bala",
+    "matr",
+    "sara",
+    "sesa",
+    "brahman",
+    "prati",
+    "matra",
+    "arha"
+  ],
+  "dina": [
+    "para",
+    "prak",
+    "sara",
+    "mita",
+    "bahu",
+    "maya",
+    "nana",
+    "arsa"
+  ],
+  "vili": [
+    "lina",
+    "vilina"
+  ],
+  "agra": [
+    "jagrat",
+    "alam",
+    "brahma",
+    "param",
+    "matr",
+    "avastha"
+  ],
+  "arta": [
+    "svar",
+    "svarita",
+    "karta",
+    "atas",
+    "atma",
+    "rnam",
+    "bahu",
+    "bahuvrihi"
+  ],
+  "tata": [
+    "karma"
+  ],
+  "moksa": [
+    "andha",
+    "atha",
+    "ajna"
+  ],
+  "krta": [
+    "brahma",
+    "tika",
+    "para",
+    "adya"
+  ],
+  "anadi": [
+    "nadi",
+    "arsa",
+    "vasana"
+  ],
+  "nadi": [
+    "anadi"
+  ],
+  "virat": [
+    "bala",
+    "anya"
+  ],
+  "adhikari": [
+    "adhika",
+    "kara"
+  ],
+  "adhika": [
+    "adhikari",
+    "kara",
+    "tamas",
+    "bala"
+  ],
+  "kara": [
+    "tika",
+    "karanam",
+    "adhikari",
+    "adhika",
+    "preta",
+    "nitya",
+    "para",
+    "andha"
+  ],
+  "preta": [
+    "kara",
+    "asat",
+    "tika",
+    "prati",
+    "nitya",
+    "upapad",
+    "anudatta",
+    "nama"
+  ],
+  "asat": [
+    "preta",
+    "bhasa",
+    "kara",
+    "karma",
+    "atas",
+    "atha",
+    "akhya"
+  ],
+  "tika": [
+    "kara",
+    "nama",
+    "sara",
+    "nana",
+    "preta",
+    "para",
+    "namas",
+    "antika"
+  ],
+  "antaranga": [
+    "antara",
+    "antar",
+    "sara"
+  ],
+  "antara": [
+    "antar",
+    "antaranga",
+    "sara",
+    "nitya",
+    "ananta",
+    "kara",
+    "prati",
+    "matr"
+  ],
+  "antar": [
+    "antara",
+    "antaranga",
+    "sara",
+    "nitya",
+    "kara",
+    "tika",
+    "prati",
+    "matr"
+  ],
+  "prati": [
+    "nama",
+    "gata",
+    "prak",
+    "preta",
+    "tika",
+    "antara",
+    "antar",
+    "matr"
+  ],
+  "matra": [
+    "matr",
+    "yatra",
+    "sala"
+  ],
+  "nitya": [
+    "anitya",
+    "kara",
+    "antara",
+    "antar",
+    "nama",
+    "preta",
+    "svar",
+    "vanam"
+  ],
+  "upapad": [
+    "preta"
+  ],
+  "anitya": [
+    "nitya",
+    "kara",
+    "antara",
+    "antar",
+    "manja",
+    "stha",
+    "jnapaka",
+    "vastu"
+  ],
+  "jara": [
+    "apata",
+    "lila",
+    "bahu"
+  ],
+  "lila": [
+    "jara"
+  ],
+  "samah": [
+    "samahita",
+    "dirgha"
+  ],
+  "avyaya": [
+    "sukham"
+  ],
+  "gita": [
+    "tika"
+  ],
+  "manja": [
+    "padam",
+    "tika",
+    "anitya",
+    "avasthita"
+  ],
+  "padam": [
+    "manja",
+    "tika",
+    "prati",
+    "avasthita"
+  ],
+  "dirgha": [
+    "samah"
+  ],
+  "arha": [
+    "sala"
+  ],
+  "bhaj": [
+    "nirvikalpe"
+  ],
+  "vibhasa": [
+    "bhasa",
+    "avasthita",
+    "aprapta",
+    "hita"
+  ],
+  "bhasa": [
+    "vibhasa",
+    "abhasa",
+    "avasthita",
+    "asat",
+    "kara",
+    "aprapta",
+    "hita",
+    "tatha"
+  ],
+  "kriya": [
+    "yadi"
+  ],
+  "aprapta": [
+    "vibhasa",
+    "bhasa"
+  ],
+  "nistha": [
+    "stha",
+    "anistha",
+    "angi",
+    "arsa"
+  ],
+  "anudatta": [
+    "preta",
+    "svar",
+    "svarita",
+    "arta"
+  ],
+  "atha": [
+    "para",
+    "nama",
+    "brahma",
+    "karma",
+    "moksa",
+    "andha",
+    "asat",
+    "dina"
+  ],
+  "alata": [
+    "cala"
+  ],
+  "avasthita": [
+    "vibhasa",
+    "bhasa",
+    "hita",
+    "manja",
+    "padam"
+  ],
+  "yusmad": [
+    "asmad"
+  ],
+  "asmad": [
+    "yusmad",
+    "atharvan",
+    "prati",
+    "andha"
+  ],
+  "anya": [
+    "brahma",
+    "karma",
+    "hita",
+    "brahman",
+    "sita",
+    "vastu",
+    "virat",
+    "atha"
+  ],
+  "gata": [
+    "prati",
+    "nama",
+    "andha",
+    "ratih",
+    "stha",
+    "karma",
+    "namas",
+    "prak"
+  ],
+  "saman": [
+    "samana",
+    "vikr"
+  ],
+  "atharvan": [
+    "asmad"
+  ],
+  "ratih": [
+    "gata"
+  ],
+  "vastu": [
+    "anya",
+    "brahma",
+    "anitya",
+    "nitya"
+  ],
+  "daya": [
+    "ayah",
+    "brahma"
+  ],
+  "kala": [
+    "sakala",
+    "manas",
+    "tika",
+    "arta",
+    "alam"
+  ],
+  "sakala": [
+    "kala",
+    "manas",
+    "tattvamasi"
+  ],
+  "ayah": [
+    "daya",
+    "sara",
+    "sthula"
+  ],
+  "taddhita": [
+    "hita"
+  ],
+  "uttara": [
+    "kara"
+  ],
+  "vina": [
+    "sastr",
+    "atma"
+  ],
+  "daksina": [
+    "ksina"
+  ],
+  "ksina": [
+    "daksina"
+  ],
+  "atma": [
+    "andha",
+    "arta",
+    "brahma",
+    "sita",
+    "karma",
+    "tyat",
+    "ajna",
+    "para"
+  ],
+  "upadesa": [
+    "para"
+  ],
+  "sita": [
+    "maya",
+    "aksita",
+    "anya",
+    "atma",
+    "andha",
+    "asita",
+    "stha",
+    "brahman"
+  ],
+  "andha": [
+    "kara",
+    "atma",
+    "karma",
+    "gata",
+    "moksa",
+    "sita",
+    "atha",
+    "asmad"
+  ],
+  "asita": [
+    "sita",
+    "upasita"
+  ],
+  "ksam": [
+    "ksama"
+  ],
+  "svar": [
+    "svarita",
+    "arta",
+    "kara",
+    "rupam",
+    "bahu",
+    "anudatta",
+    "nitya",
+    "nama"
+  ],
+  "bahuvrihi": [
+    "bahu",
+    "santa",
+    "arta"
+  ],
+  "svarita": [
+    "svar",
+    "arta",
+    "anudatta"
+  ],
+  "vanam": [
+    "sarvanama",
+    "nama",
+    "namas",
+    "nitya"
+  ],
+  "sarvanama": [
+    "vanam",
+    "nama",
+    "namas",
+    "nitya",
+    "karma"
+  ],
+  "nama": [
+    "namas",
+    "tika",
+    "vanam",
+    "sarvanama",
+    "karma",
+    "nitya",
+    "stha",
+    "prati"
+  ],
+  "santa": [
+    "bahu",
+    "bahuvrihi",
+    "prasanta",
+    "hita"
+  ],
+  "jnapaka": [
+    "sara",
+    "anitya"
+  ],
+  "yadi": [
+    "kriya"
+  ],
+  "laksana": [
+    "tika",
+    "vilaksanam"
+  ],
+  "karma": [
+    "adhara",
+    "nama",
+    "anya",
+    "stha",
+    "andha",
+    "hita",
+    "atha",
+    "brahma"
+  ],
+  "namas": [
+    "nama",
+    "sarvanama",
+    "vanam",
+    "prak",
+    "tika",
+    "karma",
+    "gata",
+    "rnam"
+  ],
+  "atas": [
+    "arta",
+    "karma",
+    "asat",
+    "svar",
+    "arsa"
+  ],
+  "vasana": [
+    "anadi"
+  ],
+  "ananta": [
+    "antara",
+    "nitya",
+    "anantara"
+  ],
+  "adhara": [
+    "karma",
+    "hita"
+  ],
+  "antya": [
+    "tyat"
+  ],
+  "tyat": [
+    "atma",
+    "antya"
+  ],
+  "upama": [
+    "niskala"
+  ],
+  "nivrt": [
+    "vrttih",
+    "nivrttih"
+  ],
+  "ubhaya": [
+    "yatra"
+  ],
+  "yatra": [
+    "matra",
+    "matr",
+    "ubhaya"
+  ],
+  "hita": [
+    "anya",
+    "karma",
+    "avasthita",
+    "adhara",
+    "vibhasa",
+    "bhasa",
+    "taddhita",
+    "tika"
+  ],
+  "asis": [
+    "preta"
+  ],
+  "mahat": [
+    "avyakta",
+    "vyakta"
+  ],
+  "samana": [
+    "saman",
+    "vikr"
+  ],
+  "akhya": [
+    "asat"
+  ],
+  "manas": [
+    "kala",
+    "para",
+    "brahman",
+    "brahma",
+    "sala",
+    "sakala",
+    "ajna",
+    "citta"
+  ],
+  "prak": [
+    "dina",
+    "prakasa",
+    "nama",
+    "namas",
+    "prati",
+    "samhita",
+    "brahman",
+    "sesa"
+  ],
+  "samhita": [
+    "prak"
+  ],
+  "idam": [
+    "visvam",
+    "manah",
+    "sthula"
+  ],
+  "apeksa": [
+    "apeks"
+  ],
+  "apeks": [
+    "apeksa"
+  ],
+  "upanisad": [
+    "anisa",
+    "brahman",
+    "brahma"
+  ],
+  "anisa": [
+    "upanisad",
+    "brahman",
+    "brahma"
+  ],
+  "nasah": [
+    "manasa"
+  ],
+  "aksita": [
+    "sita",
+    "laksita"
+  ],
+  "sastr": [
+    "vina"
+  ],
+  "adya": [
+    "nama",
+    "atha",
+    "krta",
+    "atma",
+    "sara"
+  ],
+  "atita": [
+    "matram"
+  ],
+  "hotr": [
+    "agnih",
+    "nana",
+    "tika"
+  ],
+  "agnih": [
+    "hotr",
+    "nana",
+    "tika"
+  ],
+  "madhya": [
+    "dina",
+    "akam"
+  ],
+  "rajas": [
+    "tamas",
+    "bala"
+  ],
+  "anyatha": [
+    "atha"
+  ],
+  "avidya": [
+    "vidya",
+    "karya",
+    "andha",
+    "akam"
+  ],
+  "vidya": [
+    "avidya",
+    "andha"
+  ],
+  "purna": [
+    "rnam"
+  ],
+  "jaimini": [
+    "tika",
+    "bala"
+  ],
+  "pariks": [
+    "sara"
+  ],
+  "aksara": [
+    "sara"
+  ],
+  "tatha": [
+    "atha",
+    "abhasa",
+    "bhasa"
+  ],
+  "tamas": [
+    "rajas",
+    "bala",
+    "bahu",
+    "adhika",
+    "mudha"
+  ],
+  "avyakta": [
+    "vyakta",
+    "mahat"
+  ],
+  "vyakta": [
+    "avyakta",
+    "mahat"
+  ],
+  "drsta": [
+    "adrsta",
+    "anya"
+  ],
+  "akam": [
+    "bala",
+    "madhya",
+    "sala",
+    "nama",
+    "avidya"
+  ],
+  "hina": [
+    "vihina"
+  ],
+  "adrsta": [
+    "drsta"
+  ],
+  "sabda": [
+    "alam",
+    "tattvam"
+  ],
+  "bhuta": [
+    "abhuta",
+    "arsa",
+    "bhinna"
+  ],
+  "antika": [
+    "tika"
+  ],
+  "citta": [
+    "cittam",
+    "manas"
+  ],
+  "sunya": [
+    "sesa"
+  ],
+  "annam": [
+    "nama"
+  ],
+  "janma": [
+    "atma"
+  ],
+  "bhavat": [
+    "viveka",
+    "tika",
+    "dhih"
+  ],
+  "manah": [
+    "ajna",
+    "idam",
+    "kara",
+    "karanam"
+  ],
+  "vijnanam": [
+    "jnanam",
+    "anamaya"
+  ],
+  "anamaya": [
+    "vijnanam",
+    "jnanam",
+    "nama"
+  ],
+  "jnanam": [
+    "vijnanam",
+    "anamaya",
+    "nana"
+  ],
+  "niruddha": [
+    "arsa"
+  ],
+  "upasita": [
+    "asita"
+  ],
+  "lamba": [
+    "alam"
+  ],
+  "rupam": [
+    "svar",
+    "svarupam"
+  ],
+  "agocara": [
+    "gocara"
+  ],
+  "gocara": [
+    "agocara"
+  ],
+  "upadeya": [
+    "deyam",
+    "heya"
+  ],
+  "deyam": [
+    "upadeya",
+    "heya"
+  ],
+  "heya": [
+    "upadeya",
+    "deyam"
+  ],
+  "tattvamasi": [
+    "tattvam",
+    "mala",
+    "sakala"
+  ],
+  "srutih": [
+    "supta"
+  ],
+  "prarabdham": [
+    "arabdha"
+  ],
+  "svarupam": [
+    "rupam",
+    "svar"
+  ],
+  "suddha": [
+    "visuddha"
+  ],
+  "karya": [
+    "akarya",
+    "maya",
+    "avidya"
+  ],
+  "viveka": [
+    "vivekah",
+    "bhavat"
+  ],
+  "akarya": [
+    "karya",
+    "tattvam"
+  ],
+  "advaya": [
+    "dvayam"
+  ],
+  "avastha": [
+    "saksi",
+    "svayam",
+    "agra"
+  ],
+  "saksi": [
+    "avastha",
+    "pratyagatma"
+  ],
+  "abhinna": [
+    "bhinna"
+  ],
+  "bhinna": [
+    "abhinna",
+    "bhuta"
+  ],
+  "visuddha": [
+    "suddha"
+  ],
+  "matram": [
+    "atita"
+  ],
+  "sthula": [
+    "ayah",
+    "suksma",
+    "idam"
+  ],
+  "manasa": [
+    "manas",
+    "nasah"
+  ],
+  "vikr": [
+    "saman",
+    "samana"
+  ],
+  "durlabha": [
+    "atma"
+  ],
+  "anatma": [
+    "param"
+  ],
+  "vivekah": [
+    "viveka"
+  ],
+  "sukham": [
+    "avyaya"
+  ],
+  "mudha": [
+    "tamas"
+  ],
+  "dhih": [
+    "buddhih",
+    "bhavat"
+  ],
+  "hanam": [
+    "dhanam"
+  ],
+  "vittam": [
+    "vitta"
+  ],
+  "vitta": [
+    "vittam"
+  ],
+  "svayam": [
+    "avastha"
+  ],
+  "svabhavah": [
+    "abhavah",
+    "bhavah"
+  ],
+  "abhavah": [
+    "bhavah",
+    "svabhavah"
+  ],
+  "bhavah": [
+    "abhavah",
+    "svabhavah"
+  ],
+  "arabdha": [
+    "prarabdham"
+  ],
+  "tattvam": [
+    "tattvamasi",
+    "akarya",
+    "mala",
+    "sabda"
+  ],
+  "karta": [
+    "arta",
+    "bhokta"
+  ],
+  "vairagyam": [
+    "ajna"
+  ],
+  "dhanam": [
+    "hanam",
+    "anusandhanam",
+    "sandhanam"
+  ],
+  "samahita": [
+    "samah"
+  ],
+  "amita": [
+    "mita"
+  ],
+  "anistha": [
+    "nistha"
+  ],
+  "asakta": [
+    "sakta"
+  ],
+  "sakta": [
+    "asakta"
+  ],
+  "bahudha": [
+    "bahu"
+  ],
+  "advitiya": [
+    "dvitiya"
+  ],
+  "dvitiya": [
+    "advitiya"
+  ],
+  "avrttih": [
+    "vrttih"
+  ],
+  "vilina": [
+    "vili",
+    "lina"
+  ],
+  "anusandhanam": [
+    "dhanam",
+    "sandhanam"
+  ],
+  "sandhanam": [
+    "dhanam",
+    "anusandhanam"
+  ],
+  "advaita": [
+    "dvaitam",
+    "devah"
+  ],
+  "dvaitam": [
+    "advaita",
+    "devah"
+  ],
+  "prasanta": [
+    "santa"
+  ],
+  "jagrat": [
+    "agra",
+    "supta"
+  ],
+  "dvayam": [
+    "advaya"
+  ],
+  "karanam": [
+    "kara",
+    "manah"
+  ],
+  "vihina": [
+    "hina"
+  ],
+  "laksita": [
+    "aksita",
+    "sita"
+  ],
+  "suksma": [
+    "sthula"
+  ],
+  "abhuta": [
+    "bhuta",
+    "bhutam"
+  ],
+  "prakasa": [
+    "prak"
+  ],
+  "ranjana": [
+    "niranjana"
+  ],
+  "sphutam": [
+    "sphuta"
+  ],
+  "sphuta": [
+    "sphutam"
+  ],
+  "anantara": [
+    "ananta",
+    "antara"
+  ],
+  "antah": [
+    "antahkaranam"
+  ],
+  "bhokta": [
+    "karta"
+  ],
+  "abhasa": [
+    "bhasa",
+    "tatha",
+    "avabha"
+  ],
+  "karah": [
+    "vikarah"
+  ],
+  "vikalpah": [
+    "kalpah"
+  ],
+  "kalpah": [
+    "vikalpah"
+  ],
+  "buddhih": [
+    "dhih"
+  ],
+  "asaktih": [
+    "saktih"
+  ],
+  "saktih": [
+    "asaktih"
+  ],
+  "vilaksanam": [
+    "laksana"
+  ],
+  "bhutam": [
+    "abhuta"
+  ],
+  "nirvikalpe": [
+    "bhaj"
+  ],
+  "anubhutih": [
+    "bhutih"
+  ],
+  "bhutih": [
+    "anubhutih"
+  ],
+  "supta": [
+    "srutih",
+    "jagrat"
+  ],
+  "drsya": [
+    "drsyam"
+  ],
+  "drsyam": [
+    "drsya"
+  ],
+  "ksama": [
+    "ksam"
+  ],
+  "avabha": [
+    "abhasa"
+  ],
+  "antahkaranam": [
+    "antah"
+  ],
+  "cittam": [
+    "citta"
+  ],
+  "niranjana": [
+    "ranjana"
+  ],
+  "sraddha": [
+    "raddha"
+  ],
+  "raddha": [
+    "sraddha"
+  ],
+  "muktih": [
+    "uktih"
+  ],
+  "uktih": [
+    "muktih"
+  ],
+  "visesah": [
+    "sesa",
+    "sesah"
+  ],
+  "sesah": [
+    "sesa",
+    "visesah"
+  ],
+  "acala": [
+    "cala"
+  ],
+  "pratyagatma": [
+    "saksi"
+  ],
+  "devah": [
+    "advaita",
+    "dvaitam"
+  ],
+  "vijneya": [
+    "jneya"
+  ],
+  "jneya": [
+    "vijneya"
+  ],
+  "vrttih": [
+    "nivrttih",
+    "nivrt",
+    "avrttih"
+  ],
+  "niskala": [
+    "upama"
+  ],
+  "vikarah": [
+    "karah"
+  ],
+  "nivrttih": [
+    "vrttih",
+    "nivrt"
+  ]
+}

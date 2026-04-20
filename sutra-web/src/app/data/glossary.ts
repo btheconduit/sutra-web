@@ -41,6 +41,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "abhāvaḥ",
     definition:
       "The state of non-existence; total absence.",
+    relatedTerms: ["bhavaḥ", "svabhāvaḥ"],
   },
   {
     id: "abhayadanam",
@@ -144,6 +145,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "abhinna",
     definition:
       "Undivided, whole, unaffected, not changed, unbroken.",
+    relatedTerms: ["bhinna"],
   },
   {
     id: "abhipravrtta",
@@ -221,6 +223,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "abhūta",
     definition:
       "Non-existent, what is not or has not been, not true or real.",
+    relatedTerms: ["bhūta"],
   },
   {
     id: "abhyantara",
@@ -270,6 +273,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "acala",
     definition:
       "Unmoving, steady.",
+    relatedTerms: ["cala"],
   },
   {
     id: "acamanam",
@@ -680,6 +684,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "adṛṣṭa",
     definition:
       "Unseen (karmic results).",
+    relatedTerms: ["dṛṣṭa"],
   },
   {
     id: "advaita",
@@ -689,6 +694,7 @@ export const glossary: GlossaryEntry[] = [
       "Non-dual; without a second; without fear.",
     vedantaMeaning:
       "The teaching that Brahman alone is real and there is no second entity apart from it. Advaita does not deny the empirical world but reveals that the world has no independent reality separate from Brahman. The mahāvākya 'tat tvam asi' directly reveals this non-duality — that the essential nature of the individual (tvam) is identical with the whole (tat).",
+    relatedTerms: ["brahman"],
   },
   {
     id: "advaya",
@@ -703,6 +709,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "advitīya",
     definition:
       "Without a second; matchless.",
+    relatedTerms: ["dvitīya"],
   },
   {
     id: "adya",
@@ -753,6 +760,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "agocara",
     definition:
       "Not available for perception or inference; beyond the power of words.",
+    relatedTerms: ["gocara"],
   },
   {
     id: "agotra",
@@ -973,6 +981,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "akārya",
     definition:
       "Improper; not fit to be done.",
+    relatedTerms: ["kārya"],
   },
   {
     id: "akasah",
@@ -1195,6 +1204,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "amita",
     definition:
       "Immeasurable, boundless.",
+    relatedTerms: ["mita"],
   },
   {
     id: "amnayah",
@@ -1555,6 +1565,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "aniṣṭha",
     definition:
       "Subtle, unsteady.",
+    relatedTerms: ["niṣṭhā"],
   },
   {
     id: "anitya",
@@ -1562,6 +1573,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "anitya",
     definition:
       "Limited; time bound; impermanent.",
+    relatedTerms: ["nitya"],
   },
   {
     id: "aniyata",
@@ -1618,6 +1630,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "antaḥ",
     definition:
       "End, limit, boundary, border, edge.",
+    relatedTerms: ["antaḥkaraṇam"],
   },
   {
     id: "antahkaranam",
@@ -1748,6 +1761,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "anubhūtiḥ",
     definition:
       "Perception; unqualified experience; immediate recognition; knowledge; consciousness.",
+    relatedTerms: ["bhūtiḥ"],
   },
   {
     id: "anubodhah",
@@ -2094,6 +2108,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "anyathā",
     definition:
       "ind. Otherwise, in another way or manner; falsely; wrongly.",
+    relatedTerms: ["atha"],
   },
   {
     id: "anyatra",
@@ -2483,6 +2498,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "ārabdha",
     definition:
       "Begun, started.",
+    relatedTerms: ["prārabdham"],
   },
   {
     id: "arabhya",
@@ -2743,6 +2759,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "asakta",
     definition:
       "Free of attachment; not entangled.",
+    relatedTerms: ["sakta"],
   },
   {
     id: "asaktih",
@@ -2750,6 +2767,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "āsaktiḥ",
     definition:
       "Dependence; attachment.",
+    relatedTerms: ["śaktiḥ"],
   },
   {
     id: "asamanjasa",
@@ -2871,6 +2889,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "āsita",
     definition:
       "Resting in; located on; placed; inhabiting; using; practicing.",
+    relatedTerms: ["upasitā"],
   },
   {
     id: "asmad",
@@ -3175,6 +3194,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "aupaniṣada",
     definition:
       "Contained, based in, derived from, or taught in an Upanishad.",
+    relatedTerms: ["upaniṣad"],
   },
   {
     id: "ausnyam",
@@ -3415,6 +3435,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "avasthita",
     definition:
       "Abiding, remained; stayed; firm of purpose; steady.",
+    relatedTerms: ["hita"],
   },
   {
     id: "avasthitih",
@@ -3547,6 +3568,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "āvṛttiḥ",
     definition:
       "Repetition; repetition of birth and death; coming back; revolving.",
+    relatedTerms: ["vṛttih"],
   },
   {
     id: "avyabhicara",
@@ -3755,6 +3777,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "bahu",
     definition:
       "Much, abundant, many; exceedingly.",
+    relatedTerms: ["bahuvrīhi", "bahudhā"],
   },
   {
     id: "bahudakah",
@@ -3770,6 +3793,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "bahudhā",
     definition:
       "ind. In many ways, variously; in different forms; frequently.",
+    relatedTerms: ["bahu"],
   },
   {
     id: "bahula",
@@ -3785,6 +3809,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "Lit. possessing much rice; compound which relates to a word outside the compound - the final compound member, a noun, serves as an adjective.",
     root: "possessing much rice",
+    relatedTerms: ["bahu"],
   },
   {
     id: "bahya",
@@ -3965,6 +3990,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "bhāṣā",
     definition:
       "Language; speech; common vernacular or dialect.",
+    relatedTerms: ["vibhāsa", "abhāsa"],
   },
   {
     id: "bhasyakarah",
@@ -3994,6 +4020,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "bhavaḥ",
     definition:
       "Existence; state of being; existent.",
+    relatedTerms: ["abhāvaḥ", "svabhāvaḥ"],
   },
   {
     id: "bhavana",
@@ -4080,6 +4107,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "bhinna",
     definition:
       "Divided.",
+    relatedTerms: ["abhinna"],
   },
   {
     id: "bhisa",
@@ -4216,6 +4244,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "bhūtiḥ",
     definition:
       "Wealth, fortune; success; being, existence; birth.",
+    relatedTerms: ["anubhūtiḥ"],
   },
   {
     id: "bhuvah",
@@ -4430,6 +4459,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "cala",
     definition:
       "Moving; movable; unsteady; perishable.",
+    relatedTerms: ["chalam", "acala"],
   },
   {
     id: "calanam",
@@ -4565,6 +4595,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "chalam",
     definition:
       "Fraud, trick, deception.",
+    relatedTerms: ["cala"],
   },
   {
     id: "chandah",
@@ -4851,7 +4882,7 @@ export const glossary: GlossaryEntry[] = [
     term: "dātṛ",
     transliteration: "dātṛ",
     definition:
-      "Giving. Nom. sing. dātā Giver; donor.",
+      "Giving; giver; donor.",
   },
   {
     id: "daya",
@@ -4946,6 +4977,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "dhānam",
     definition:
       "Abode; place; ray of light; splendor, power.",
+    relatedTerms: ["hānam", "anusandhānam", "sandhānam"],
   },
   {
     id: "dharanam",
@@ -5038,6 +5070,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "dhīḥ",
     definition:
       "Antaḥkaraṇa; knowledge; all thought; the subtle body; the mind; intellect.",
+    relatedTerms: ["buddhiḥ"],
   },
   {
     id: "dhimat",
@@ -5089,6 +5122,7 @@ export const glossary: GlossaryEntry[] = [
       "Religious meditation; abstract contemplation - one of the eight aṅgas of Patañjali's Yoga.",
     vedantaMeaning:
       "Meditation — in Vedānta, the sustained contemplation (nididhyāsana) on the truth revealed by the teaching. Unlike in Yoga philosophy, dhyāna in Vedānta is not a technique to produce a new experience but a means to internalize what has already been understood through śravaṇa and manana. It addresses habitual, emotional resistance to the knowledge 'I am Brahman.'",
+    relatedTerms: ["brahman"],
   },
   {
     id: "dhyeyam",
@@ -5102,7 +5136,7 @@ export const glossary: GlossaryEntry[] = [
     term: "dik",
     transliteration: "dik",
     definition:
-      "Nom. sing. of diś. Deity of the ear – hearing.",
+      "Deity of the ear — hearing.",
     relatedTerms: ["diś"],
   },
   {
@@ -5406,13 +5440,14 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "dvitīya",
     definition:
       "Second; the second of any group or family.",
+    relatedTerms: ["advitīya"],
   },
   {
     id: "dyo",
     term: "dyo",
     transliteration: "dyo",
     definition:
-      "Nom. sing. The sky; heaven; brightness.",
+      "The sky; heaven; brightness.",
   },
   {
     id: "dyotana",
@@ -5731,6 +5766,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "gocara",
     definition:
       "Within range of (particularly of the senses); dwelling; grazed by cattle; object.",
+    relatedTerms: ["agocara"],
   },
   {
     id: "golakah",
@@ -5864,6 +5900,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "hānam",
     definition:
       "Loss; lack, cessation.",
+    relatedTerms: ["dhānam"],
   },
   {
     id: "hananam",
@@ -5976,6 +6013,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "hīna",
     definition:
       "Less, lower; left, abandoned; deprived of, without; excluded.",
+    relatedTerms: ["vihīna"],
   },
   {
     id: "hiranmayah",
@@ -5998,6 +6036,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "hita",
     definition:
       "Placed, taken; suitable; proper; fit; beneficial; wholesome.",
+    relatedTerms: ["avasthita", "taddhita"],
   },
   {
     id: "hitoktih",
@@ -6302,6 +6341,7 @@ export const glossary: GlossaryEntry[] = [
       "Being awake, watching.",
     vedantaMeaning:
       "The waking state — in which the individual (called viśva) experiences the external world through the sense organs and mind. The Māṇḍūkya Upaniṣad analyzes this as the first quarter (pāda) of ātmā. The waking state is characterized by duality — a subject experiencing objects. Vedānta uses the analysis of the three states to show that ātmā is the invariable witness present in all three.",
+    relatedTerms: ["upaniṣad", "ātmā"],
   },
   {
     id: "jahallaksana",
@@ -6540,6 +6580,7 @@ export const glossary: GlossaryEntry[] = [
     vedantaMeaning:
       "The path of knowledge — a life wholly dedicated to self-inquiry through śravaṇa, manana, and nididhyāsana, typically in the context of sannyāsa. In the Gītā, Kṛṣṇa presents jñāna-yoga as the direct means to mokṣa for one whose mind has been prepared by karma-yoga. It is not mere study but the living pursuit of the truth 'I am Brahman' under the guidance of a teacher.",
     aliases: ["dnyanayogah"],
+    relatedTerms: ["gītā", "kṛṣṇa", "mokṣa", "karma", "brahman"],
   },
   {
     id: "jnanendriyah",
@@ -6589,6 +6630,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "To be investigated or learned or understood; perceptible, cognizable.",
     aliases: ["dnyeya"],
+    relatedTerms: ["vijñeya"],
   },
   {
     id: "jvarah",
@@ -6646,6 +6688,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "kalā",
     definition:
       "A sixteenth part; a small part of anything; facet; feature.",
+    relatedTerms: ["sakala"],
   },
   {
     id: "kalah",
@@ -6690,6 +6733,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "kalpaḥ",
     definition:
       "Rule; proposal; resolve; procedure; a day of Brahmāji - 432 million years; a termination added in the sense of 'a little less than', 'nearly equal to'.",
+    relatedTerms: ["vikalpaḥ"],
   },
   {
     id: "kalpam",
@@ -6791,6 +6835,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "kara",
     definition:
       "(At the end of comp.) Maker; doer.",
+    relatedTerms: ["karaṇam"],
   },
   {
     id: "karah",
@@ -6798,6 +6843,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "kāraḥ",
     definition:
       "A term denoting the letter it is affixed to.",
+    relatedTerms: ["vikāraḥ"],
   },
   {
     id: "karakam",
@@ -6812,6 +6858,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "karaṇam",
     definition:
       "Action; sense organ; sense; sense expressed by the instrumental case.",
+    relatedTerms: ["kara"],
   },
   {
     id: "karayitr",
@@ -6839,7 +6886,7 @@ export const glossary: GlossaryEntry[] = [
     term: "karma",
     transliteration: "karma",
     definition:
-      "Nom. sing. karma. Action from free will; certain consequences of action; duty.",
+      "Action from free will; certain consequences of action; duty.",
     vedantaMeaning:
       "Action and its results. Every deliberate action produces a result (phala) governed by the law of dharma. Accumulated karma — puṇya (merit) and pāpa (demerit) — drives the cycle of saṃsāra. Vedānta teaches that no amount of karma can produce mokṣa, because action produces only finite results. Knowledge alone reveals that ātmā is ever-free and was never a doer (akartā).",
     relatedTerms: ["dharmaḥ", "saṃsāra", "mokṣa", "yogaḥ"],
@@ -6868,6 +6915,7 @@ export const glossary: GlossaryEntry[] = [
       "A life devoted to knowledge including performance of life's roles.",
     vedantaMeaning:
       "The yoga of action — performing one's duties with the attitude of offering to Īśvara (īśvarārpaṇa-buddhi) and accepting the results with equanimity as the Lord's grace (prasāda-buddhi). Karma-yoga does not produce mokṣa directly but purifies the mind (citta-śuddhi), making it fit for self-knowledge. In the Gītā, karma-yoga is the primary sādhana for preparing the mind for jñāna-yoga.",
+    relatedTerms: ["karma", "mokṣa", "citta", "gītā"],
   },
   {
     id: "karmendriyah",
@@ -6919,6 +6967,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "kārya",
     definition:
       "Object; what is to be done; product; effect.",
+    relatedTerms: ["akārya"],
   },
   {
     id: "karyakaranasambandhah",
@@ -7248,6 +7297,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "kṣam",
     definition:
       "The earth, ground.",
+    relatedTerms: ["kṣamā"],
   },
   {
     id: "ksama",
@@ -7256,6 +7306,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "Patient; enduring; competent; proper; forgiving.",
     tags: ["forgiveness", "patience", "forbearance", "tolerance"],
+    relatedTerms: ["kṣam"],
   },
   {
     id: "ksanika",
@@ -7443,6 +7494,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "lakṣaṇā",
     definition:
       "Definition; attribute; quality; mark.",
+    relatedTerms: ["vilakṣaṇam"],
   },
   {
     id: "laksanya",
@@ -7527,6 +7579,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "līna",
     definition:
       "Completely absorbed; dissolved, unmanifest.",
+    relatedTerms: ["vilīna"],
   },
   {
     id: "lingam",
@@ -7819,6 +7872,7 @@ export const glossary: GlossaryEntry[] = [
     vedantaMeaning:
       "A sacred formula or verse from the Vedas, used in prayer, ritual, and contemplation. In Vedānta, mantras from the Upaniṣads — especially the mahāvākyas — function as the verbal means of knowledge (śabda-pramāṇam) that reveal the nature of ātmā. The power of a mantra lies not in its sound alone but in the meaning it unfolds when properly taught and contemplated.",
     tags: ["prayer", "chant", "sacred", "hymn", "invocation"],
+    relatedTerms: ["sābda", "pramāṇam", "ātmā"],
   },
   {
     id: "manusya",
@@ -7905,6 +7959,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "mātṛ",
     definition:
       "A mother.",
+    relatedTerms: ["mātrā"],
   },
   {
     id: "matra",
@@ -8028,6 +8083,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "mita",
     definition:
       "Moderate; measured; defined.",
+    relatedTerms: ["amita"],
   },
   {
     id: "mithya",
@@ -8354,6 +8410,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "nāma",
     definition:
       "Name.",
+    relatedTerms: ["namas", "sarvanāma"],
   },
   {
     id: "namadheyam",
@@ -8368,6 +8425,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "namas",
     definition:
       "ind. Salutation; reverential obeisance; bow.",
+    relatedTerms: ["nāma"],
   },
   {
     id: "nan",
@@ -8690,6 +8748,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "nirañjana",
     definition:
       "Unstained; free from falsehood.",
+    relatedTerms: ["rañjana"],
   },
   {
     id: "nirapeksa",
@@ -9049,6 +9108,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "niṣṭhā",
     definition:
       "Steadiness; adherence; freedom from doubt and vagueness.",
+    relatedTerms: ["sthā", "aniṣṭha"],
   },
   {
     id: "nisvasah",
@@ -9070,6 +9130,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "nitya",
     definition:
       "Timewise limitless - that which is, was, and will always be; perpetual; eternal.",
+    relatedTerms: ["anitya"],
   },
   {
     id: "nityakarma",
@@ -9341,6 +9402,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "para",
     definition:
       "Other, different, another; distant removed, remote; beyond; following, subsequent; higher, superior; hostile, adverse; exceeding.",
+    relatedTerms: ["param"],
   },
   {
     id: "paragah",
@@ -10044,6 +10106,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "prāk",
     definition:
       "ind. Before; previously.",
+    relatedTerms: ["prakāśa"],
   },
   {
     id: "prakalpita",
@@ -10283,6 +10346,7 @@ export const glossary: GlossaryEntry[] = [
       "Breathing practices - one of the eight aṅgas of Patañjali's Yoga.",
     vedantaMeaning:
       "Breath regulation — valued in Vedānta as a preparatory practice (sādhana) for calming the mind and making it fit for self-inquiry. Prāṇāyāma is mentioned in the Gītā alongside sense-control and other disciplines. It is not considered a direct means to mokṣa but a support for the quieting of rajas and the cultivation of sattva in the mind.",
+    relatedTerms: ["gītā", "mokṣa", "rajas"],
   },
   {
     id: "pranidhanam",
@@ -10292,13 +10356,14 @@ export const glossary: GlossaryEntry[] = [
       "Respectful behavior with Īśvara in mind.",
     vedantaMeaning:
       "Surrender or devotion to Īśvara — offering one's actions, thoughts, and their results to the Lord. In the context of Yoga, Patañjali lists Īśvara-praṇidhāna as a means to samādhi. In Vedānta, this attitude is the heart of karma-yoga — acting with Īśvara in mind transforms ordinary action into a means of inner purification and prepares the mind for self-knowledge.",
+    relatedTerms: ["karma"],
   },
   {
     id: "pranin",
     term: "prāṇin",
     transliteration: "prāṇin",
     definition:
-      "Nom. sing. prāṇī Man; a living creature, having prāṇaḥ.",
+      "A living creature; one who has prāṇaḥ.",
     relatedTerms: ["prāṇaḥ"],
   },
   {
@@ -10434,6 +10499,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "praśānta",
     definition:
       "Composed, calm.",
+    relatedTerms: ["śānta"],
   },
   {
     id: "prasastr",
@@ -11128,6 +11194,7 @@ export const glossary: GlossaryEntry[] = [
     vedantaMeaning:
       "In Sāṅkhya, puruṣa is pure consciousness distinct from prakṛti. In Advaita Vedānta, the term refers to ātmā or Brahman — the conscious principle that is the basis of all experience. The Puruṣasūkta describes the entire creation as arising from puruṣa. Unlike in Sāṅkhya, Vedānta does not accept a real duality between puruṣa and prakṛti — they are Brahman and its power.",
     tags: ["spirit", "soul", "consciousness", "supreme", "being", "person"],
+    relatedTerms: ["sāṅkhya", "advaita", "ātmā", "brahman"],
   },
   {
     id: "purusakarah",
@@ -11206,6 +11273,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "raddha",
     definition:
       "Prepared; accomplished; equipped; successful.",
+    relatedTerms: ["śraddhā"],
   },
   {
     id: "ragah",
@@ -11317,6 +11385,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "rañjana",
     definition:
       "Pleasing, gratifying; exciting passion; coloring.",
+    relatedTerms: ["nirañjana"],
   },
   {
     id: "rasah",
@@ -11452,6 +11521,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "rūpam",
     definition:
       "Form; appearance; shape.",
+    relatedTerms: ["svarūpam"],
   },
   {
     id: "sabala",
@@ -11675,6 +11745,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sakala",
     definition:
       "All; whole; together with all parts.",
+    relatedTerms: ["kalā"],
   },
   {
     id: "sakalyam",
@@ -11758,6 +11829,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "śaktiḥ",
     definition:
       "Power; faculty; the relation of a term to the thing designated.",
+    relatedTerms: ["āsaktiḥ"],
   },
   {
     id: "sakunah",
@@ -11816,6 +11888,7 @@ export const glossary: GlossaryEntry[] = [
       "Fixing the mind in contemplation on the true nature of self.",
     vedantaMeaning:
       "The capacity to hold the mind steadily on the teaching and on the nature of ātmā — the last of the six inner disciplines. In Vedānta, samādhāna is not a trance state but a focused, abiding attention to what the śāstra reveals. It is the mind's ability to dwell on the truth rather than being scattered by competing demands and distractions.",
+    relatedTerms: ["ātmā"],
   },
   {
     id: "samadhih",
@@ -12511,6 +12584,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sandhānam",
     definition:
       "Joining; uniting; compounding.",
+    relatedTerms: ["dhānam", "anusandhānam"],
   },
   {
     id: "sandhih",
@@ -12729,6 +12803,7 @@ export const glossary: GlossaryEntry[] = [
       "Renunciation; the vow of non-injury; a life committed to knowledge and free of life's roles.",
     vedantaMeaning:
       "The life of renunciation — giving up all obligatory and desire-prompted actions for the single-pointed pursuit of self-knowledge. In the Gītā, Kṛṣṇa also speaks of an inner sannyāsa — the renunciation of the sense of doership and the results of action. Whether formal or internal, sannyāsa reflects the understanding that no action can produce what knowledge alone reveals.",
+    relatedTerms: ["gītā", "kṛṣṇa"],
   },
   {
     id: "sannyasi",
@@ -12840,6 +12915,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "Best; essential; genuine; highest.",
     tags: ["essence", "essential", "core", "best", "genuine"],
+    relatedTerms: ["akṣara"],
   },
   {
     id: "saram",
@@ -12911,6 +12987,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sarvanāma",
     definition:
       "A word that is a name for all - e.g. tat; a class of pronominal words; pronoun.",
+    relatedTerms: ["vanam", "nāma"],
   },
   {
     id: "sarvasaktih",
@@ -13099,6 +13176,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "seṣaḥ",
     definition:
       "Result, effect; end conclusion; subsidiary, something said to be subservient to another thing.",
+    relatedTerms: ["śeṣa", "viśeṣaḥ"],
   },
   {
     id: "seva",
@@ -13513,6 +13591,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sthā",
     definition:
       "At the end of comp. Staying; existing; abiding.",
+    relatedTerms: ["niṣṭhā"],
   },
   {
     id: "sthairyam",
@@ -13653,6 +13732,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "śuddha",
     definition:
       "Pure; clean.",
+    relatedTerms: ["viśuddha"],
   },
   {
     id: "suddhih",
@@ -13793,6 +13873,7 @@ export const glossary: GlossaryEntry[] = [
       "Deep sleep.",
     vedantaMeaning:
       "The deep sleep state — in which the individual (called prājña) resolves into causal ignorance. There is no experience of duality, no suffering, no sense of limitation. The Māṇḍūkya Upaniṣad identifies this as the third pāda. Deep sleep is significant because it reveals that ātmā continues to exist even when the mind is resolved — 'I slept well, I knew nothing' shows both the continuity of the witness and the presence of ignorance.",
+    relatedTerms: ["prajñā", "upaniṣad", "ātmā"],
   },
   {
     id: "sutaram",
@@ -13828,6 +13909,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "svabhāvaḥ",
     definition:
       "Own nature; inherent attribute.",
+    relatedTerms: ["abhāvaḥ", "bhavaḥ"],
   },
   {
     id: "svabhavika",
@@ -13907,6 +13989,7 @@ export const glossary: GlossaryEntry[] = [
       "Sleep; sleeping.",
     vedantaMeaning:
       "The dream state — in which the individual (called taijasa) creates and experiences an entire world projected by the mind alone, without external objects. The Māṇḍūkya Upaniṣad identifies this as the second pāda. The dream state reveals that the mind can generate a convincing experience of duality from within itself — a key insight for understanding how waking duality is also dependent on consciousness.",
+    relatedTerms: ["upaniṣad"],
   },
   {
     id: "svar",
@@ -13914,6 +13997,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "svar",
     definition:
       "Heaven; Indra's heaven. Often suaḥ.",
+    relatedTerms: ["svarita"],
   },
   {
     id: "svarah",
@@ -13951,6 +14035,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "svarita",
     definition:
       "The middle chanting tone; between high and low.",
+    relatedTerms: ["svar"],
   },
   {
     id: "svarnam",
@@ -13979,6 +14064,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "svarūpam",
     definition:
       "Essential form; own nature.",
+    relatedTerms: ["rūpam"],
   },
   {
     id: "svastha",
@@ -14089,6 +14175,7 @@ export const glossary: GlossaryEntry[] = [
       "Name of the dreamer - the shining one.",
     vedantaMeaning:
       "The name given to ātmā as identified with the dream state in the Māṇḍūkya Upaniṣad. Called 'the shining one' because in dream the mind alone illumines the entire dream world without external light or objects. Taijasa experiences the subtle, internally projected world. It is the second pāda — ātmā functioning through the subtle body alone.",
+    relatedTerms: ["ātmā", "upaniṣad"],
   },
   {
     id: "talu",
@@ -14960,6 +15047,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "upasitā",
     definition:
       "Meditation; worship.",
+    relatedTerms: ["āsita"],
   },
   {
     id: "upasitr",
@@ -15397,6 +15485,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vanam",
     definition:
       "Forest, woods.",
+    relatedTerms: ["sarvanāma"],
   },
   {
     id: "vanaprasthah",
@@ -15676,6 +15765,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vibhāsa",
     definition:
       "Option, alternative.",
+    relatedTerms: ["bhāṣā"],
   },
   {
     id: "vibhatam",
@@ -15902,6 +15992,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vihīna",
     definition:
       "Devoid of; without; abandoned; left.",
+    relatedTerms: ["hīna"],
   },
   {
     id: "vihitakarma",
@@ -15953,6 +16044,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "Knowledge, wisdom, intelligence.",
     aliases: ["vidnyanam"],
+    relatedTerms: ["jñānam"],
   },
   {
     id: "vijnanamayakosah",
@@ -15985,6 +16077,7 @@ export const glossary: GlossaryEntry[] = [
     definition:
       "To be known; knowable, cognizable.",
     aliases: ["vidnyeya"],
+    relatedTerms: ["jñeya"],
   },
   {
     id: "vikala",
@@ -15999,6 +16092,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vikalpaḥ",
     definition:
       "Doubt, uncertainty; error, imagination, superimposition; duality; distinction.",
+    relatedTerms: ["kalpaḥ"],
   },
   {
     id: "vikalpanam",
@@ -16020,6 +16114,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vikāraḥ",
     definition:
       "Change; transformation; body.",
+    relatedTerms: ["kāraḥ"],
   },
   {
     id: "vikaranam",
@@ -16078,6 +16173,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vilakṣaṇam",
     definition:
       "Distinct; different; other; having no distinguishing marks.",
+    relatedTerms: ["lakṣaṇā"],
   },
   {
     id: "vilapah",
@@ -16106,6 +16202,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vilī",
     definition:
       "4A. To be dissolved, to melt away, be absorbed in; settle on; adhere to.",
+    relatedTerms: ["vilīna"],
   },
   {
     id: "vilina",
@@ -16113,6 +16210,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vilīna",
     definition:
       "In contact with; next to; disappeared; clinging to; adhered to.",
+    relatedTerms: ["vilī", "līna"],
   },
   {
     id: "vimatam",
@@ -16381,6 +16479,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "viśeṣaḥ",
     definition:
       "Aspect; characteristic; difference; mental impression; peculiarity.",
+    relatedTerms: ["śeṣa", "seṣaḥ"],
   },
   {
     id: "visesanam",
@@ -16473,6 +16572,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "viśuddha",
     definition:
       "Stainless, free from imperfection; correct.",
+    relatedTerms: ["śuddha"],
   },
   {
     id: "visvah",
@@ -16482,6 +16582,7 @@ export const glossary: GlossaryEntry[] = [
       "The name of the waker; complete.",
     vedantaMeaning:
       "The name given to ātmā as identified with the waking state in the Māṇḍūkya Upaniṣad. Viśva experiences the gross external world through the fourteen organs (five sense organs, five organs of action, and the fourfold mind). Viśva is the first pāda — not a separate self, but ātmā functioning through the waking body-mind.",
+    relatedTerms: ["ātmā", "upaniṣad"],
   },
   {
     id: "visvam",
@@ -16733,6 +16834,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vṛttih",
     definition:
       "A thought of an object; expression; capacity; condition; commentary; exposition.",
+    relatedTerms: ["nivṛttiḥ", "āvṛttiḥ"],
   },
   {
     id: "vrttijnanam",

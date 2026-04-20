@@ -92,6 +92,24 @@ export function InfoPanel({ onClose }: { onClose: () => void }) {
 
           <div>
             <h3 className="mb-1.5 text-xs tracking-wide text-zinc-400 dark:text-zinc-600">
+              Related terms
+            </h3>
+            <p className="text-zinc-500 dark:text-zinc-400">
+              Related terms are discovered in three ways: manually curated
+              links from the glossary, terms found within an entry&apos;s
+              definition or Vedantic meaning, and morphological connections
+              between terms that share a Sanskrit root — such as advaita and
+              dvaitam, or nitya and anitya.
+            </p>
+            <p className="mt-2 text-zinc-500 dark:text-zinc-400">
+              These connections are informed by source texts including
+              the Vivekacūḍāmaṇi, Brahma-Sūtra-Bhāṣya of Śaṅkarācārya,
+              Pāṇini&apos;s Aṣṭādhyāyī, and the Amarakośa.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="mb-1.5 text-xs tracking-wide text-zinc-400 dark:text-zinc-600">
               Search &amp; transliteration
             </h3>
             <p className="text-zinc-500 dark:text-zinc-400">

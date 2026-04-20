@@ -5,7 +5,7 @@ import type { User } from "@supabase/supabase-js";
 import type { GlossaryEntry } from "../data/glossary";
 import type { StickyNote, MwEntry } from "../types";
 import { toDevanagari } from "../data/devanagari";
-import { findByTerm } from "../lib/search";
+import { findByTerm, getRelatedTerms } from "../lib/search";
 import { loadMwData } from "../lib/mw";
 import { IconExpand, IconCollapse, IconMinimize, IconClose, iconButtonClass } from "./Icons";
 import { NotesArea } from "./Notes";
@@ -269,37 +269,40 @@ export function WordPanel({
           {entry.vedantaMeaning && (
             <Section label="Vedantic meaning" tooltip="Meaning as understood within the living tradition of Advaita Vedanta, rooted in the teachings of the ancient rishis and the works of Ādi Śaṅkarācārya.">{entry.vedantaMeaning}</Section>
           )}
-          {entry.relatedTerms && entry.relatedTerms.length > 0 && (
-            <div>
-              <div className="mb-1 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
-                Related terms
-              </div>
-              <div className="flex flex-wrap gap-x-3 gap-y-1 text-base leading-relaxed">
-                {entry.relatedTerms.map((term) => {
-                  const linked = findByTerm(term);
-                  if (linked) {
+          {(() => {
+            const allRelated = getRelatedTerms(entry);
+            return allRelated.length > 0 ? (
+              <div>
+                <div className="mb-1 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
+                  Related terms
+                </div>
+                <div className="flex flex-wrap gap-x-3 gap-y-1 text-base leading-relaxed">
+                  {allRelated.map((term) => {
+                    const linked = findByTerm(term);
+                    if (linked) {
+                      return (
+                        <button
+                          key={term}
+                          onClick={() => onSelectTerm(linked)}
+                          className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-all hover:-translate-y-px hover:text-zinc-900 dark:text-zinc-300 dark:decoration-zinc-600 dark:hover:text-zinc-100"
+                        >
+                          {term}
+                        </button>
+                      );
+                    }
                     return (
-                      <button
+                      <span
                         key={term}
-                        onClick={() => onSelectTerm(linked)}
-                        className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-all hover:-translate-y-px hover:text-zinc-900 dark:text-zinc-300 dark:decoration-zinc-600 dark:hover:text-zinc-100"
+                        className="text-zinc-400 dark:text-zinc-500"
                       >
                         {term}
-                      </button>
+                      </span>
                     );
-                  }
-                  return (
-                    <span
-                      key={term}
-                      className="text-zinc-400 dark:text-zinc-500"
-                    >
-                      {term}
-                    </span>
-                  );
-                })}
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            ) : null;
+          })()}
           <MwSection entryId={entry.id} />
         </div>
       </div>
