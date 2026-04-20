@@ -148,7 +148,6 @@ export function MwSection({ entryId }: { entryId: string }) {
   );
 }
 
-
 export function CollapsedPanel({
   entry,
   onRestore,

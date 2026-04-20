@@ -775,7 +775,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "agra",
     definition:
       "First, foremost, best; pre-eminent; excessive, surplus.",
-    relatedTerms: ["jāgrat"],
   },
   {
     id: "agrahah",
@@ -1100,7 +1099,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "akṣita",
     definition:
       "Permanent; undecaying; unfailing.",
-    relatedTerms: ["śīta", "lakṣita"],
   },
   {
     id: "alam",
@@ -1108,7 +1106,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "alam",
     definition:
       "ind. Enough.",
-    relatedTerms: ["chalam"],
   },
   {
     id: "alambanam",
@@ -1315,7 +1312,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "anāmaya",
     definition:
       "Free from affliction; healthy.",
-    relatedTerms: ["nāma"],
   },
   {
     id: "anandabhuh",
@@ -1555,7 +1551,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "aniṣā",
     definition:
       "Helplessness.",
-    relatedTerms: ["upaniṣad"],
   },
   {
     id: "anista",
@@ -1716,7 +1711,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "antika",
     definition:
       "Near; close; lasting, as far as; reaching to the end of.",
-    relatedTerms: ["ṭīkā"],
   },
   {
     id: "antima",
@@ -2640,7 +2634,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "ārta",
     definition:
       "Afflicted with, struck by; sick; distressed.",
-    relatedTerms: ["svarita", "kartā"],
   },
   {
     id: "arthabodhakatvam",
@@ -2896,7 +2889,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "āsita",
     definition:
       "Resting in; located on; placed; inhabiting; using; practicing.",
-    relatedTerms: ["śīta", "upasitā"],
+    relatedTerms: ["upasitā"],
   },
   {
     id: "asmad",
@@ -4602,7 +4595,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "chalam",
     definition:
       "Fraud, trick, deception.",
-    relatedTerms: ["cala", "alam"],
+    relatedTerms: ["cala"],
   },
   {
     id: "chandah",
@@ -4807,7 +4800,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "dakṣiṇa",
     definition:
       "Able; skillful; right (side); southern.",
-    relatedTerms: ["kṣīṇa"],
   },
   {
     id: "daksinamurtih",
@@ -5161,7 +5153,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "dīna",
     definition:
       "Helpless; poor; distressed; frightened.",
-    relatedTerms: ["purī"],
   },
   {
     id: "dipah",
@@ -6350,7 +6341,7 @@ export const glossary: GlossaryEntry[] = [
       "Being awake, watching.",
     vedantaMeaning:
       "The waking state — in which the individual (called viśva) experiences the external world through the sense organs and mind. The Māṇḍūkya Upaniṣad analyzes this as the first quarter (pāda) of ātmā. The waking state is characterized by duality — a subject experiencing objects. Vedānta uses the analysis of the three states to show that ātmā is the invariable witness present in all three.",
-    relatedTerms: ["upaniṣad", "ātmā", "agra"],
+    relatedTerms: ["upaniṣad", "ātmā"],
   },
   {
     id: "jahallaksana",
@@ -7372,7 +7363,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "kṣīṇa",
     definition:
       "Diminished, thin, small, weak.",
-    relatedTerms: ["dakṣiṇa"],
   },
   {
     id: "ksirah",
@@ -7394,7 +7384,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "kṣudra",
     definition:
       "Minute, small, trifling, mean; poor; short.",
-    relatedTerms: ["purī"],
   },
   {
     id: "kukkuti",
@@ -7520,7 +7509,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "lakṣita",
     definition:
       "Indicated; aimed at.",
-    relatedTerms: ["akṣita", "śīta"],
   },
   {
     id: "laksmi",
@@ -8338,7 +8326,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "nadī",
     definition:
       "River, stream, ocean.",
-    relatedTerms: ["anādi"],
   },
   {
     id: "nadih",
@@ -13285,7 +13272,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "śīta",
     definition:
       "Cool; cold; dull; lazy.",
-    relatedTerms: ["akṣita", "āsita"],
   },
   {
     id: "sithila",
@@ -13366,7 +13352,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "snigdha",
     definition:
       "Sticky; viscous; adhesive; shining; glassy; moist; wet.",
-    relatedTerms: ["vet"],
   },
   {
     id: "sobhanadhyasah",
@@ -14050,7 +14035,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "svarita",
     definition:
       "The middle chanting tone; between high and low.",
-    relatedTerms: ["svar", "ārta"],
+    relatedTerms: ["svar"],
   },
   {
     id: "svarnam",
@@ -14079,7 +14064,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "svarūpam",
     definition:
       "Essential form; own nature.",
-    relatedTerms: ["rūpam", "svar"],
+    relatedTerms: ["rūpam"],
   },
   {
     id: "svastha",
@@ -14776,7 +14761,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "uktih",
     definition:
       "Statement; teaching, instruction.",
-    relatedTerms: ["muktiḥ"],
   },
   {
     id: "ulka",

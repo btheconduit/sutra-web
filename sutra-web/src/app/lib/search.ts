@@ -38,15 +38,17 @@ export function findByTerm(term: string): GlossaryEntry | undefined {
   );
 }
 
-// Build a normalized-term → entry lookup for fast matching
-const normalizedTermMap = new Map<string, GlossaryEntry>();
+// Build a lowercase-term → entry lookup for definition text scanning.
+// Uses toLowerCase (not normalize) so English words like "wet" don't
+// collide with Sanskrit terms like "vet" via transliteration rules.
+const lowerTermMap = new Map<string, GlossaryEntry>();
 for (const entry of glossary) {
-  const n = normalize(entry.term);
-  if (n.length >= 3 && !normalizedTermMap.has(n)) normalizedTermMap.set(n, entry);
+  const low = entry.term.toLowerCase();
+  if (low.length >= 3 && !lowerTermMap.has(low)) lowerTermMap.set(low, entry);
   if (entry.aliases) {
     for (const alias of entry.aliases) {
-      const na = normalize(alias);
-      if (na.length >= 3 && !normalizedTermMap.has(na)) normalizedTermMap.set(na, entry);
+      const la = alias.toLowerCase();
+      if (la.length >= 3 && !lowerTermMap.has(la)) lowerTermMap.set(la, entry);
     }
   }
 }
@@ -69,9 +71,11 @@ export function getRelatedTerms(entry: GlossaryEntry): string[] {
   const discovered: string[] = [];
 
   for (const word of words) {
-    const n = normalize(word);
-    if (n.length < 3 || seen.has(n)) continue;
-    const match = normalizedTermMap.get(n);
+    const low = word.toLowerCase();
+    if (low.length < 3) continue;
+    const n = normalize(low);
+    if (seen.has(n)) continue;
+    const match = lowerTermMap.get(low);
     if (match && match.id !== entry.id) {
       discovered.push(match.term);
       seen.add(n);
