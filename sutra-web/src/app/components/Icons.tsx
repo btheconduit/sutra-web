@@ -63,8 +63,9 @@ export function IconCopy({ className }: { className?: string }) {
 export function IconShare({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 16 16" fill="none" className={className ?? "size-4"}>
-      <path d="M6 9l4-4M10 5H6.5M10 5v3.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M10 9v2.5a1.5 1.5 0 0 1-1.5 1.5h-4A1.5 1.5 0 0 1 3 11.5v-4A1.5 1.5 0 0 1 4.5 6H7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <path d="M6.5 9.5l3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <path d="M9 7.5l1.2-1.2a2 2 0 0 0-2.83-2.83L6.2 4.7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <path d="M7 8.5l-1.2 1.2a2 2 0 0 0 2.83 2.83l1.17-1.2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
     </svg>
   );
 }
