@@ -36,15 +36,5 @@ export default async function TermPage({ params }: Props) {
   const { id } = await params;
   const entry = glossaryById.get(id);
 
-  if (!entry) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <p className="text-sm text-zinc-400 dark:text-zinc-500">
-          Term not found
-        </p>
-      </div>
-    );
-  }
-
-  return <TermRedirect id={id} />;
+  return <TermRedirect id={id} found={!!entry} />;
 }

@@ -43,6 +43,12 @@ export default function Home() {
   }, [user?.id]);
 
   useEffect(() => {
+    const notFound = localStorage.getItem("sutra-share-not-found");
+    if (notFound) {
+      localStorage.removeItem("sutra-share-not-found");
+      showToast("Term not found");
+      return;
+    }
     const sharedId = localStorage.getItem("sutra-share-entry");
     if (sharedId) {
       localStorage.removeItem("sutra-share-entry");
@@ -53,7 +59,7 @@ export default function Home() {
         );
       }
     }
-  }, []);
+  }, [showToast]);
 
   useEffect(() => {
     const ids = openEntries.map((e) => e.id);
