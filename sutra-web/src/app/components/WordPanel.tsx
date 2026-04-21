@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { User } from "@supabase/supabase-js";
 import type { GlossaryEntry } from "../data/glossary";
 import type { StickyNote, MwEntry } from "../types";
 import { toDevanagari } from "../data/devanagari";
 import { findByTerm, getRelatedTerms } from "../lib/search";
 import { loadMwData } from "../lib/mw";
-import { IconExpand, IconCollapse, IconMinimize, IconClose, iconButtonClass } from "./Icons";
+import { IconExpand, IconCollapse, IconMinimize, IconClose, IconCopy, IconShare, iconButtonClass } from "./Icons";
 import { NotesArea } from "./Notes";
+import { formatEntryAsText } from "../lib/format";
 
 export function Section({
   label,
@@ -207,6 +208,7 @@ export function WordPanel({
   onEditNote,
   user,
   onSignInClick,
+  showToast,
 }: {
   entry: GlossaryEntry;
   panelState: "default" | "expanded";
@@ -221,8 +223,37 @@ export function WordPanel({
   onEditNote: (id: string, index: number, text: string) => void;
   user: User | null;
   onSignInClick: () => void;
+  showToast: (message: string) => void;
 }) {
   const expanded = panelState === "expanded";
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  function handleCopy() {
+    setMenuOpen(false);
+    navigator.clipboard.writeText(formatEntryAsText(entry))
+      .then(() => showToast("Copied to clipboard"))
+      .catch(() => showToast("Failed to copy"));
+  }
+
+  function handleShare() {
+    const url = `${window.location.origin}/t/${entry.id}`;
+    setMenuOpen(false);
+    navigator.clipboard.writeText(url)
+      .then(() => showToast("Link copied"))
+      .catch(() => showToast("Failed to copy link"));
+  }
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [menuOpen]);
 
   return (
     <div
@@ -239,27 +270,66 @@ export function WordPanel({
             </div>
           </div>
           <div className="ml-4 mt-1 flex items-center gap-1">
-            <button
-              onClick={onCollapse}
-              aria-label="Minimize panel"
-              className={iconButtonClass}
+            <div
+              className="relative"
+              ref={menuRef}
+              onMouseEnter={() => setMenuOpen(true)}
+              onMouseLeave={() => setMenuOpen(false)}
             >
-              <IconMinimize />
-            </button>
-            <button
-              onClick={onToggleExpand}
-              aria-label={expanded ? "Collapse panel" : "Expand panel"}
-              className={iconButtonClass}
-            >
-              {expanded ? <IconCollapse /> : <IconExpand />}
-            </button>
-            <button
-              onClick={onClose}
-              aria-label={`Close ${entry.term}`}
-              className={iconButtonClass}
-            >
-              <IconClose />
-            </button>
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                aria-label="More actions"
+                className="text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+              >
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                  <circle cx="3.5" cy="8" r="1.3" />
+                  <circle cx="8" cy="8" r="1.3" />
+                  <circle cx="12.5" cy="8" r="1.3" />
+                </svg>
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 top-full z-20 pt-1">
+                <div className="animate-fade-in min-w-[150px] rounded-lg border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-800">
+                  <button
+                    onClick={onClose}
+                    className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/50"
+                  >
+                    <IconClose />
+                    Close
+                  </button>
+                  <button
+                    onClick={onCollapse}
+                    className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/50"
+                  >
+                    <IconMinimize />
+                    Minimize
+                  </button>
+                  <button
+                    onClick={onToggleExpand}
+                    className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/50"
+                  >
+                    {expanded ? <IconCollapse /> : <IconExpand />}
+                    {expanded ? "Collapse" : "Expand"}
+                  </button>
+                  <div className="my-1 border-t border-zinc-100 dark:border-zinc-700/50" />
+                  <button
+                    onClick={handleCopy}
+                    className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/50"
+                  >
+                    <IconCopy />
+                    Copy text
+                  </button>
+                  <button
+                    onClick={handleShare}
+                    className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/50"
+                  >
+                    <IconShare />
+                    Copy link
+                  </button>
+                </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

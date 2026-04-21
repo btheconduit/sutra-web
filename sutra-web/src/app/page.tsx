@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { glossaryById, type GlossaryEntry } from "./data/glossary";
 import type { StickyNote, SharedEntryState } from "./types";
 import { useAuth, useIsMobile, useNotes } from "./hooks";
@@ -43,6 +43,19 @@ export default function Home() {
   }, [user?.id]);
 
   useEffect(() => {
+    const sharedId = localStorage.getItem("sutra-share-entry");
+    if (sharedId) {
+      localStorage.removeItem("sutra-share-entry");
+      const entry = glossaryById.get(sharedId);
+      if (entry) {
+        setOpenEntries((prev) =>
+          prev.some((e) => e.id === entry.id) ? prev : [...prev, entry]
+        );
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     const ids = openEntries.map((e) => e.id);
     localStorage.setItem("sutra-open-entries", JSON.stringify(ids));
     if (user?.id) localStorage.setItem(`sutra-open-entries-${user.id}`, JSON.stringify(ids));
@@ -80,10 +93,36 @@ export default function Home() {
     }
   }, [user, notesBundle.initialized, notesBundle.handleAddNote]);
 
-  const shared: SharedEntryState = { openEntries, setOpenEntries, ...notesBundle, user };
+  const [toast, setToast] = useState<{ message: string; key: number } | null>(null);
+  const [toastExiting, setToastExiting] = useState(false);
+  const showToast = useCallback((message: string) => {
+    setToastExiting(false);
+    setToast({ message, key: Date.now() });
+  }, []);
+
+  useEffect(() => {
+    if (!toast) return;
+    const show = setTimeout(() => setToastExiting(true), 1800);
+    const remove = setTimeout(() => setToast(null), 2000);
+    return () => { clearTimeout(show); clearTimeout(remove); };
+  }, [toast]);
+
+  const shared: SharedEntryState = { openEntries, setOpenEntries, ...notesBundle, user, showToast };
 
   if (isMobile === null) return null;
-  if (isMobile) return <MobileHome {...shared} />;
 
-  return <DesktopHome {...shared} />;
+  return (
+    <>
+      {isMobile ? <MobileHome {...shared} /> : <DesktopHome {...shared} />}
+      {toast && (
+        <div
+          key={toast.key}
+          className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-lg border border-zinc-200 bg-white px-4 py-2.5 text-sm text-zinc-600 shadow-lg dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+          style={{ animation: toastExiting ? "toast-out 200ms ease-in forwards" : "toast-in 200ms ease-out" }}
+        >
+          {toast.message}
+        </div>
+      )}
+    </>
+  );
 }
