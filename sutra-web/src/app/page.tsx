@@ -26,6 +26,20 @@ export default function Home() {
   const prevUserRef = useRef<string | undefined>(undefined);
   const [openEntries, setOpenEntries] = useState<GlossaryEntry[]>(() => loadOpenEntries("sutra-open-entries"));
 
+  const [toast, setToast] = useState<{ message: string; key: number } | null>(null);
+  const [toastExiting, setToastExiting] = useState(false);
+  const showToast = useCallback((message: string) => {
+    setToastExiting(false);
+    setToast({ message, key: Date.now() });
+  }, []);
+
+  useEffect(() => {
+    if (!toast) return;
+    const show = setTimeout(() => setToastExiting(true), 1800);
+    const remove = setTimeout(() => setToast(null), 2000);
+    return () => { clearTimeout(show); clearTimeout(remove); };
+  }, [toast]);
+
   useEffect(() => {
     const prevUserId = prevUserRef.current;
     const currentUserId = user?.id;
@@ -98,20 +112,6 @@ export default function Home() {
       } catch { /* ignore */ }
     }
   }, [user, notesBundle.initialized, notesBundle.handleAddNote]);
-
-  const [toast, setToast] = useState<{ message: string; key: number } | null>(null);
-  const [toastExiting, setToastExiting] = useState(false);
-  const showToast = useCallback((message: string) => {
-    setToastExiting(false);
-    setToast({ message, key: Date.now() });
-  }, []);
-
-  useEffect(() => {
-    if (!toast) return;
-    const show = setTimeout(() => setToastExiting(true), 1800);
-    const remove = setTimeout(() => setToast(null), 2000);
-    return () => { clearTimeout(show); clearTimeout(remove); };
-  }, [toast]);
 
   const shared: SharedEntryState = { openEntries, setOpenEntries, ...notesBundle, user, showToast };
 
