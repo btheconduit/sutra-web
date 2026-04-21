@@ -20,4 +20,5 @@ export type SharedEntryState = {
   handleChangeNoteColor: (id: string, index: number, color: number) => void;
   handleEditNote: (id: string, index: number, text: string) => void;
   user: User | null;
+  showToast: (message: string) => void;
 };

@@ -261,6 +261,7 @@ export function NotesArea({
         </div>
       ) : (
         <button
+          data-note-add
           onClick={() => setComposing(true)}
           className="w-full rounded border border-dashed border-zinc-200 px-3 py-2 text-left text-xs text-zinc-400 transition-colors hover:border-zinc-300 hover:text-zinc-500 dark:border-zinc-700/60 dark:text-zinc-600 dark:hover:border-zinc-600 dark:hover:text-zinc-400"
         >

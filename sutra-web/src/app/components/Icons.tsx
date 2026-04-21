@@ -51,6 +51,24 @@ export function IconUser({ className }: { className?: string }) {
   );
 }
 
+export function IconCopy({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" className={className ?? "size-4"}>
+      <rect x="5.5" y="5.5" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M10.5 5.5V4a1.5 1.5 0 0 0-1.5-1.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" stroke="currentColor" strokeWidth="1.3" />
+    </svg>
+  );
+}
+
+export function IconShare({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className ?? "size-4"}>
+      <path d="M12 3v12M12 3l4 4M12 3L8 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function Wordmark({ width = 120, className }: { width?: number; className?: string }) {
   const aspect = 838 / 442;
   const height = Math.round(width / aspect);

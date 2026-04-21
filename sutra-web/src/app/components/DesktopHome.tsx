@@ -14,7 +14,7 @@ import { SearchSidebar } from "./SearchSidebar";
 import { CategoryBlocks, CategoryTermCards } from "./Categories";
 import { CollapsedPanel, WordPanel } from "./WordPanel";
 
-export function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote, user }: SharedEntryState) {
+export function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote, user, showToast }: SharedEntryState) {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>("core");
   const [showInfo, setShowInfo] = useState(false);
@@ -55,6 +55,7 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote,
   const [dropSide, setDropSide] = useState<"left" | "right">("left");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [highlightedPanelId, setHighlightedPanelId] = useState<string | null>(null);
+  const [focusedPanelIndex, setFocusedPanelIndex] = useState<number | null>(null);
   const newPanelIds = useRef<Set<string>>(new Set());
 
   const results = useMemo(() => searchGlossary(query), [query]);
@@ -69,49 +70,20 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote,
     inputRef.current?.focus();
   }, [hasPanels]);
 
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      const tag = (e.target as HTMLElement)?.tagName;
-      const isInput = tag === "INPUT" || tag === "TEXTAREA";
+  const handleCollapse = useCallback((id: string) => {
+    setPanelStates((prev) => ({ ...prev, [id]: "collapsed" }));
+  }, []);
 
-      if (e.key === "f" && !isInput && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault();
-        if (sidebarCollapsed && hasPanels) setSidebarCollapsed(false);
-        requestAnimationFrame(() => inputRef.current?.focus());
-        return;
-      }
+  const handleToggleExpand = useCallback((id: string) => {
+    setPanelStates((prev) => ({
+      ...prev,
+      [id]: prev[id] === "expanded" ? "default" : "expanded",
+    }));
+  }, []);
 
-      if ((e.metaKey || e.ctrlKey) && e.key === "b" && hasPanels) {
-        e.preventDefault();
-        setSidebarCollapsed((prev) => !prev);
-        return;
-      }
-
-      if (e.key === "Escape" && hasPanels) {
-        if (isInput && document.activeElement === inputRef.current) {
-          inputRef.current?.blur();
-        } else if (!sidebarCollapsed) {
-          setSidebarCollapsed(true);
-        }
-        return;
-      }
-
-      if (e.key === "i" && !isInput && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault();
-        setShowInfo((prev) => !prev);
-        return;
-      }
-
-      if (e.key === "o" && !isInput && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault();
-        toggle();
-        return;
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [hasPanels, sidebarCollapsed, toggle]);
+  const handleRestore = useCallback((id: string) => {
+    setPanelStates((prev) => ({ ...prev, [id]: "default" }));
+  }, []);
 
   const triggerHighlight = useCallback((id: string) => {
     setHighlightedPanelId(id);
@@ -132,6 +104,124 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote,
       container.scrollBy({ left: elRect.right - visibleRight + 16, behavior: "smooth" });
     }
   }, []);
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement)?.tagName;
+      const isInput = tag === "INPUT" || tag === "TEXTAREA";
+
+      if (e.key === "f" && !isInput && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        if (sidebarCollapsed && hasPanels) setSidebarCollapsed(false);
+        requestAnimationFrame(() => inputRef.current?.focus());
+        return;
+      }
+
+      if ((e.metaKey || e.ctrlKey) && e.key === "b" && hasPanels) {
+        e.preventDefault();
+        setSidebarCollapsed((prev) => !prev);
+        return;
+      }
+
+      if (e.key === "Escape") {
+        if (isInput && document.activeElement !== inputRef.current) {
+          return;
+        }
+        if (!isInput && focusedPanelIndex !== null) {
+          e.preventDefault();
+          setFocusedPanelIndex(null);
+          return;
+        }
+        if (hasPanels) {
+          if (isInput && document.activeElement === inputRef.current) {
+            inputRef.current?.blur();
+          } else if (!sidebarCollapsed) {
+            setSidebarCollapsed(true);
+          }
+          return;
+        }
+      }
+
+      if (e.key === "i" && !isInput && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        setShowInfo((prev) => !prev);
+        return;
+      }
+
+      if (e.key === "o" && !isInput && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        toggle();
+        return;
+      }
+
+      if (!isInput && focusedPanelIndex !== null && e.key === "Enter") {
+        e.preventDefault();
+        const entry = openEntries[focusedPanelIndex];
+        if (entry) {
+          const el = panelRefs.current.get(entry.id);
+          if (el) {
+            const textarea = el.querySelector("textarea") as HTMLTextAreaElement | null;
+            if (textarea) {
+              textarea.focus();
+            } else {
+              const addBtn = el.querySelector("[data-note-add]") as HTMLButtonElement | null;
+              if (addBtn) addBtn.click();
+            }
+          }
+        }
+        return;
+      }
+
+      if (!isInput && focusedPanelIndex !== null && e.key === " ") {
+        e.preventDefault();
+        const entry = openEntries[focusedPanelIndex];
+        if (entry) {
+          const state = panelStates[entry.id] || "default";
+          if (state === "default") handleToggleExpand(entry.id);
+          else if (state === "expanded") handleCollapse(entry.id);
+          else if (state === "collapsed") handleRestore(entry.id);
+        }
+        return;
+      }
+
+      if (!isInput && focusedPanelIndex !== null && (e.key === "Backspace" || e.key === "Delete")) {
+        e.preventDefault();
+        const entry = openEntries[focusedPanelIndex];
+        if (entry) {
+          const nextIndex = focusedPanelIndex >= openEntries.length - 1
+            ? Math.max(0, openEntries.length - 2)
+            : focusedPanelIndex;
+          handleClose(entry.id);
+          setFocusedPanelIndex(openEntries.length <= 1 ? null : nextIndex);
+        }
+        return;
+      }
+
+      if (!isInput && hasPanels && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+        e.preventDefault();
+        const count = openEntries.length;
+        if (count === 0) {
+          setFocusedPanelIndex(null);
+          return;
+        }
+        const next = focusedPanelIndex === null
+          ? (e.key === "ArrowRight" ? 0 : count - 1)
+          : (e.key === "ArrowRight"
+            ? (focusedPanelIndex + 1) % count
+            : (focusedPanelIndex - 1 + count) % count);
+        setFocusedPanelIndex(next);
+        const entry = openEntries[next];
+        if (entry) {
+          const el = panelRefs.current.get(entry.id);
+          if (el) scrollPanelIntoView(el);
+        }
+        return;
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [hasPanels, sidebarCollapsed, toggle, openEntries, focusedPanelIndex, scrollPanelIntoView, panelStates, handleToggleExpand, handleCollapse, handleRestore]);
 
   const handleSelect = useCallback(
     (entry: GlossaryEntry) => {
@@ -167,21 +257,7 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote,
       delete next[id];
       return next;
     });
-  }, []);
-
-  const handleCollapse = useCallback((id: string) => {
-    setPanelStates((prev) => ({ ...prev, [id]: "collapsed" }));
-  }, []);
-
-  const handleToggleExpand = useCallback((id: string) => {
-    setPanelStates((prev) => ({
-      ...prev,
-      [id]: prev[id] === "expanded" ? "default" : "expanded",
-    }));
-  }, []);
-
-  const handleRestore = useCallback((id: string) => {
-    setPanelStates((prev) => ({ ...prev, [id]: "default" }));
+    setFocusedPanelIndex(null);
   }, []);
 
   const handleSearchKeyDown = useCallback(
@@ -243,6 +319,7 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote,
       });
       setDragIndex(null);
       setDropIndex(null);
+      setFocusedPanelIndex(null);
     },
     [dragIndex, dropSide],
   );
@@ -282,8 +359,13 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote,
               }}
               onKeyDown={handleSearchKeyDown}
               placeholder="Find a term (e.g. sat, cit, ānanda)"
-              className="w-full rounded-xl border border-zinc-200 bg-zinc-50/80 px-5 py-3.5 text-base text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-300 focus:border-zinc-400 focus:bg-white focus:shadow-[0_0_0_3px_rgba(161,161,170,0.1)] dark:border-zinc-700/60 dark:bg-zinc-900/60 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-500 dark:focus:bg-zinc-900 dark:focus:shadow-[0_0_0_3px_rgba(161,161,170,0.08)]"
+              className="peer w-full rounded-xl border border-zinc-200 bg-zinc-50/80 px-5 py-3.5 text-base text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-300 focus:border-zinc-400 focus:bg-white focus:shadow-[0_0_0_3px_rgba(161,161,170,0.1)] dark:border-zinc-700/60 dark:bg-zinc-900/60 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-500 dark:focus:bg-zinc-900 dark:focus:shadow-[0_0_0_3px_rgba(161,161,170,0.08)]"
             />
+            {query.length === 0 && (
+              <kbd className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 rounded border border-zinc-200 bg-zinc-100 px-1.5 py-0.5 text-[11px] font-medium text-zinc-400 peer-focus:hidden dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-500">
+                F
+              </kbd>
+            )}
 
             {results.length > 0 && (
               <ul className="animate-slide-down absolute top-full z-10 mt-2 w-full overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-700/60 dark:bg-zinc-900 dark:shadow-zinc-950/30">
@@ -366,6 +448,7 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote,
 
       <div
         ref={panelContainerRef}
+        onClick={(e) => { if (e.target === e.currentTarget) setFocusedPanelIndex(null); }}
         className={`flex min-h-0 flex-1 items-stretch gap-3 overflow-x-auto p-4 pr-24 transition-[padding] duration-300 ease-out ${sidebarCollapsed ? "pl-16" : "pl-[19rem]"}`}
       >
         {openEntries.map((entry, index) => {
@@ -382,11 +465,12 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote,
                 else panelRefs.current.delete(entry.id);
               }}
               draggable
+              onClick={() => setFocusedPanelIndex(index)}
               onDragStart={() => handleDragStart(index)}
               onDragOver={(e) => handleDragOver(e, index)}
               onDrop={(e) => handleDrop(e, index)}
               onDragEnd={handleDragEnd}
-              className={`relative cursor-grab transition-all duration-200 active:cursor-grabbing ${isDragging ? "opacity-30 scale-[0.97]" : ""} ${newPanelIds.current.has(entry.id) ? "animate-slide-in-right" : ""} ${highlightedPanelId === entry.id ? "animate-panel-highlight" : ""}`}
+              className={`relative cursor-grab transition-all duration-200 active:cursor-grabbing ${isDragging ? "opacity-30 scale-[0.97]" : ""} ${newPanelIds.current.has(entry.id) ? "animate-slide-in-right" : ""} ${highlightedPanelId === entry.id ? "animate-panel-highlight" : ""} ${focusedPanelIndex === index ? "ring-2 ring-zinc-300 dark:ring-zinc-600 rounded-lg" : ""}`}
               onAnimationEnd={(e) => {
                 if (e.animationName === "slide-in-right") {
                   newPanelIds.current.delete(entry.id);
@@ -423,6 +507,7 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, handleAddNote,
                   onEditNote={handleEditNote}
                   user={user}
                   onSignInClick={handleSignInClick}
+                  showToast={showToast}
                 />
               )}
             </div>

@@ -9,9 +9,10 @@ import type { StickyNote, SharedEntryState } from "../types";
 import { searchGlossary } from "../lib/search";
 import { findByTerm, getRelatedTerms } from "../lib/search";
 import { useTheme } from "../hooks";
-import { IconInfo, IconUser, Wordmark } from "./Icons";
+import { IconInfo, IconUser, IconCopy, IconShare, Wordmark, iconButtonClass } from "./Icons";
 import { NotesArea } from "./Notes";
 import { Section, RootText, DefinitionText, MwSection } from "./WordPanel";
+import { formatEntryAsText } from "../lib/format";
 import { MobileAuthDropdown } from "./Auth";
 import { InfoPanel } from "./InfoPanel";
 
@@ -29,6 +30,7 @@ function MobileDetailView({
   onEditNote,
   user,
   onSignInClick,
+  showToast,
 }: {
   entry: GlossaryEntry;
   openEntries: GlossaryEntry[];
@@ -43,9 +45,27 @@ function MobileDetailView({
   onEditNote: (id: string, index: number, text: string) => void;
   user: User | null;
   onSignInClick: () => void;
+  showToast: (message: string) => void;
 }) {
   const tabsRef = useRef<HTMLDivElement>(null);
   const touchRef = useRef<{ x: number; y: number } | null>(null);
+
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(formatEntryAsText(entry))
+      .then(() => showToast("Copied to clipboard"))
+      .catch(() => showToast("Failed to copy"));
+  }, [entry, showToast]);
+
+  const handleShare = useCallback(() => {
+    const url = `${window.location.origin}/t/${entry.id}`;
+    if (typeof navigator.share === "function") {
+      navigator.share({ title: entry.term, url }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(url)
+        .then(() => showToast("Link copied"))
+        .catch(() => showToast("Failed to copy link"));
+    }
+  }, [entry, showToast]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
@@ -127,11 +147,23 @@ function MobileDetailView({
 
       <div className="flex-1 px-5 pt-6 pb-8" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <div className="mb-8">
-          <div className="font-mono text-4xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">
-            {entry.devanagari || toDevanagari(entry.term)}
-          </div>
-          <div className="mt-2 text-lg text-zinc-400 dark:text-zinc-500">
-            {entry.term}
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="font-mono text-4xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">
+                {entry.devanagari || toDevanagari(entry.term)}
+              </div>
+              <div className="mt-2 text-lg text-zinc-400 dark:text-zinc-500">
+                {entry.term}
+              </div>
+            </div>
+            <div className="mt-1 flex items-center gap-2">
+              <button onClick={handleCopy} aria-label="Copy entry text" className={`${iconButtonClass} p-2`}>
+                <IconCopy className="size-5" />
+              </button>
+              <button onClick={handleShare} aria-label="Share" className={`${iconButtonClass} p-2`}>
+                <IconShare className="size-5" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -192,7 +224,7 @@ function MobileDetailView({
   );
 }
 
-export function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote, user }: SharedEntryState) {
+export function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote, user, showToast }: SharedEntryState) {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>("core");
   const [showInfo, setShowInfo] = useState(false);
@@ -331,6 +363,7 @@ export function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, 
           onEditNote={handleEditNote}
           user={user}
           onSignInClick={handleSignInClick}
+          showToast={showToast}
         />
       </>
     );

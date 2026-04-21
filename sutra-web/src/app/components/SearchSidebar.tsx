@@ -94,8 +94,13 @@ export function SearchSidebar({
             }}
             onKeyDown={onKeyDown}
             placeholder="Find a term..."
-            className="w-full rounded-lg border border-zinc-200/60 bg-zinc-50/80 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-200 focus:border-zinc-300 focus:bg-white focus:shadow-[0_0_0_3px_rgba(161,161,170,0.08)] dark:border-zinc-700/40 dark:bg-zinc-900/60 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-600 dark:focus:bg-zinc-900"
+            className="peer w-full rounded-lg border border-zinc-200/60 bg-zinc-50/80 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 outline-none transition-all duration-200 focus:border-zinc-300 focus:bg-white focus:shadow-[0_0_0_3px_rgba(161,161,170,0.08)] dark:border-zinc-700/40 dark:bg-zinc-900/60 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-600 dark:focus:bg-zinc-900"
           />
+          {query.length === 0 && (
+            <kbd className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 rounded border border-zinc-200 bg-zinc-100 px-1.5 py-0.5 text-[10px] font-medium text-zinc-400 peer-focus:hidden dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-500">
+              F
+            </kbd>
+          )}
           {query.length > 0 && (
             <button
               onClick={() => { onQueryChange(""); inputRef.current?.focus(); }}

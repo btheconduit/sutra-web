@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { ThemeInit } from "./components/ThemeInit";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -72,9 +72,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="h-full flex flex-col">
-        <Script id="theme-init" strategy="beforeInteractive">
-          {`(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`}
-        </Script>
+        <ThemeInit />
         {children}
         <Analytics />
         <SpeedInsights />

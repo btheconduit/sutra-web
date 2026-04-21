@@ -18,9 +18,31 @@ It helps users quickly:
 - search Sanskrit terms
 - discover relations between terms
 - understand their meaning in context
+- share terms with others
 - return to study without distraction
 
 Do not introduce features that interfere with this.
+
+---
+
+## Tech Stack
+
+- Next.js 16 (App Router)
+- React 19
+- Supabase (auth + notes storage)
+- Tailwind CSS 4
+- TypeScript
+
+---
+
+## Architecture
+
+- **Static glossary data** — 650+ entries embedded in `glossary.ts`, loaded client-side. No database for term data.
+- **Separate mobile/desktop UIs** — `MobileHome` and `DesktopHome` components, chosen by viewport. Do not try to make one layout scale to both.
+- **Supabase** is used only for email OTP auth and user notes (one table, RLS). No other backend.
+- **No API routes** — everything is client-side except `/t/[id]` which is a server component for OG metadata.
+- **Shareable URLs** at `/t/[id]` — server component generates OG meta tags, then redirects to the main app with the term pre-opened.
+- **State** is managed via React state + localStorage, passed through props. No state management library.
 
 ---
 
@@ -40,6 +62,7 @@ Do not introduce features that interfere with this.
 - No clutter
 - Smooth clear use of animations
 - Typography should be calm and readable
+- Keyboard accessible — all core actions reachable without a mouse
 
 Avoid:
 - dashboards
@@ -53,16 +76,39 @@ Avoid:
 
 Core:
 
-1. Search input
+1. Search input with transliteration support
 2. Search results list
-3. Word detail view
+3. Word detail panels (multiple open, draggable, collapsible)
 4. Personal notes on entries (per-user, via Supabase auth)
-5. Magic link sign-in (via Supabase)
+5. Email OTP sign-in (via Supabase)
+6. Shareable word URLs with OG metadata (`/t/[id]`)
+7. Copy word content to clipboard
+8. Keyboard navigation between panels
 
 Do NOT build:
-- social features
+- comments, reactions, or social feeds
+- user profiles or public accounts
 - AI-generated content
 - complex filtering systems
+- analytics dashboards
+
+---
+
+## Keyboard Shortcuts
+
+Desktop keyboard shortcuts that must be preserved:
+
+- `f` — focus search input (when not in an input)
+- `Cmd/Ctrl+B` — toggle sidebar collapsed/expanded
+- `Escape` — blur search input, collapse sidebar, or clear panel focus (context-dependent; does not propagate when pressed in a notes textarea)
+- `i` — toggle info panel
+- `o` — toggle dark/light mode
+- `Arrow Left/Right` — navigate focus between open word panels
+- `Enter` (on focused panel) — open note input
+- `Space` (on focused panel) — cycle panel state: default → expanded → collapsed → default
+- `Delete/Backspace` (on focused panel) — close the panel
+
+Clicking a panel also focuses it. Clicking empty space clears focus.
 
 ---
 
@@ -71,6 +117,7 @@ Do NOT build:
 - Use structured JSON for glossary data
 - Prioritize exact matches, then fuzzy matches
 - Support transliteration search
+- Monier-Williams enrichment data loaded from JSON
 
 ---
 
@@ -86,7 +133,6 @@ Do NOT build:
 
 When unsure:
 - choose the simpler implementation
-- do not add features beyond scope
 - do not speculate on meanings
 - do not invent Sanskrit interpretations
 
@@ -94,14 +140,11 @@ When unsure:
 
 ## Iteration Approach
 
-Start with a working, minimal version.
-
-Then refine:
+Refine incrementally:
 - speed
 - clarity
 - usability
-
-Do not attempt to build a complete system in the first version.
+- accessibility
 
 ---
 
