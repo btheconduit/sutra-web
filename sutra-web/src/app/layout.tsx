@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeInit } from "./components/ThemeInit";
+import { SWRegister } from "./components/SWRegister";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,6 +26,7 @@ export const metadata: Metadata = {
   title: "Sutra",
   description: "A Sanskrit lookup tool for Vedanta study",
   metadataBase: new URL("https://sutra.so"),
+  manifest: "/manifest.json",
   openGraph: {
     title: "Sutra",
     description: "A Sanskrit lookup tool for Vedanta study",
@@ -73,6 +75,7 @@ export default function RootLayout({
     >
       <body className="h-full flex flex-col">
         <ThemeInit />
+        <SWRegister />
         {children}
         <Analytics />
         <SpeedInsights />
