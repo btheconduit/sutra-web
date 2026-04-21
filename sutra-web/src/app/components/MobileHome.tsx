@@ -156,12 +156,12 @@ function MobileDetailView({
                 {entry.term}
               </div>
             </div>
-            <div className="mt-1 flex items-center gap-1.5">
-              <button onClick={handleCopy} aria-label="Copy entry text" className={iconButtonClass}>
-                <IconCopy />
+            <div className="mt-1 flex items-center gap-2">
+              <button onClick={handleCopy} aria-label="Copy entry text" className={`${iconButtonClass} p-2`}>
+                <IconCopy className="size-5" />
               </button>
-              <button onClick={handleShare} aria-label="Share" className={iconButtonClass}>
-                <IconShare />
+              <button onClick={handleShare} aria-label="Share" className={`${iconButtonClass} p-2`}>
+                <IconShare className="size-5" />
               </button>
             </div>
           </div>
