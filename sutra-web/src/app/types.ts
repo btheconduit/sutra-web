@@ -11,10 +11,13 @@ export type MwData = Record<string, MwEntry>;
 export type SourceRef = { text: string; ref: string };
 export type SourceData = Record<string, SourceRef[]>;
 
+export type NoteSyncStatus = "idle" | "pending";
+
 export type SharedEntryState = {
   openEntries: GlossaryEntry[];
   setOpenEntries: React.Dispatch<React.SetStateAction<GlossaryEntry[]>>;
   notes: Record<string, StickyNote[]>;
+  syncStatus: NoteSyncStatus;
   handleAddNote: (id: string, text: string, color: number) => void;
   handleRemoveNote: (id: string, index: number) => void;
   handleChangeNoteColor: (id: string, index: number, color: number) => void;

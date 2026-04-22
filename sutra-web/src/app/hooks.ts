@@ -1,9 +1,26 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
-import type { StickyNote } from "./types";
+import type { StickyNote, NoteSyncStatus } from "./types";
+
+function pendingKey(userId: string) {
+  return `sutra-notes-pending-${userId}`;
+}
+
+function setPending(userId: string, pending: boolean) {
+  try {
+    if (pending) localStorage.setItem(pendingKey(userId), "1");
+    else localStorage.removeItem(pendingKey(userId));
+  } catch { /* ignore */ }
+}
+
+function isPending(userId: string): boolean {
+  try {
+    return localStorage.getItem(pendingKey(userId)) !== null;
+  } catch { return false; }
+}
 
 // --- Theme ---
 
@@ -77,8 +94,8 @@ function nextNoteId() {
   return `note-${Date.now()}-${++noteIdCounter}`;
 }
 
-async function upsertNotesToSupabase(userId: string, notes: Record<string, StickyNote[]>) {
-  if (!supabase) return;
+async function upsertNotesToSupabase(userId: string, notes: Record<string, StickyNote[]>): Promise<boolean> {
+  if (!supabase) return true;
   const rows = Object.entries(notes).flatMap(([entryId, arr]) =>
     arr.map((n) => ({
       id: n.id,
@@ -89,8 +106,13 @@ async function upsertNotesToSupabase(userId: string, notes: Record<string, Stick
       updated_at: new Date().toISOString(),
     }))
   );
-  if (rows.length === 0) return;
-  await supabase.from("notes").upsert(rows, { onConflict: "user_id,id" });
+  if (rows.length === 0) return true;
+  try {
+    const { error } = await supabase.from("notes").upsert(rows, { onConflict: "user_id,id" });
+    return !error;
+  } catch {
+    return false;
+  }
 }
 
 async function fetchNotesFromSupabase(userId: string): Promise<Record<string, StickyNote[]>> {
@@ -131,16 +153,60 @@ function untrackDeletedNote(noteId: string) {
   else localStorage.setItem(DELETED_NOTES_KEY, JSON.stringify([...ids]));
 }
 
-async function deleteNoteFromSupabase(userId: string, noteId: string) {
-  if (!supabase) return;
-  const { error } = await supabase.from("notes").delete().eq("user_id", userId).eq("id", noteId);
-  if (!error) untrackDeletedNote(noteId);
+async function deleteNoteFromSupabase(userId: string, noteId: string): Promise<boolean> {
+  if (!supabase) return true;
+  try {
+    const { error } = await supabase.from("notes").delete().eq("user_id", userId).eq("id", noteId);
+    if (!error) {
+      untrackDeletedNote(noteId);
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
 }
 
 export function useNotes(userId: string | undefined) {
   const storageKey = userId ? `sutra-notes-${userId}` : "sutra-notes";
   const [notes, setNotes] = useState<Record<string, StickyNote[]>>({});
   const [initialized, setInitialized] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<NoteSyncStatus>("idle");
+  const notesRef = useRef(notes);
+  notesRef.current = notes;
+  const inFlightRef = useRef(false);
+  const queuedRef = useRef<Record<string, StickyNote[]> | null>(null);
+
+  const syncNow = useCallback(async (data: Record<string, StickyNote[]>) => {
+    if (!userId) return;
+    if (inFlightRef.current) {
+      queuedRef.current = data;
+      return;
+    }
+    inFlightRef.current = true;
+    let current: Record<string, StickyNote[]> | null = data;
+    try {
+      while (current) {
+        setPending(userId, true);
+        const upsertOk = await upsertNotesToSupabase(userId, current);
+        let deleteOk = true;
+        for (const noteId of getDeletedNoteIds()) {
+          const ok = await deleteNoteFromSupabase(userId, noteId);
+          if (!ok) deleteOk = false;
+        }
+        if (upsertOk && deleteOk) {
+          setPending(userId, false);
+          setSyncStatus("idle");
+        } else {
+          setSyncStatus("pending");
+        }
+        current = queuedRef.current;
+        queuedRef.current = null;
+      }
+    } finally {
+      inFlightRef.current = false;
+    }
+  }, [userId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -169,6 +235,7 @@ export function useNotes(userId: string | undefined) {
       } catch { /* ignore */ }
 
       if (userId) {
+        if (isPending(userId)) setSyncStatus("pending");
         const remote = await fetchNotesFromSupabase(userId);
         const deletedIds = getDeletedNoteIds();
         for (const [entryId, remoteNotes] of Object.entries(remote)) {
@@ -180,10 +247,7 @@ export function useNotes(userId: string | undefined) {
           }
         }
         localStorage.setItem(storageKey, JSON.stringify(local));
-        upsertNotesToSupabase(userId, local);
-        for (const noteId of deletedIds) {
-          await deleteNoteFromSupabase(userId, noteId);
-        }
+        syncNow(local);
       }
 
       if (!cancelled) {
@@ -202,17 +266,25 @@ export function useNotes(userId: string | undefined) {
       }
     })();
     return () => { cancelled = true; };
-  }, [storageKey, userId]);
+  }, [storageKey, userId, syncNow]);
+
+  useEffect(() => {
+    if (!userId) return;
+    const onOnline = () => { syncNow(notesRef.current); };
+    window.addEventListener("online", onOnline);
+    return () => window.removeEventListener("online", onOnline);
+  }, [userId, syncNow]);
 
   const persist = useCallback((data: Record<string, StickyNote[]>) => {
     localStorage.setItem(storageKey, JSON.stringify(data));
-    if (userId) upsertNotesToSupabase(userId, data);
-  }, [storageKey, userId]);
+    if (userId) syncNow(data);
+  }, [storageKey, userId, syncNow]);
 
   const handleAddNote = useCallback((id: string, text: string, color: number) => {
+    const noteId = nextNoteId();
     let next: Record<string, StickyNote[]>;
     setNotes((prev) => {
-      next = { ...prev, [id]: [...(prev[id] || []), { id: nextNoteId(), text, color }] };
+      next = { ...prev, [id]: [...(prev[id] || []), { id: noteId, text, color }] };
       return next;
     });
     queueMicrotask(() => { if (next) persist(next); });
@@ -230,11 +302,8 @@ export function useNotes(userId: string | undefined) {
       return next;
     });
     queueMicrotask(() => {
+      if (userId && removed) trackDeletedNote(removed.id);
       if (next) persist(next);
-      if (userId && removed) {
-        trackDeletedNote(removed.id);
-        deleteNoteFromSupabase(userId, removed.id);
-      }
     });
   }, [persist, userId]);
 
@@ -262,5 +331,5 @@ export function useNotes(userId: string | undefined) {
     queueMicrotask(() => { if (next) persist(next); });
   }, [persist]);
 
-  return { notes, initialized, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote };
+  return { notes, initialized, syncStatus, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote };
 }

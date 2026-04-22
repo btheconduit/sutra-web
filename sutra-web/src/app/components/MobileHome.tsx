@@ -224,7 +224,7 @@ function MobileDetailView({
   );
 }
 
-export function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote, user, showToast }: SharedEntryState) {
+export function MobileHome({ openEntries, setOpenEntries, notes, syncStatus, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote, user, showToast }: SharedEntryState) {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>("core");
   const [showInfo, setShowInfo] = useState(false);
@@ -339,7 +339,7 @@ export function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, 
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-zinc-200 dark:bg-zinc-700" />
-        <MobileAuthDropdown user={user} onClose={() => setShowAuth(false)} noteCount={noteCount} />
+        <MobileAuthDropdown user={user} onClose={() => setShowAuth(false)} noteCount={noteCount} syncStatus={syncStatus} />
       </div>
     </div>
   ) : null;
@@ -399,9 +399,16 @@ export function MobileHome({ openEntries, setOpenEntries, notes, handleAddNote, 
             <button
               onClick={() => setShowAuth(!showAuth)}
               aria-label={user ? "Account" : "Sign in"}
-              className={`transition-colors ${user ? "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200" : "text-zinc-300 hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"}`}
+              className={`relative transition-colors ${user ? "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200" : "text-zinc-300 hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"}`}
             >
               <IconUser />
+              {user && syncStatus === "pending" && (
+                <span
+                  className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-amber-400/80 dark:bg-amber-500/80"
+                  title="Notes will sync when back online"
+                  aria-label="Notes pending sync"
+                />
+              )}
             </button>
           </div>
         </div>

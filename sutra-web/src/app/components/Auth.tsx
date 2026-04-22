@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import type { User } from "@supabase/supabase-js";
+import type { NoteSyncStatus } from "../types";
 import { supabase } from "@/lib/supabase";
 import { IconInfo, IconUser, Tooltip } from "./Icons";
 
@@ -10,7 +11,7 @@ function formatJoinDate(iso: string) {
   return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 }
 
-export function AuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose: () => void; noteCount: number }) {
+export function AuthDropdown({ user, onClose, noteCount, syncStatus }: { user: User | null; onClose: () => void; noteCount: number; syncStatus: NoteSyncStatus }) {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [otp, setOtp] = useState("");
@@ -70,6 +71,14 @@ export function AuthDropdown({ user, onClose, noteCount }: { user: User | null; 
         <p className="mt-1.5 text-[11px] text-zinc-400 dark:text-zinc-500">
           {noteCount} {noteCount === 1 ? "note" : "notes"} · joined {formatJoinDate(user.created_at)}
         </p>
+        {syncStatus === "pending" && (
+          <div className="mt-3 flex items-center gap-2 rounded-md border border-zinc-200/60 bg-zinc-50/60 px-2.5 py-1.5 dark:border-zinc-700/40 dark:bg-zinc-800/30">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400/80 dark:bg-amber-500/80" />
+            <p className="text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+              Offline · notes sync when reconnected
+            </p>
+          </div>
+        )}
         <button
           onClick={handleSignOut}
           disabled={signingOut}
@@ -158,7 +167,7 @@ export function AuthDropdown({ user, onClose, noteCount }: { user: User | null; 
   );
 }
 
-export function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | null; onClose: () => void; noteCount: number }) {
+export function MobileAuthDropdown({ user, onClose, noteCount, syncStatus }: { user: User | null; onClose: () => void; noteCount: number; syncStatus: NoteSyncStatus }) {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [otp, setOtp] = useState("");
@@ -208,6 +217,14 @@ export function MobileAuthDropdown({ user, onClose, noteCount }: { user: User | 
         <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-500">
           {noteCount} {noteCount === 1 ? "note" : "notes"} · joined {formatJoinDate(user.created_at)}
         </p>
+        {syncStatus === "pending" && (
+          <div className="mt-3 flex items-center gap-2 rounded-md border border-zinc-200/60 bg-zinc-50/60 px-3 py-2 dark:border-zinc-700/40 dark:bg-zinc-800/30">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400/80 dark:bg-amber-500/80" />
+            <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+              Offline · notes sync when reconnected
+            </p>
+          </div>
+        )}
         <button
           onClick={handleSignOut}
           disabled={signingOut}
@@ -295,6 +312,7 @@ export function TopBar({
   noteCount,
   showAuth,
   setShowAuth,
+  syncStatus,
 }: {
   dark: boolean;
   onToggle: () => void;
@@ -303,6 +321,7 @@ export function TopBar({
   noteCount: number;
   showAuth: boolean;
   setShowAuth: (v: boolean) => void;
+  syncStatus: NoteSyncStatus;
 }) {
   return (
     <div className="fixed top-5 right-5 z-20 flex items-center gap-3 rounded-lg border border-zinc-200/40 bg-white/40 px-3 py-2 leading-none backdrop-blur-2xl backdrop-saturate-150 dark:border-zinc-700/30 dark:bg-zinc-950/30">
@@ -330,16 +349,22 @@ export function TopBar({
       </Tooltip>
       <div className="h-3 w-px bg-zinc-200/60 dark:bg-zinc-700/40" />
       <div className="relative">
-        <Tooltip label={user ? "Account" : "Sign in"}>
+        <Tooltip label={user && syncStatus === "pending" ? "Notes pending sync" : user ? "Account" : "Sign in"}>
           <button
             onClick={() => setShowAuth(!showAuth)}
             aria-label={user ? "Account" : "Sign in"}
-            className={`flex items-center transition-colors ${user ? "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200" : "text-zinc-300 hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"}`}
+            className={`relative flex items-center transition-colors ${user ? "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200" : "text-zinc-300 hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"}`}
           >
             <IconUser />
+            {user && syncStatus === "pending" && (
+              <span
+                className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-amber-400/80 dark:bg-amber-500/80"
+                aria-label="Notes pending sync"
+              />
+            )}
           </button>
         </Tooltip>
-        {showAuth && <AuthDropdown user={user} onClose={() => setShowAuth(false)} noteCount={noteCount} />}
+        {showAuth && <AuthDropdown user={user} onClose={() => setShowAuth(false)} noteCount={noteCount} syncStatus={syncStatus} />}
       </div>
     </div>
   );
