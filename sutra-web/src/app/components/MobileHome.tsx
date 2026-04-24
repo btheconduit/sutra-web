@@ -11,7 +11,7 @@ import { findByTerm, getRelatedTerms } from "../lib/search";
 import { useTheme } from "../hooks";
 import { IconInfo, IconUser, IconCopy, IconShare, Wordmark, iconButtonClass } from "./Icons";
 import { NotesArea } from "./Notes";
-import { Section, RootText, DefinitionText, MwSection } from "./WordPanel";
+import { Section, RootDisplay, CompositionDisplay, DefinitionText, MwSection } from "./WordPanel";
 import { formatEntryAsText } from "../lib/format";
 import { MobileAuthDropdown } from "./Auth";
 import { InfoPanel } from "./InfoPanel";
@@ -169,7 +169,8 @@ function MobileDetailView({
 
         <div className="space-y-6">
           <Section label="Definition" tooltip="From the Vedanta glossary used by Swami Dayananda Saraswati, reflecting traditional usage in the Advaita Vedanta teaching tradition."><DefinitionText text={entry.definition} /></Section>
-          {entry.root && <Section label="Root"><RootText text={entry.root} /></Section>}
+          {entry.root && <Section label="Root" tooltip="The verbal root (dhātu) from which this word derives — the seed-verb a family of Sanskrit words grows from."><RootDisplay root={entry.root} /></Section>}
+          {entry.composition && <Section label="Built from" tooltip="How the word is assembled from meaningful pieces (morphemes) — prefixes, suffixes, and smaller words joined to form this term."><CompositionDisplay composition={entry.composition} /></Section>}
           {entry.vedantaMeaning && (
             <Section label="Vedantic meaning" tooltip="Meaning as understood within the living tradition of Advaita Vedanta, rooted in the teachings of the ancient rishis and the works of Ādi Śaṅkarācārya.">{entry.vedantaMeaning}</Section>
           )}

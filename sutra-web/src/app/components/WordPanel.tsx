@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import type { User } from "@supabase/supabase-js";
 import type { GlossaryEntry } from "../data/glossary";
+import { roots } from "../data/roots";
+import { morphemes } from "../data/morphemes";
 import type { StickyNote, MwEntry } from "../types";
 import { toDevanagari } from "../data/devanagari";
 import { findByTerm, getRelatedTerms } from "../lib/search";
@@ -54,17 +56,49 @@ function SourceTooltip({ text }: { text: string }) {
   );
 }
 
-export function RootText({ text }: { text: string }) {
-  const parts = text.split(/(√\S+)/);
+export function RootDisplay({ root }: { root: NonNullable<GlossaryEntry["root"]> }) {
   return (
     <>
-      {parts.map((part, i) =>
-        part.startsWith("√") ? (
-          <em key={i}>{part.slice(1)}</em>
-        ) : (
-          <span key={i}>{part}</span>
-        ),
-      )}
+      {root.prefix && <span>{root.prefix} + </span>}
+      {root.keys.map((key, i) => {
+        const entry = roots[key];
+        return (
+          <span key={key}>
+            {i > 0 && <span>, or </span>}
+            √<em>{key}</em>
+            {entry && <span> — {entry.gloss}</span>}
+          </span>
+        );
+      })}
+    </>
+  );
+}
+
+function resolvePart(
+  part: NonNullable<GlossaryEntry["composition"]>["parts"][number],
+): { text: string; gloss: string } {
+  if ("morpheme" in part) {
+    const m = morphemes[part.morpheme];
+    return { text: part.morpheme, gloss: m?.gloss ?? "" };
+  }
+  return { text: part.text, gloss: part.gloss };
+}
+
+export function CompositionDisplay({
+  composition,
+}: {
+  composition: NonNullable<GlossaryEntry["composition"]>;
+}) {
+  const resolved = composition.parts.map(resolvePart);
+  return (
+    <>
+      {resolved.map((p, i) => (
+        <span key={i}>
+          {i > 0 && <span> + </span>}
+          <em>{p.text}</em>
+        </span>
+      ))}
+      <span> ({resolved.map((p) => p.gloss).join(" + ")})</span>
     </>
   );
 }
@@ -335,7 +369,8 @@ export function WordPanel({
 
         <div className="space-y-6">
           <Section label="Definition" tooltip="From the Vedanta glossary used by Swami Dayananda Saraswati, reflecting traditional usage in the Advaita Vedanta teaching tradition."><DefinitionText text={entry.definition} /></Section>
-          {entry.root && <Section label="Root"><RootText text={entry.root} /></Section>}
+          {entry.root && <Section label="Root" tooltip="The verbal root (dhātu) from which this word derives — the seed-verb a family of Sanskrit words grows from."><RootDisplay root={entry.root} /></Section>}
+          {entry.composition && <Section label="Built from" tooltip="How the word is assembled from meaningful pieces (morphemes) — prefixes, suffixes, and smaller words joined to form this term."><CompositionDisplay composition={entry.composition} /></Section>}
           {entry.vedantaMeaning && (
             <Section label="Vedantic meaning" tooltip="Meaning as understood within the living tradition of Advaita Vedanta, rooted in the teachings of the ancient rishis and the works of Ādi Śaṅkarācārya.">{entry.vedantaMeaning}</Section>
           )}
