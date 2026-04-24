@@ -4,7 +4,10 @@ export interface GlossaryEntry {
   devanagari?: string;
   transliteration: string;
   definition: string;
-  root?: string;
+  root?: { keys: string[]; prefix?: string };
+  composition?: {
+    parts: Array<{ morpheme: string } | { text: string; gloss: string }>;
+  };
   vedantaMeaning?: string;
   relatedTerms?: string[];
   tags?: string[];
@@ -393,7 +396,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "adhara",
     definition:
       "Lower (lit. not held up), low.",
-    root: "not held up",
   },
   {
     id: "adharmah",
@@ -576,7 +578,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "adhyāsa",
     definition:
       "Superimposition; the projection of attributes of one thing onto another.",
-    root: "adhi + √as — to throw upon",
+    root: { keys: ["as"], prefix: "adhi" },
     vedantaMeaning:
       "The mutual superimposition of the Self and the not-Self. Śaṅkara opens the Brahmasūtra-bhāṣya by identifying adhyāsa as the root cause of saṃsāra — mistaking the body-mind for ātmā and ātmā for the body-mind.",
     relatedTerms: ["avidyā", "mithyā", "viveka"],
@@ -647,7 +649,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "adhyayanam",
     definition:
       "Study of the Veda; learning; from adī to study adhyetavyaḥ adhyāpayati.",
-    root: "adī to study",
     relatedTerms: ["ādi"],
   },
   {
@@ -850,7 +851,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "aikṣata",
     definition:
       "It saw -- from from root īkṣ.",
-    root: "īkṣ",
   },
   {
     id: "aikyam",
@@ -1433,7 +1433,12 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "anātmā",
     definition:
       "All that is other than self; all objects of consciousness.",
-    root: "an (not) + ātmā",
+    composition: {
+      parts: [
+        { morpheme: "an" },
+        { text: "ātmā", gloss: "self" },
+      ],
+    },
     vedantaMeaning:
       "The body, senses, mind, and all objects of experience. Anātmā is mithyā — it has no independent existence apart from ātmā. Discrimination between ātmā and anātmā is the foundation of viveka.",
     relatedTerms: ["ātmā", "viveka", "mithyā"],
@@ -3102,7 +3107,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "ātmā",
     definition:
       "The self; that which is unfolded by this teaching.",
-    root: "√at — that which pervades, or √an — to breathe",
+    root: { keys: ["at", "an"] },
     vedantaMeaning:
       "Pure awareness, identical with Brahman. Not the body, mind, or ego. Ātmā is self-evident, self-luminous, and the only reality that is never negated.",
     relatedTerms: ["brahman", "anātmā", "sākṣī", "jīvah", "caitanyam", "ānandaḥ"],
@@ -3808,7 +3813,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "bahuvrīhi",
     definition:
       "Lit. possessing much rice; compound which relates to a word outside the compound - the final compound member, a noun, serves as an adjective.",
-    root: "possessing much rice",
     relatedTerms: ["bahu"],
   },
   {
@@ -4359,7 +4363,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "brahmāṇḍam",
     definition:
       "Lit. the egg of brahman; the cosmos.",
-    root: "the egg of brahman",
     relatedTerms: ["brahman"],
   },
   {
@@ -8131,7 +8134,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "mokṣa",
     definition:
       "Liberation; freedom from the cycle of birth and death.",
-    root: "√muc — to release, to set free",
+    root: { keys: ["muc"] },
     vedantaMeaning:
       "Not a future event or a place to reach. Mokṣa is the recognition that one is already free — that ātmā was never bound. It is the cessation of self-ignorance (avidyā-nivṛtti), not the gain of something new.",
     relatedTerms: ["avidyā", "ātmā", "brahman", "saṃsāra", "jñānam"],
@@ -13123,7 +13126,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "sāttvika",
     definition:
       "Endowed with virtue; with sattvam; derived from sattvam.",
-    root: "sattvam",
     relatedTerms: ["sattvam"],
   },
   {
@@ -14367,7 +14369,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "tattvamasi",
     definition:
       "lit. 'You are that.'; equation of self and brahman - a mahāvākya.",
-    root: "You are that",
     relatedTerms: ["brahman"],
   },
   {
@@ -15635,7 +15636,6 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "vāsanā",
     definition:
       "Subtle impressions left on the mind by previous actions; knowledge derived from memory; desire.",
-    root: "memory",
     relatedTerms: ["karma", "manas", "saṃsāra"],
     tags: ["impression", "conditioning", "tendency", "habit", "memory", "pattern"],
   },
@@ -16692,7 +16692,7 @@ export const glossary: GlossaryEntry[] = [
     transliteration: "viveka",
     definition:
       "Discrimination; the capacity to distinguish the real from the unreal.",
-    root: "vi + √vic — to separate, to discern",
+    root: { keys: ["vic"], prefix: "vi" },
     vedantaMeaning:
       "Nitya-anitya-vastu-viveka — the discrimination between the eternal (nitya) and the non-eternal (anitya). Listed as the first qualification (sādhana) for a student of Vedanta.",
     relatedTerms: ["adhyāsa", "anātmā", "vairāgyam", "mumukṣutvam", "sādhanatuṣṭayam"],
