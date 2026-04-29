@@ -10,7 +10,7 @@ import { toDevanagari } from "../data/devanagari";
 import { findByTerm, getRelatedTerms } from "../lib/search";
 import { loadMwData } from "../lib/mw";
 import { IconExpand, IconCollapse, IconMinimize, IconClose, IconCopy, IconShare, iconButtonClass } from "./Icons";
-import { NotesArea } from "./Notes";
+import { NotesList, NoteComposer } from "./Notes";
 import { formatEntryAsText } from "../lib/format";
 
 export function Section({
@@ -228,6 +228,85 @@ export function CollapsedPanel({
   );
 }
 
+function PanelMenu({
+  expanded,
+  onClose,
+  onCollapse,
+  onToggleExpand,
+  onCopy,
+  onShare,
+}: {
+  expanded: boolean;
+  onClose: () => void;
+  onCollapse: () => void;
+  onToggleExpand: () => void;
+  onCopy: () => void;
+  onShare: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [open]);
+
+  const itemClass =
+    "flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/50";
+
+  return (
+    <div
+      className="relative"
+      ref={ref}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        onClick={() => setOpen(!open)}
+        aria-label="More actions"
+        className="text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+      >
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+          <circle cx="3.5" cy="8" r="1.3" />
+          <circle cx="8" cy="8" r="1.3" />
+          <circle cx="12.5" cy="8" r="1.3" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full z-20 pt-1">
+          <div className="animate-fade-in min-w-[150px] rounded-lg border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-800">
+            <button onClick={() => { setOpen(false); onClose(); }} className={itemClass}>
+              <IconClose />
+              Close
+            </button>
+            <button onClick={() => { setOpen(false); onCollapse(); }} className={itemClass}>
+              <IconMinimize />
+              Minimize
+            </button>
+            <button onClick={() => { setOpen(false); onToggleExpand(); }} className={itemClass}>
+              {expanded ? <IconCollapse /> : <IconExpand />}
+              {expanded ? "Collapse" : "Expand"}
+            </button>
+            <div className="my-1 border-t border-zinc-100 dark:border-zinc-700/50" />
+            <button onClick={() => { setOpen(false); onCopy(); }} className={itemClass}>
+              <IconCopy />
+              Copy text
+            </button>
+            <button onClick={() => { setOpen(false); onShare(); }} className={itemClass}>
+              <IconShare />
+              Copy link
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function WordPanel({
   entry,
   panelState,
@@ -260,11 +339,11 @@ export function WordPanel({
   showToast: (message: string) => void;
 }) {
   const expanded = panelState === "expanded";
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const [stuck, setStuck] = useState(false);
 
   function handleCopy() {
-    setMenuOpen(false);
     navigator.clipboard.writeText(formatEntryAsText(entry))
       .then(() => showToast("Copied to clipboard"))
       .catch(() => showToast("Failed to copy"));
@@ -272,148 +351,142 @@ export function WordPanel({
 
   function handleShare() {
     const url = `${window.location.origin}/t/${entry.id}`;
-    setMenuOpen(false);
     navigator.clipboard.writeText(url)
       .then(() => showToast("Link copied"))
       .catch(() => showToast("Failed to copy link"));
   }
 
   useEffect(() => {
-    if (!menuOpen) return;
-    function handleClick(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [menuOpen]);
+    const sentinel = sentinelRef.current;
+    const scroller = scrollerRef.current;
+    if (!sentinel || !scroller) return;
+    const observer = new IntersectionObserver(
+      ([e]) => setStuck(!e.isIntersecting),
+      { root: scroller, threshold: 1.0 },
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div
       className={`${expanded ? "w-[32rem]" : "w-80"} flex h-full shrink-0 flex-col rounded-lg border border-zinc-200 bg-white transition-all duration-300 ease-out hover:border-zinc-300 hover:shadow-md dark:border-zinc-700/60 dark:bg-zinc-900/50 dark:hover:border-zinc-600/60 dark:hover:shadow-zinc-950/25`}
     >
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="mb-6 flex items-start justify-between">
-          <div>
-            <div className="text-4xl font-light tracking-tight font-mono text-zinc-900 dark:text-zinc-100">
-              {entry.devanagari || toDevanagari(entry.term)}
+      <div ref={scrollerRef} className="relative flex-1 overflow-y-auto scrollbar-thin">
+        <div
+          inert={!stuck}
+          className={`sticky top-0 z-10 -mb-16 h-16 transition-opacity duration-200 ${stuck ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        >
+          <div className="flex h-full items-center justify-between gap-3 border-b border-zinc-100 bg-white/95 px-6 backdrop-blur dark:border-zinc-800/60 dark:bg-zinc-900/85">
+            <div className="min-w-0">
+              <div className="font-mono text-xl font-light leading-tight tracking-tight text-zinc-900 dark:text-zinc-100">
+                {entry.devanagari || toDevanagari(entry.term)}
+              </div>
+              <div className="text-xs leading-tight text-zinc-400 dark:text-zinc-500">
+                {entry.term}
+              </div>
             </div>
-            <div className="mt-1.5 text-lg text-zinc-400 dark:text-zinc-500">
-              {entry.term}
-            </div>
-          </div>
-          <div className="ml-4 mt-1 flex items-center gap-1">
-            <div
-              className="relative"
-              ref={menuRef}
-              onMouseEnter={() => setMenuOpen(true)}
-              onMouseLeave={() => setMenuOpen(false)}
-            >
-              <button
-                onClick={() => setMenuOpen(!menuOpen)}
-                aria-label="More actions"
-                className="text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
-              >
-                <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
-                  <circle cx="3.5" cy="8" r="1.3" />
-                  <circle cx="8" cy="8" r="1.3" />
-                  <circle cx="12.5" cy="8" r="1.3" />
-                </svg>
-              </button>
-              {menuOpen && (
-                <div className="absolute right-0 top-full z-20 pt-1">
-                <div className="animate-fade-in min-w-[150px] rounded-lg border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-800">
-                  <button
-                    onClick={onClose}
-                    className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/50"
-                  >
-                    <IconClose />
-                    Close
-                  </button>
-                  <button
-                    onClick={onCollapse}
-                    className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/50"
-                  >
-                    <IconMinimize />
-                    Minimize
-                  </button>
-                  <button
-                    onClick={onToggleExpand}
-                    className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/50"
-                  >
-                    {expanded ? <IconCollapse /> : <IconExpand />}
-                    {expanded ? "Collapse" : "Expand"}
-                  </button>
-                  <div className="my-1 border-t border-zinc-100 dark:border-zinc-700/50" />
-                  <button
-                    onClick={handleCopy}
-                    className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/50"
-                  >
-                    <IconCopy />
-                    Copy text
-                  </button>
-                  <button
-                    onClick={handleShare}
-                    className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/50"
-                  >
-                    <IconShare />
-                    Copy link
-                  </button>
-                </div>
-                </div>
-              )}
-            </div>
+            <PanelMenu
+              expanded={expanded}
+              onClose={onClose}
+              onCollapse={onCollapse}
+              onToggleExpand={onToggleExpand}
+              onCopy={handleCopy}
+              onShare={handleShare}
+            />
           </div>
         </div>
 
-        <div className="space-y-6">
-          <Section label="Definition" tooltip="From the Vedanta glossary used by Swami Dayananda Saraswati, reflecting traditional usage in the Advaita Vedanta teaching tradition."><DefinitionText text={entry.definition} /></Section>
-          {entry.root && <Section label="Root" tooltip="The verbal root (dhātu) from which this word derives — the seed-verb a family of Sanskrit words grows from."><RootDisplay root={entry.root} /></Section>}
-          {entry.composition && <Section label="Built from" tooltip="How the word is assembled from meaningful pieces (morphemes) — prefixes, suffixes, and smaller words joined to form this term."><CompositionDisplay composition={entry.composition} /></Section>}
-          {entry.vedantaMeaning && (
-            <Section label="Vedantic meaning" tooltip="Meaning as understood within the living tradition of Advaita Vedanta, rooted in the teachings of the ancient rishis and the works of Ādi Śaṅkarācārya.">{entry.vedantaMeaning}</Section>
-          )}
-          {(() => {
-            const allRelated = getRelatedTerms(entry);
-            return allRelated.length > 0 ? (
-              <div>
-                <div className="mb-1 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
-                  Related terms
-                </div>
-                <div className="flex flex-wrap gap-x-3 gap-y-1 text-base leading-relaxed">
-                  {allRelated.map((term) => {
-                    const linked = findByTerm(term);
-                    if (linked) {
+        <div ref={sentinelRef} aria-hidden className="h-px" />
+
+        <div className="px-6 pt-6 pb-6">
+          <div className="mb-6 flex items-start justify-between">
+            <div>
+              <div className="text-4xl font-light tracking-tight font-mono text-zinc-900 dark:text-zinc-100">
+                {entry.devanagari || toDevanagari(entry.term)}
+              </div>
+              <div className="mt-1.5 text-lg text-zinc-400 dark:text-zinc-500">
+                {entry.term}
+              </div>
+            </div>
+            <div inert={stuck} className="ml-4 mt-1 flex items-center gap-1">
+              <PanelMenu
+                expanded={expanded}
+                onClose={onClose}
+                onCollapse={onCollapse}
+                onToggleExpand={onToggleExpand}
+                onCopy={handleCopy}
+                onShare={handleShare}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <Section label="Definition" tooltip="From the Vedanta glossary used by Swami Dayananda Saraswati, reflecting traditional usage in the Advaita Vedanta teaching tradition."><DefinitionText text={entry.definition} /></Section>
+            {entry.root && <Section label="Root" tooltip="The verbal root (dhātu) from which this word derives — the seed-verb a family of Sanskrit words grows from."><RootDisplay root={entry.root} /></Section>}
+            {entry.composition && <Section label="Built from" tooltip="How the word is assembled from meaningful pieces (morphemes) — prefixes, suffixes, and smaller words joined to form this term."><CompositionDisplay composition={entry.composition} /></Section>}
+            {entry.vedantaMeaning && (
+              <Section label="Vedantic meaning" tooltip="Meaning as understood within the living tradition of Advaita Vedanta, rooted in the teachings of the ancient rishis and the works of Ādi Śaṅkarācārya.">{entry.vedantaMeaning}</Section>
+            )}
+            {(() => {
+              const allRelated = getRelatedTerms(entry);
+              return allRelated.length > 0 ? (
+                <div>
+                  <div className="mb-1 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
+                    Related terms
+                  </div>
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 text-base leading-relaxed">
+                    {allRelated.map((term) => {
+                      const linked = findByTerm(term);
+                      if (linked) {
+                        return (
+                          <button
+                            key={term}
+                            onClick={() => onSelectTerm(linked)}
+                            className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-all hover:-translate-y-px hover:text-zinc-900 dark:text-zinc-300 dark:decoration-zinc-600 dark:hover:text-zinc-100"
+                          >
+                            {term}
+                          </button>
+                        );
+                      }
                       return (
-                        <button
+                        <span
                           key={term}
-                          onClick={() => onSelectTerm(linked)}
-                          className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-all hover:-translate-y-px hover:text-zinc-900 dark:text-zinc-300 dark:decoration-zinc-600 dark:hover:text-zinc-100"
+                          className="text-zinc-400 dark:text-zinc-500"
                         >
                           {term}
-                        </button>
+                        </span>
                       );
-                    }
-                    return (
-                      <span
-                        key={term}
-                        className="text-zinc-400 dark:text-zinc-500"
-                      >
-                        {term}
-                      </span>
-                    );
-                  })}
+                    })}
+                  </div>
                 </div>
-              </div>
-            ) : null;
-          })()}
-          <MwSection entryId={entry.id} />
+              ) : null;
+            })()}
+            <MwSection entryId={entry.id} />
+          </div>
+
+          {notes.length > 0 && (
+            <div className="mt-8 border-t border-zinc-100 pt-6 dark:border-zinc-800/60">
+              <NotesList
+                entryId={entry.id}
+                notes={notes}
+                onRemove={onRemoveNote}
+                onChangeColor={onChangeNoteColor}
+                onEdit={onEditNote}
+              />
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="shrink-0 border-t border-zinc-100 px-6 py-4 dark:border-zinc-800/60">
-        <NotesArea entryId={entry.id} notes={notes} onAdd={onAddNote} onRemove={onRemoveNote} onChangeColor={onChangeNoteColor} onEdit={onEditNote} user={user} onSignInClick={onSignInClick} />
+      <div className="shrink-0 border-t border-zinc-100 bg-white/95 px-6 py-3 backdrop-blur dark:border-zinc-800/60 dark:bg-zinc-900/85">
+        <NoteComposer
+          entryId={entry.id}
+          notesCount={notes.length}
+          onAdd={onAddNote}
+          user={user}
+          onSignInClick={onSignInClick}
+        />
       </div>
     </div>
   );
