@@ -143,8 +143,6 @@ export function StickyNoteCard({
   );
 }
 
-const NOTES_PREVIEW_LIMIT = 3;
-
 export function NotesList({
   entryId,
   notes,
@@ -158,55 +156,19 @@ export function NotesList({
   onChangeColor: (id: string, index: number, color: number) => void;
   onEdit: (id: string, index: number, text: string) => void;
 }) {
-  const [showAll, setShowAll] = useState(false);
-
   if (notes.length === 0) return null;
-
-  const hasOverflow = notes.length > NOTES_PREVIEW_LIMIT;
-  const collapsed = hasOverflow && !showAll;
-  const startIndex = collapsed ? notes.length - NOTES_PREVIEW_LIMIT : 0;
-  const visibleNotes = collapsed ? notes.slice(startIndex) : notes;
-  const hiddenCount = notes.length - NOTES_PREVIEW_LIMIT;
 
   return (
     <div className="space-y-2">
-      {hasOverflow && (
-        <button
-          onClick={() => setShowAll((v) => !v)}
-          className="mx-auto flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-zinc-500 transition-colors hover:bg-zinc-100/70 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800/40 dark:hover:text-zinc-200"
-        >
-          <svg
-            width="10"
-            height="10"
-            viewBox="0 0 10 10"
-            fill="none"
-            className={`transition-transform duration-200 ${showAll ? "rotate-180" : ""}`}
-          >
-            <path
-              d="M2.5 4L5 6.5L7.5 4"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          {showAll
-            ? "Show fewer"
-            : `Show ${hiddenCount} earlier ${hiddenCount === 1 ? "note" : "notes"}`}
-        </button>
-      )}
-      {visibleNotes.map((note, j) => {
-        const i = startIndex + j;
-        return (
-          <StickyNoteCard
-            key={note.id}
-            note={note}
-            onRemove={() => onRemove(entryId, i)}
-            onChangeColor={(c) => onChangeColor(entryId, i, c)}
-            onEdit={(text) => onEdit(entryId, i, text)}
-          />
-        );
-      })}
+      {notes.map((note, i) => (
+        <StickyNoteCard
+          key={note.id}
+          note={note}
+          onRemove={() => onRemove(entryId, i)}
+          onChangeColor={(c) => onChangeColor(entryId, i, c)}
+          onEdit={(text) => onEdit(entryId, i, text)}
+        />
+      ))}
     </div>
   );
 }
