@@ -10,7 +10,7 @@ import { searchGlossary } from "../lib/search";
 import { findByTerm, getRelatedTerms } from "../lib/search";
 import { useTheme } from "../hooks";
 import { IconInfo, IconUser, IconCopy, IconShare, Wordmark, iconButtonClass } from "./Icons";
-import { NotesArea } from "./Notes";
+import { NotesList, NoteComposer } from "./Notes";
 import { Section, RootDisplay, CompositionDisplay, DefinitionText, MwSection } from "./WordPanel";
 import { formatEntryAsText } from "../lib/format";
 import { MobileAuthDropdown } from "./Auth";
@@ -208,14 +208,18 @@ function MobileDetailView({
           <MwSection entryId={entry.id} />
         </div>
 
-        <div className="mt-8 border-t border-zinc-100 pt-6 dark:border-zinc-800/60">
-          <NotesArea
+        <div className="mt-8 space-y-3 border-t border-zinc-100 pt-6 dark:border-zinc-800/60">
+          <NotesList
             entryId={entry.id}
             notes={notes}
-            onAdd={onAddNote}
             onRemove={onRemoveNote}
             onChangeColor={onChangeNoteColor}
             onEdit={onEditNote}
+          />
+          <NoteComposer
+            entryId={entry.id}
+            notesCount={notes.length}
+            onAdd={onAddNote}
             user={user}
             onSignInClick={onSignInClick}
           />

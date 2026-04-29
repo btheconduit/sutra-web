@@ -143,22 +143,84 @@ export function StickyNoteCard({
   );
 }
 
-export function NotesArea({
+const NOTES_PREVIEW_LIMIT = 3;
+
+export function NotesList({
   entryId,
   notes,
-  onAdd,
   onRemove,
   onChangeColor,
   onEdit,
+}: {
+  entryId: string;
+  notes: StickyNote[];
+  onRemove: (id: string, index: number) => void;
+  onChangeColor: (id: string, index: number, color: number) => void;
+  onEdit: (id: string, index: number, text: string) => void;
+}) {
+  const [showAll, setShowAll] = useState(false);
+
+  if (notes.length === 0) return null;
+
+  const hasOverflow = notes.length > NOTES_PREVIEW_LIMIT;
+  const collapsed = hasOverflow && !showAll;
+  const startIndex = collapsed ? notes.length - NOTES_PREVIEW_LIMIT : 0;
+  const visibleNotes = collapsed ? notes.slice(startIndex) : notes;
+  const hiddenCount = notes.length - NOTES_PREVIEW_LIMIT;
+
+  return (
+    <div className="space-y-2">
+      {hasOverflow && (
+        <button
+          onClick={() => setShowAll((v) => !v)}
+          className="mx-auto flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-zinc-500 transition-colors hover:bg-zinc-100/70 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800/40 dark:hover:text-zinc-200"
+        >
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+            className={`transition-transform duration-200 ${showAll ? "rotate-180" : ""}`}
+          >
+            <path
+              d="M2.5 4L5 6.5L7.5 4"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          {showAll
+            ? "Show fewer"
+            : `Show ${hiddenCount} earlier ${hiddenCount === 1 ? "note" : "notes"}`}
+        </button>
+      )}
+      {visibleNotes.map((note, j) => {
+        const i = startIndex + j;
+        return (
+          <StickyNoteCard
+            key={note.id}
+            note={note}
+            onRemove={() => onRemove(entryId, i)}
+            onChangeColor={(c) => onChangeColor(entryId, i, c)}
+            onEdit={(text) => onEdit(entryId, i, text)}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+export function NoteComposer({
+  entryId,
+  notesCount,
+  onAdd,
   user,
   onSignInClick,
 }: {
   entryId: string;
-  notes: StickyNote[];
+  notesCount: number;
   onAdd: (id: string, text: string, color: number) => void;
-  onRemove: (id: string, index: number) => void;
-  onChangeColor: (id: string, index: number, color: number) => void;
-  onEdit: (id: string, index: number, text: string) => void;
   user: User | null;
   onSignInClick: () => void;
 }) {
@@ -168,6 +230,7 @@ export function NotesArea({
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const addingRef = useRef(false);
+
   useEffect(() => {
     if (composing) textareaRef.current?.focus();
   }, [composing]);
@@ -189,85 +252,75 @@ export function NotesArea({
     queueMicrotask(() => { addingRef.current = false; });
   }
 
-  return (
-    <div className="space-y-2">
-      {notes.map((note, i) => (
-        <StickyNoteCard
-          key={note.id}
-          note={note}
-          onRemove={() => onRemove(entryId, i)}
-          onChangeColor={(c) => onChangeColor(entryId, i, c)}
-          onEdit={(text) => onEdit(entryId, i, text)}
+  if (composing) {
+    return (
+      <div>
+        <textarea
+          ref={textareaRef}
+          value={draft}
+          onChange={(e) => {
+            setDraft(e.target.value);
+            if (showSignInPrompt) setShowSignInPrompt(false);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              tryAdd();
+            }
+            if (e.key === "Escape") {
+              setDraft("");
+              setComposing(false);
+              setShowSignInPrompt(false);
+            }
+          }}
+          placeholder="Write a note..."
+          rows={2}
+          className={`w-full resize-none rounded border px-3 py-2 text-xs leading-relaxed text-zinc-700 outline-none transition-colors dark:text-zinc-200 ${stickyColors[draftColor % stickyColors.length].bg}`}
         />
-      ))}
-
-      {composing ? (
-        <div>
-          <textarea
-            ref={textareaRef}
-            value={draft}
-            onChange={(e) => {
-              setDraft(e.target.value);
-              if (showSignInPrompt) setShowSignInPrompt(false);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                tryAdd();
-              }
-              if (e.key === "Escape") {
+        {showSignInPrompt && (
+          <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-400 dark:text-zinc-500">
+            <button
+              type="button"
+              onClick={onSignInClick}
+              className="underline transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
+            >
+              Sign in
+            </button>
+            {" "}to save this note.
+          </p>
+        )}
+        <div className="mt-2 flex items-center gap-3">
+          <ColorPicker selected={draftColor} onSelect={setDraftColor} />
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              onClick={tryAdd}
+              className="rounded px-2 py-0.5 text-xs font-medium text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+            >
+              Add
+            </button>
+            <button
+              onClick={() => {
                 setDraft("");
                 setComposing(false);
                 setShowSignInPrompt(false);
-              }
-            }}
-            placeholder="Write a note..."
-            rows={2}
-            className={`w-full resize-none rounded border px-3 py-2 text-xs leading-relaxed text-zinc-700 outline-none transition-colors dark:text-zinc-200 ${stickyColors[draftColor % stickyColors.length].bg}`}
-          />
-          {showSignInPrompt && (
-            <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-400 dark:text-zinc-500">
-              <button
-                type="button"
-                onClick={onSignInClick}
-                className="underline transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
-              >
-                Sign in
-              </button>
-              {" "}to save this note.
-            </p>
-          )}
-          <div className="mt-2 flex items-center gap-3">
-            <ColorPicker selected={draftColor} onSelect={setDraftColor} />
-            <div className="ml-auto flex items-center gap-2">
-              <button
-                onClick={tryAdd}
-                className="rounded px-2 py-0.5 text-xs font-medium text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
-              >
-                Add
-              </button>
-              <button
-                onClick={() => {
-                  setDraft("");
-                  setComposing(false);
-                  setShowSignInPrompt(false);
-                }}
-                className="rounded px-2 py-0.5 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
-              >
-                Cancel
-              </button>
-            </div>
+              }}
+              className="rounded px-2 py-0.5 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+            >
+              Cancel
+            </button>
           </div>
         </div>
-      ) : (
-        <button
-          data-note-add
-          onClick={() => setComposing(true)}
-          className="w-full rounded border border-dashed border-zinc-200 px-3 py-2 text-left text-xs text-zinc-400 transition-colors hover:border-zinc-300 hover:text-zinc-500 dark:border-zinc-700/60 dark:text-zinc-600 dark:hover:border-zinc-600 dark:hover:text-zinc-400"
-        >
-          {notes.length === 0 ? "Add a note..." : "+ Add another note"}
-        </button>
-      )}
-    </div>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      data-note-add
+      onClick={() => setComposing(true)}
+      className="w-full rounded border border-dashed border-zinc-200 px-3 py-2 text-left text-xs text-zinc-400 transition-colors hover:border-zinc-300 hover:text-zinc-500 dark:border-zinc-700/60 dark:text-zinc-600 dark:hover:border-zinc-600 dark:hover:text-zinc-400"
+    >
+      {notesCount === 0 ? "Add a note..." : "+ Add another note"}
+    </button>
   );
 }
