@@ -44,7 +44,7 @@ export function SearchSidebar({
 
   return (
     <div
-      className={`flex h-full shrink-0 flex-col overflow-hidden border-r border-zinc-200/40 bg-white/40 backdrop-blur-2xl backdrop-saturate-150 transition-[width] duration-300 ease-out dark:border-zinc-700/30 dark:bg-zinc-950/30 ${collapsed ? "w-12" : "w-72"}`}
+      className="flex h-full w-[var(--sidebar-w)] shrink-0 flex-col overflow-hidden border-r border-zinc-200/40 bg-white/40 backdrop-blur-2xl backdrop-saturate-150 transition-[width] duration-300 ease-out dark:border-zinc-700/30 dark:bg-zinc-950/30"
     >
       {collapsed ? (
         <button
