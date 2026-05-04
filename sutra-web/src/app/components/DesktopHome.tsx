@@ -92,13 +92,16 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
   const scrollPanelIntoView = useCallback((el: HTMLDivElement) => {
     const container = panelContainerRef.current;
     if (!container) return;
+    const sidebarWidth = parseFloat(getComputedStyle(container).paddingLeft);
     const containerRect = container.getBoundingClientRect();
     const elRect = el.getBoundingClientRect();
+    const visibleLeft = containerRect.left + sidebarWidth;
+    const visibleRight = containerRect.right;
 
-    if (elRect.left < containerRect.left) {
-      container.scrollBy({ left: elRect.left - containerRect.left - 16, behavior: "smooth" });
-    } else if (elRect.right > containerRect.right) {
-      container.scrollBy({ left: elRect.right - containerRect.right + 16, behavior: "smooth" });
+    if (elRect.left < visibleLeft) {
+      container.scrollBy({ left: elRect.left - visibleLeft - 16, behavior: "smooth" });
+    } else if (elRect.right > visibleRight) {
+      container.scrollBy({ left: elRect.right - visibleRight + 16, behavior: "smooth" });
     }
   }, []);
 
@@ -422,29 +425,34 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
   }
 
   return (
-    <div className="relative flex h-full min-h-0 flex-1 overflow-hidden bg-white font-sans dark:bg-zinc-950">
+    <div
+      className="relative flex h-full min-h-0 flex-1 overflow-hidden bg-white font-sans dark:bg-zinc-950"
+      style={{ "--sidebar-w": sidebarCollapsed ? "3rem" : "18rem" } as React.CSSProperties}
+    >
       <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={Object.values(notes).reduce((sum, arr) => sum + arr.length, 0)} showAuth={showAuth} setShowAuth={setShowAuth} syncStatus={syncStatus} />
       {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
 
-      <SearchSidebar
-        query={query}
-        onQueryChange={setQuery}
-        results={results}
-        onSelect={handleSelect}
-        inputRef={inputRef}
-        highlightedIndex={highlightedIndex}
-        onKeyDown={handleSearchKeyDown}
-        selectedCategory={selectedCategory}
-        onCategorySelect={setSelectedCategory}
-        onInfoClick={() => setShowInfo(true)}
-        collapsed={sidebarCollapsed}
-        onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
-      />
+      <div className="absolute inset-y-0 left-0 z-10">
+        <SearchSidebar
+          query={query}
+          onQueryChange={setQuery}
+          results={results}
+          onSelect={handleSelect}
+          inputRef={inputRef}
+          highlightedIndex={highlightedIndex}
+          onKeyDown={handleSearchKeyDown}
+          selectedCategory={selectedCategory}
+          onCategorySelect={setSelectedCategory}
+          onInfoClick={() => setShowInfo(true)}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
+        />
+      </div>
 
       <div
         ref={panelContainerRef}
         onClick={(e) => { if (e.target === e.currentTarget) setFocusedPanelIndex(null); }}
-        className="flex min-h-0 flex-1 items-stretch gap-3 overflow-x-auto p-4 pr-24"
+        className="isolate flex min-h-0 flex-1 items-stretch gap-3 overflow-x-auto p-4 pr-24 pl-[calc(var(--sidebar-w)+1rem)] transition-[padding] duration-300 ease-out"
       >
         {openEntries.map((entry, index) => {
           const state = panelStates[entry.id] || "default";
