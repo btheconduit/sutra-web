@@ -1,8 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect, type RefObject } from "react";
 import type { User } from "@supabase/supabase-js";
 import type { StickyNote } from "../types";
+
+function useAutosize(ref: RefObject<HTMLTextAreaElement | null>, value: string) {
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.height = "0px";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [ref, value]);
+}
 
 export const stickyColors = [
   { bg: "bg-zinc-50 border-zinc-200/80 dark:bg-zinc-800/20 dark:border-zinc-700/30", dot: "bg-zinc-300 dark:bg-zinc-500/70" },
@@ -51,6 +60,8 @@ export function StickyNoteCard({
   const [draft, setDraft] = useState(note.text);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const color = stickyColors[note.color % stickyColors.length];
+
+  useAutosize(textareaRef, editing ? draft : "");
 
   useEffect(() => {
     if (editing) textareaRef.current?.focus();
@@ -114,7 +125,7 @@ export function StickyNoteCard({
               setEditing(false);
             }}
             rows={2}
-            className="w-full resize-none rounded bg-transparent text-xs leading-relaxed text-zinc-600 outline-none dark:text-zinc-300"
+            className="block max-h-64 w-full resize-none overflow-y-auto rounded bg-transparent text-xs leading-relaxed text-zinc-600 outline-none dark:text-zinc-300"
           />
           <div className="mt-1.5 flex items-center justify-between md:hidden">
             <ColorPicker selected={note.color} onSelect={(c) => onChangeColor(c)} />
@@ -193,6 +204,8 @@ export function NoteComposer({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const addingRef = useRef(false);
 
+  useAutosize(textareaRef, composing ? draft : "");
+
   useEffect(() => {
     if (composing) textareaRef.current?.focus();
   }, [composing]);
@@ -237,7 +250,7 @@ export function NoteComposer({
           }}
           placeholder="Write a note..."
           rows={2}
-          className={`w-full resize-none rounded border px-3 py-2 text-xs leading-relaxed text-zinc-700 outline-none transition-colors dark:text-zinc-200 ${stickyColors[draftColor % stickyColors.length].bg}`}
+          className={`block max-h-64 w-full resize-none overflow-y-auto rounded border px-3 py-2 text-xs leading-relaxed text-zinc-700 outline-none transition-colors dark:text-zinc-200 ${stickyColors[draftColor % stickyColors.length].bg}`}
         />
         {showSignInPrompt && (
           <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-400 dark:text-zinc-500">
