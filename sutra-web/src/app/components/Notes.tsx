@@ -8,8 +8,19 @@ function useAutosize(ref: RefObject<HTMLTextAreaElement | null>, value: string) 
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    el.style.height = "0px";
-    el.style.height = `${el.scrollHeight}px`;
+    const resize = () => {
+      el.style.height = "0px";
+      el.style.height = `${el.scrollHeight}px`;
+    };
+    resize();
+    let lastWidth = el.clientWidth;
+    const observer = new ResizeObserver(() => {
+      if (el.clientWidth === lastWidth) return;
+      lastWidth = el.clientWidth;
+      resize();
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
   }, [ref, value]);
 }
 
