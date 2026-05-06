@@ -22,14 +22,18 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
+const description =
+  "A Sanskrit glossary for Vedanta study — 2,000+ terms with transliteration, Devanagari, and definitions.";
+
 export const metadata: Metadata = {
   title: "Sutra",
-  description: "A Sanskrit lookup tool for Vedanta study",
+  description,
   metadataBase: new URL("https://sutra.so"),
   manifest: "/manifest.json",
+  alternates: { canonical: "/" },
   openGraph: {
     title: "Sutra",
-    description: "A Sanskrit lookup tool for Vedanta study",
+    description,
     url: "https://sutra.so",
     siteName: "Sutra",
     locale: "en_US",
@@ -46,7 +50,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Sutra",
-    description: "A Sanskrit lookup tool for Vedanta study",
+    description,
     images: ["/og-image.png"],
   },
   icons: {
@@ -76,6 +80,17 @@ export default function RootLayout({
       <body className="h-full flex flex-col">
         <ThemeInit />
         <SWRegister />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Sutra",
+              url: "https://sutra.so",
+            }),
+          }}
+        />
         {children}
         <Analytics />
         <SpeedInsights />
