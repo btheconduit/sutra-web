@@ -344,7 +344,7 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
             </span>
             <Wordmark width={120} />
             <p className="mt-3 text-sm text-zinc-400 dark:text-zinc-600">
-              Look up Sanskrit terms with clarity
+              A quiet Sanskrit reference for Vedanta study.
             </p>
           </div>
 
