@@ -473,7 +473,7 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
               onDragOver={(e) => handleDragOver(e, index)}
               onDrop={(e) => handleDrop(e, index)}
               onDragEnd={handleDragEnd}
-              className={`relative cursor-grab transition-all duration-200 active:cursor-grabbing ${isDragging ? "opacity-30 scale-[0.97]" : ""} ${newPanelIds.current.has(entry.id) ? "animate-slide-in-right" : ""} ${highlightedPanelId === entry.id ? "animate-panel-highlight" : ""} ${focusedPanelIndex === index ? "ring-2 ring-zinc-300 dark:ring-zinc-600 rounded-lg" : ""}`}
+              className={`relative cursor-grab transition-all duration-200 active:cursor-grabbing ${isDragging ? "opacity-30 scale-[0.97]" : ""} ${newPanelIds.current.has(entry.id) ? "animate-slide-in-right" : ""} ${highlightedPanelId === entry.id ? "animate-panel-highlight" : ""} ${focusedPanelIndex === index ? "-translate-y-0.5 rounded-lg shadow-lg shadow-zinc-400/25 dark:shadow-zinc-100/10" : ""}`}
               onAnimationEnd={(e) => {
                 if (e.animationName === "slide-in-right") {
                   newPanelIds.current.delete(entry.id);

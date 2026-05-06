@@ -370,7 +370,7 @@ export function WordPanel({
 
   return (
     <div
-      className={`${expanded ? "w-[32rem]" : "w-80"} flex h-full shrink-0 flex-col rounded-lg border border-zinc-200 bg-white transition-all duration-300 ease-out hover:border-zinc-300 hover:shadow-md dark:border-zinc-700/60 dark:bg-zinc-900/50 dark:hover:border-zinc-600/60 dark:hover:shadow-zinc-950/25`}
+      className={`${expanded ? "w-[32rem]" : "w-80"} flex h-full shrink-0 flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white transition-all duration-300 ease-out hover:border-zinc-300 hover:shadow-md dark:border-zinc-700/60 dark:bg-zinc-900/50 dark:hover:border-zinc-600/60 dark:hover:shadow-zinc-950/25`}
     >
       <div ref={scrollerRef} className="relative flex-1 overflow-y-auto scrollbar-thin">
         <div
