@@ -57,7 +57,7 @@ export default async function TermPage({ params }: Props) {
                   entry.transliteration,
                   entry.devanagari,
                   ...(entry.aliases ?? []),
-                ].filter(Boolean),
+                ].filter((n): n is string => !!n && n !== entry.term),
                 description: entry.vedantaMeaning ?? entry.definition,
                 url: `https://sutra.so/t/${id}`,
               }),
@@ -67,9 +67,11 @@ export default async function TermPage({ params }: Props) {
             <article>
               <h1>{entry.term}</h1>
               {entry.devanagari && <p lang="sa">{entry.devanagari}</p>}
-              <p>
-                <em>{entry.transliteration}</em>
-              </p>
+              {entry.transliteration !== entry.term && (
+                <p>
+                  <em>{entry.transliteration}</em>
+                </p>
+              )}
               <p>{entry.definition}</p>
               {entry.vedantaMeaning && (
                 <>
