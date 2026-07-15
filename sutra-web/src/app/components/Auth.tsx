@@ -4,30 +4,22 @@ import { useState, useEffect, useRef } from "react";
 import type { User } from "@supabase/supabase-js";
 import type { NoteSyncStatus } from "../types";
 import { supabase } from "@/lib/supabase";
-import { IconInfo, IconUser, Tooltip } from "./Icons";
+import { IconInfo, IconUser, IconSun, IconMoon, Tooltip } from "./Icons";
 
 function formatJoinDate(iso: string) {
   const d = new Date(iso);
   return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 }
 
-export function AuthDropdown({ user, onClose, noteCount, syncStatus }: { user: User | null; onClose: () => void; noteCount: number; syncStatus: NoteSyncStatus }) {
+// Shared OTP sign-in state and handlers for the desktop dropdown and the
+// mobile bottom sheet; only the markup differs between the two.
+function useOtpAuth(onClose: () => void) {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
   const [signingOut, setSigningOut] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (sent) return;
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [onClose, sent]);
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
@@ -63,6 +55,29 @@ export function AuthDropdown({ user, onClose, noteCount, syncStatus }: { user: U
     await supabase?.auth.signOut();
     onClose();
   }
+
+  function reset() {
+    setSent(false);
+    setEmail("");
+    setOtp("");
+    setError("");
+  }
+
+  return { email, setEmail, otp, setOtp, sent, verifying, error, signingOut, handleSignIn, handleVerifyOtp, handleSignOut, reset };
+}
+
+export function AuthDropdown({ user, onClose, noteCount, syncStatus }: { user: User | null; onClose: () => void; noteCount: number; syncStatus: NoteSyncStatus }) {
+  const { email, setEmail, otp, setOtp, sent, verifying, error, signingOut, handleSignIn, handleVerifyOtp, handleSignOut, reset } = useOtpAuth(onClose);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (sent) return;
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [onClose, sent]);
 
   if (user) {
     return (
@@ -128,7 +143,7 @@ export function AuthDropdown({ user, onClose, noteCount, syncStatus }: { user: U
           </button>
         </form>
         <button
-          onClick={() => { setSent(false); setEmail(""); setOtp(""); setError(""); }}
+          onClick={reset}
           className="mt-2 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
         >
           Try a different email
@@ -168,47 +183,7 @@ export function AuthDropdown({ user, onClose, noteCount, syncStatus }: { user: U
 }
 
 export function MobileAuthDropdown({ user, onClose, noteCount, syncStatus }: { user: User | null; onClose: () => void; noteCount: number; syncStatus: NoteSyncStatus }) {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [verifying, setVerifying] = useState(false);
-  const [error, setError] = useState("");
-  const [signingOut, setSigningOut] = useState(false);
-
-  async function handleSignIn(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    if (!supabase) {
-      setError("Sign-in is not available");
-      return;
-    }
-    const { error: err } = await supabase.auth.signInWithOtp({
-      email,
-      options: { shouldCreateUser: true, emailRedirectTo: window.location.origin },
-    });
-    if (err) setError(err.message);
-    else setSent(true);
-  }
-
-  async function handleVerifyOtp(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    if (!supabase) return;
-    setVerifying(true);
-    const { error: err } = await supabase.auth.verifyOtp({
-      email,
-      token: otp.trim(),
-      type: "email",
-    });
-    setVerifying(false);
-    if (err) setError(err.message);
-  }
-
-  async function handleSignOut() {
-    setSigningOut(true);
-    await supabase?.auth.signOut();
-    onClose();
-  }
+  const { email, setEmail, otp, setOtp, sent, verifying, error, signingOut, handleSignIn, handleVerifyOtp, handleSignOut, reset } = useOtpAuth(onClose);
 
   if (user) {
     return (
@@ -265,7 +240,7 @@ export function MobileAuthDropdown({ user, onClose, noteCount, syncStatus }: { u
           </button>
         </form>
         <button
-          onClick={() => { setSent(false); setEmail(""); setOtp(""); setError(""); }}
+          onClick={reset}
           className="mt-3 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
         >
           Try a different email
@@ -340,11 +315,7 @@ export function TopBar({
           aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
           className="flex items-center text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
         >
-          {dark ? (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          )}
+          {dark ? <IconSun /> : <IconMoon />}
         </button>
       </Tooltip>
       <div className="h-3 w-px bg-zinc-200/60 dark:bg-zinc-700/40" />

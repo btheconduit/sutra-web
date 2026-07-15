@@ -8,9 +8,6 @@ export type PanelState = "collapsed" | "default" | "expanded";
 export type MwEntry = { senses: string[]; lex?: string; etymology?: string };
 export type MwData = Record<string, MwEntry>;
 
-export type SourceRef = { text: string; ref: string };
-export type SourceData = Record<string, SourceRef[]>;
-
 export type NoteSyncStatus = "idle" | "pending";
 
 export type SharedEntryState = {

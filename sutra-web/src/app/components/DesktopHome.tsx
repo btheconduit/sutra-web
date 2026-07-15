@@ -2,17 +2,21 @@
 
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import type { GlossaryEntry } from "../data/glossary";
-import { toDevanagari } from "../data/devanagari";
 import { categories } from "../data/categories";
-import type { PanelState, SharedEntryState } from "../types";
+import type { PanelState, SharedEntryState, StickyNote } from "../types";
 import { searchGlossary } from "../lib/search";
-import { useTheme } from "../hooks";
+import { truncate, displayDevanagari } from "../lib/format";
+import { useTheme, countNotes, useSearchKeyboardNav, useGlobalShortcuts } from "../hooks";
 import { Wordmark } from "./Icons";
 import { TopBar } from "./Auth";
 import { InfoPanel } from "./InfoPanel";
 import { SearchSidebar } from "./SearchSidebar";
 import { CategoryBlocks, CategoryTermCards } from "./Categories";
 import { CollapsedPanel, WordPanel } from "./WordPanel";
+
+// Stable fallback so note-less panels keep the same prop identity across
+// renders (a fresh [] would defeat WordPanel's memo).
+const NO_NOTES: StickyNote[] = [];
 
 export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote, user, showToast }: SharedEntryState) {
   const [query, setQuery] = useState("");
@@ -59,12 +63,8 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
   const newPanelIds = useRef<Set<string>>(new Set());
 
   const results = useMemo(() => searchGlossary(query), [query]);
+  const noteCount = useMemo(() => countNotes(notes), [notes]);
   const hasPanels = openEntries.length > 0;
-  const [highlightedIndex, setHighlightedIndex] = useState(-1);
-
-  useEffect(() => {
-    setHighlightedIndex(-1);
-  }, [results]);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -105,6 +105,16 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
     }
   }, []);
 
+  const handleClose = useCallback((id: string) => {
+    setOpenEntries((prev) => prev.filter((e) => e.id !== id));
+    setPanelStates((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+    setFocusedPanelIndex(null);
+  }, [setOpenEntries]);
+
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement)?.tagName;
@@ -140,18 +150,6 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
           }
           return;
         }
-      }
-
-      if (e.key === "i" && !isInput && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault();
-        setShowInfo((prev) => !prev);
-        return;
-      }
-
-      if (e.key === "o" && !isInput && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault();
-        toggle();
-        return;
       }
 
       if (!isInput && focusedPanelIndex !== null && e.key === "Enter") {
@@ -221,7 +219,10 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [hasPanels, sidebarCollapsed, toggle, openEntries, focusedPanelIndex, scrollPanelIntoView, panelStates, handleToggleExpand, handleCollapse, handleRestore]);
+  }, [hasPanels, sidebarCollapsed, openEntries, focusedPanelIndex, scrollPanelIntoView, panelStates, handleToggleExpand, handleCollapse, handleRestore, handleClose]);
+
+  const handleToggleInfo = useCallback(() => setShowInfo((prev) => !prev), []);
+  useGlobalShortcuts(handleToggleInfo, toggle);
 
   const handleSelect = useCallback(
     (entry: GlossaryEntry) => {
@@ -250,37 +251,7 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
     [openEntries, triggerHighlight],
   );
 
-  const handleClose = useCallback((id: string) => {
-    setOpenEntries((prev) => prev.filter((e) => e.id !== id));
-    setPanelStates((prev) => {
-      const next = { ...prev };
-      delete next[id];
-      return next;
-    });
-    setFocusedPanelIndex(null);
-  }, []);
-
-  const handleSearchKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (results.length === 0) return;
-
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setHighlightedIndex((prev) =>
-          prev < results.length - 1 ? prev + 1 : 0,
-        );
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setHighlightedIndex((prev) =>
-          prev > 0 ? prev - 1 : results.length - 1,
-        );
-      } else if (e.key === "Enter" && highlightedIndex >= 0) {
-        e.preventDefault();
-        handleSelect(results[highlightedIndex]);
-      }
-    },
-    [results, highlightedIndex, handleSelect],
-  );
+  const { highlightedIndex, handleSearchKeyDown } = useSearchKeyboardNav(results, handleSelect);
 
   const handleDragStart = useCallback((index: number) => {
     setDragIndex(index);
@@ -332,7 +303,7 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
   if (!hasPanels) {
     return (
       <div className="flex flex-1 flex-col items-center justify-start bg-white font-sans dark:bg-zinc-950">
-        <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={Object.values(notes).reduce((sum, arr) => sum + arr.length, 0)} showAuth={showAuth} setShowAuth={setShowAuth} syncStatus={syncStatus} />
+        <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={noteCount} showAuth={showAuth} setShowAuth={setShowAuth} syncStatus={syncStatus} />
         {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
         <main className="flex w-full max-w-2xl flex-col items-center px-6 pt-32 pb-16">
           <div className="mb-10 flex flex-col items-center">
@@ -379,12 +350,10 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
                         {entry.term}
                       </span>
                       <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
-                        {entry.devanagari || toDevanagari(entry.term)}
+                        {displayDevanagari(entry)}
                       </span>
                       <span className="ml-auto text-xs text-zinc-400 dark:text-zinc-500">
-                        {entry.definition.length > 50
-                          ? entry.definition.slice(0, 50) + "..."
-                          : entry.definition}
+                        {truncate(entry.definition, 50)}
                       </span>
                     </button>
                   </li>
@@ -429,7 +398,7 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
       className="relative flex h-full min-h-0 flex-1 overflow-hidden bg-white font-sans dark:bg-zinc-950"
       style={{ "--sidebar-w": sidebarCollapsed ? "3rem" : "18rem" } as React.CSSProperties}
     >
-      <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={Object.values(notes).reduce((sum, arr) => sum + arr.length, 0)} showAuth={showAuth} setShowAuth={setShowAuth} syncStatus={syncStatus} />
+      <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={noteCount} showAuth={showAuth} setShowAuth={setShowAuth} syncStatus={syncStatus} />
       {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
 
       <div className="absolute inset-y-0 left-0 z-10">
@@ -499,11 +468,11 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
                 <WordPanel
                   entry={entry}
                   panelState={state}
-                  onClose={() => handleClose(entry.id)}
-                  onCollapse={() => handleCollapse(entry.id)}
-                  onToggleExpand={() => handleToggleExpand(entry.id)}
+                  onClose={handleClose}
+                  onCollapse={handleCollapse}
+                  onToggleExpand={handleToggleExpand}
                   onSelectTerm={handleSelect}
-                  notes={notes[entry.id] || []}
+                  notes={notes[entry.id] ?? NO_NOTES}
                   onAddNote={handleAddNote}
                   onRemoveNote={handleRemoveNote}
                   onChangeNoteColor={handleChangeNoteColor}

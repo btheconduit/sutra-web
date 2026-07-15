@@ -1,5 +1,5 @@
 import { glossary, glossaryById, type GlossaryEntry } from "../data/glossary";
-import cooccurrence from "../data/sources/cooccurrence.json";
+import cooccurrence from "../data/cooccurrence.json";
 
 export function normalize(s: string): string {
   return (
@@ -29,13 +29,29 @@ export function normalize(s: string): string {
   );
 }
 
+// Precompute normalized entry fields once — normalize() chains ~20 regex
+// passes, far too costly to re-run across all entries on every keystroke.
+const searchIndex = glossary.map((entry) => ({
+  entry,
+  term: normalize(entry.term),
+  aliases: entry.aliases ? entry.aliases.map(normalize) : [],
+  def: normalize(entry.definition),
+  vedanta: entry.vedantaMeaning ? normalize(entry.vedantaMeaning) : "",
+  tags: entry.tags ? entry.tags.map(normalize) : [],
+}));
+
+// First-writer-wins in glossary order (term before aliases) matches the
+// first-match semantics of the linear scan this replaces.
+const normalizedTermMap = new Map<string, GlossaryEntry>();
+for (const { entry, term, aliases } of searchIndex) {
+  if (!normalizedTermMap.has(term)) normalizedTermMap.set(term, entry);
+  for (const alias of aliases) {
+    if (!normalizedTermMap.has(alias)) normalizedTermMap.set(alias, entry);
+  }
+}
+
 export function findByTerm(term: string): GlossaryEntry | undefined {
-  const n = normalize(term);
-  return glossary.find(
-    (e) =>
-      normalize(e.term) === n ||
-      (e.aliases?.some((a) => normalize(a) === n) ?? false),
-  );
+  return normalizedTermMap.get(normalize(term));
 }
 
 // Build a lowercase-term → entry lookup for definition text scanning.
@@ -53,8 +69,14 @@ for (const entry of glossary) {
   }
 }
 
+// Output is static per entry, so results are cached across renders.
+const relatedTermsCache = new Map<string, string[]>();
+
 /** Merge manually curated relatedTerms with terms found in definition/vedantaMeaning text */
 export function getRelatedTerms(entry: GlossaryEntry): string[] {
+  const cached = relatedTermsCache.get(entry.id);
+  if (cached) return cached;
+
   const manual = entry.relatedTerms ?? [];
   const seen = new Set(manual.map(normalize));
   seen.add(normalize(entry.term));
@@ -93,7 +115,9 @@ export function getRelatedTerms(entry: GlossaryEntry): string[] {
     seen.add(n);
   }
 
-  return [...manual, ...discovered];
+  const result = [...manual, ...discovered];
+  relatedTermsCache.set(entry.id, result);
+  return result;
 }
 
 export function searchGlossary(query: string): GlossaryEntry[] {
@@ -103,13 +127,7 @@ export function searchGlossary(query: string): GlossaryEntry[] {
 
   const scored: { entry: GlossaryEntry; score: number }[] = [];
 
-  for (const entry of glossary) {
-    const term = normalize(entry.term);
-    const aliases = entry.aliases ? entry.aliases.map(normalize) : [];
-    const def = normalize(entry.definition);
-    const vedanta = entry.vedantaMeaning ? normalize(entry.vedantaMeaning) : "";
-    const tags = entry.tags ? entry.tags.map(normalize) : [];
-
+  for (const { entry, term, aliases, def, vedanta, tags } of searchIndex) {
     let score = 0;
 
     // Term matching (highest priority)
