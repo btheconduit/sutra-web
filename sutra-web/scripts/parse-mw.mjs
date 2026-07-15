@@ -3,9 +3,9 @@
  * Parse Monier-Williams Sanskrit-English Dictionary XML (mw-v1.xml)
  * and match entries against our glossary terms.
  *
- * Usage: node scripts/parse-mw.mjs
+ * Usage: node scripts/parse-mw.mjs (from sutra-web/)
  *
- * Outputs: sutra-web/src/app/data/mw-enrichment.json
+ * Outputs: src/app/data/mw-enrichment.json
  */
 
 import { readFileSync, writeFileSync } from "fs";
@@ -13,9 +13,9 @@ import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const MW_XML = join(__dirname, "../.context/attachments/mw-v2.xml");
-const GLOSSARY = join(__dirname, "../sutra-web/src/app/data/glossary.ts");
-const OUTPUT = join(__dirname, "../sutra-web/src/app/data/mw-enrichment.json");
+const MW_XML = join(__dirname, "../../.context/attachments/mw-v2.xml");
+const GLOSSARY = join(__dirname, "../src/app/data/glossary.ts");
+const OUTPUT = join(__dirname, "../src/app/data/mw-enrichment.json");
 
 // --- SLP1 to IAST transliteration ---
 // SLP1 is the encoding used in the Cologne MW digitization.
@@ -122,13 +122,10 @@ function parseMw(xml) {
   while ((m = re.exec(xml)) !== null) {
     const tag = m[1];
     const key1 = m[2];
-    const key2 = m[3];
     const body = m[5];
-    const tail = m[6];
 
     const iast = slp1ToIast(key1);
     const isEtymology = tag.endsWith("E");
-    const isSubentry = /[ABC]$/.test(tag);
     const bodyText = stripXml(body);
     const sources = extractSources(body);
     const lex = extractLex(body);
@@ -211,7 +208,7 @@ console.log(`Found ${glossaryTerms.length} glossary terms`);
 // Build MW lookups: exact IAST and normalized
 const mwByIast = new Map();
 const mwByNormalized = new Map();
-for (const [key1, entry] of mwEntries) {
+for (const entry of mwEntries.values()) {
   const iast = entry.iast.toLowerCase();
   const norm = normalize(iast);
   if (!mwByIast.has(iast)) mwByIast.set(iast, []);
