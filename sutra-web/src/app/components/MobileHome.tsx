@@ -5,11 +5,11 @@ import type { User } from "@supabase/supabase-js";
 import type { GlossaryEntry } from "../data/glossary";
 import { categories, getCategoryEntries } from "../data/categories";
 import type { StickyNote, SharedEntryState } from "../types";
-import { searchGlossary, findByTerm, getRelatedTerms } from "../lib/search";
+import { searchGlossary } from "../lib/search";
 import { useTheme, countNotes } from "../hooks";
 import { IconInfo, IconUser, IconCopy, IconShare, IconSun, IconMoon, Wordmark, iconButtonClass } from "./Icons";
 import { NotesList, NoteComposer } from "./Notes";
-import { Section, RootDisplay, CompositionDisplay, DefinitionText, MwSection } from "./WordPanel";
+import { EntryBody } from "./EntryBody";
 import { truncate, displayDevanagari, copyEntryText, copyEntryLink } from "../lib/format";
 import { MobileAuthDropdown } from "./Auth";
 import { InfoPanel } from "./InfoPanel";
@@ -159,46 +159,7 @@ function MobileDetailView({
           </div>
         </div>
 
-        <div className="space-y-6">
-          <Section label="Definition" tooltip="From the Vedanta glossary used by Swami Dayananda Saraswati, reflecting traditional usage in the Advaita Vedanta teaching tradition."><DefinitionText text={entry.definition} /></Section>
-          {entry.root && <Section label="Root" tooltip="The verbal root (dhātu) from which this word derives — the seed-verb a family of Sanskrit words grows from."><RootDisplay root={entry.root} /></Section>}
-          {entry.composition && <Section label="Built from" tooltip="How the word is assembled from meaningful pieces (morphemes) — prefixes, suffixes, and smaller words joined to form this term."><CompositionDisplay composition={entry.composition} /></Section>}
-          {entry.vedantaMeaning && (
-            <Section label="Vedantic meaning" tooltip="Meaning as understood within the living tradition of Advaita Vedanta, rooted in the teachings of the ancient rishis and the works of Ādi Śaṅkarācārya.">{entry.vedantaMeaning}</Section>
-          )}
-          {(() => {
-            const allRelated = getRelatedTerms(entry);
-            return allRelated.length > 0 ? (
-              <div>
-                <div className="mb-1.5 text-sm tracking-wide text-zinc-400 dark:text-zinc-600">
-                  Related terms
-                </div>
-                <div className="flex flex-wrap gap-x-3 gap-y-2 text-base leading-relaxed">
-                  {allRelated.map((term) => {
-                    const linked = findByTerm(term);
-                    if (linked) {
-                      return (
-                        <button
-                          key={term}
-                          onClick={() => onSelectTerm(linked)}
-                          className="text-zinc-600 underline decoration-zinc-300 underline-offset-2 transition-colors hover:text-zinc-900 dark:text-zinc-300 dark:decoration-zinc-600 dark:hover:text-zinc-100"
-                        >
-                          {term}
-                        </button>
-                      );
-                    }
-                    return (
-                      <span key={term} className="text-zinc-400 dark:text-zinc-500">
-                        {term}
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-            ) : null;
-          })()}
-          <MwSection entryId={entry.id} />
-        </div>
+        <EntryBody entry={entry} onSelectTerm={onSelectTerm} />
 
         <div className="mt-8 space-y-3 border-t border-zinc-100 pt-6 dark:border-zinc-800/60">
           <NotesList

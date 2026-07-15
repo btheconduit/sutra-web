@@ -3,7 +3,7 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import type { GlossaryEntry } from "../data/glossary";
 import { categories } from "../data/categories";
-import type { PanelState, SharedEntryState } from "../types";
+import type { PanelState, SharedEntryState, StickyNote } from "../types";
 import { searchGlossary } from "../lib/search";
 import { truncate, displayDevanagari } from "../lib/format";
 import { useTheme, countNotes } from "../hooks";
@@ -13,6 +13,10 @@ import { InfoPanel } from "./InfoPanel";
 import { SearchSidebar } from "./SearchSidebar";
 import { CategoryBlocks, CategoryTermCards } from "./Categories";
 import { CollapsedPanel, WordPanel } from "./WordPanel";
+
+// Stable fallback so note-less panels keep the same prop identity across
+// renders (a fresh [] would defeat WordPanel's memo).
+const NO_NOTES: StickyNote[] = [];
 
 export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote, user, showToast }: SharedEntryState) {
   const [query, setQuery] = useState("");
@@ -498,11 +502,11 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
                 <WordPanel
                   entry={entry}
                   panelState={state}
-                  onClose={() => handleClose(entry.id)}
-                  onCollapse={() => handleCollapse(entry.id)}
-                  onToggleExpand={() => handleToggleExpand(entry.id)}
+                  onClose={handleClose}
+                  onCollapse={handleCollapse}
+                  onToggleExpand={handleToggleExpand}
                   onSelectTerm={handleSelect}
-                  notes={notes[entry.id] || []}
+                  notes={notes[entry.id] ?? NO_NOTES}
                   onAddNote={handleAddNote}
                   onRemoveNote={handleRemoveNote}
                   onChangeNoteColor={handleChangeNoteColor}
