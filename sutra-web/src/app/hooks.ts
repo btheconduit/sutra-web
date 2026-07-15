@@ -153,18 +153,31 @@ function nextNoteId() {
   return `note-${Date.now()}-${++noteIdCounter}`;
 }
 
-async function upsertNotesToSupabase(userId: string, notes: Record<string, StickyNote[]>): Promise<boolean> {
+type NoteRow = {
+  id: string;
+  user_id: string;
+  entry_id: string;
+  text: string;
+  color: number;
+  updated_at: string;
+};
+
+/** Build upsert rows for just the notes whose ids are in `ids` (note ids are globally unique). */
+function collectRows(userId: string, notes: Record<string, StickyNote[]>, ids: Set<string>): NoteRow[] {
+  const updatedAt = new Date().toISOString();
+  const rows: NoteRow[] = [];
+  for (const [entryId, arr] of Object.entries(notes)) {
+    for (const n of arr) {
+      if (ids.has(n.id)) {
+        rows.push({ id: n.id, user_id: userId, entry_id: entryId, text: n.text, color: n.color, updated_at: updatedAt });
+      }
+    }
+  }
+  return rows;
+}
+
+async function upsertNotesToSupabase(rows: NoteRow[]): Promise<boolean> {
   if (!supabase) return true;
-  const rows = Object.entries(notes).flatMap(([entryId, arr]) =>
-    arr.map((n) => ({
-      id: n.id,
-      user_id: userId,
-      entry_id: entryId,
-      text: n.text,
-      color: n.color,
-      updated_at: new Date().toISOString(),
-    }))
-  );
   if (rows.length === 0) return true;
   try {
     const { error } = await supabase.from("notes").upsert(rows, { onConflict: "user_id,id" });
@@ -234,38 +247,66 @@ export function useNotes(userId: string | undefined) {
   const notesRef = useRef(notes);
   notesRef.current = notes;
   const inFlightRef = useRef(false);
-  const queuedRef = useRef<Record<string, StickyNote[]> | null>(null);
+  const queuedRef = useRef(false);
+  // Note ids changed locally but not yet confirmed by Supabase; each flush
+  // upserts only these rows instead of the user's entire note set.
+  const dirtyRef = useRef<Set<string>>(new Set());
+  const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const syncNow = useCallback(async (data: Record<string, StickyNote[]>) => {
+  const flush = useCallback(async () => {
     if (!userId) return;
+    if (flushTimerRef.current) {
+      clearTimeout(flushTimerRef.current);
+      flushTimerRef.current = null;
+    }
     if (inFlightRef.current) {
-      queuedRef.current = data;
+      queuedRef.current = true;
       return;
     }
     inFlightRef.current = true;
-    let current: Record<string, StickyNote[]> | null = data;
     try {
-      while (current) {
+      do {
+        queuedRef.current = false;
         setPending(userId, true);
-        const upsertOk = await upsertNotesToSupabase(userId, current);
+        const ids = new Set(dirtyRef.current);
+        const rows = collectRows(userId, notesRef.current, ids);
+        const upsertOk = await upsertNotesToSupabase(rows);
+        if (upsertOk) {
+          for (const id of ids) dirtyRef.current.delete(id);
+        }
         let deleteOk = true;
         for (const noteId of getDeletedNoteIds()) {
           const ok = await deleteNoteFromSupabase(userId, noteId);
           if (!ok) deleteOk = false;
         }
-        if (upsertOk && deleteOk) {
+        if (upsertOk && deleteOk && dirtyRef.current.size === 0) {
           setPending(userId, false);
           setSyncStatus("idle");
         } else {
           setSyncStatus("pending");
         }
-        current = queuedRef.current;
-        queuedRef.current = null;
-      }
+      } while (queuedRef.current);
     } finally {
       inFlightRef.current = false;
     }
   }, [userId]);
+
+  // Debounced flush for note edits. The pending flag is set synchronously,
+  // so a tab closed inside the debounce window is recovered by the
+  // pending-flag full sync on next load.
+  const scheduleFlush = useCallback(() => {
+    if (!userId) return;
+    setPending(userId, true);
+    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+    flushTimerRef.current = setTimeout(() => {
+      flushTimerRef.current = null;
+      flush();
+    }, 800);
+  }, [userId, flush]);
+
+  useEffect(() => () => {
+    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -306,7 +347,15 @@ export function useNotes(userId: string | undefined) {
           }
         }
         localStorage.setItem(storageKey, JSON.stringify(local));
-        syncNow(local);
+        // Push all local notes up immediately: recovers anon/legacy notes on
+        // sign-in and anything a previous session failed to sync. The ref is
+        // updated eagerly because flush snapshots it before the state below
+        // has rendered.
+        for (const arr of Object.values(local)) {
+          for (const n of arr) dirtyRef.current.add(n.id);
+        }
+        notesRef.current = local;
+        flush();
       }
 
       if (!cancelled) {
@@ -325,19 +374,19 @@ export function useNotes(userId: string | undefined) {
       }
     })();
     return () => { cancelled = true; };
-  }, [storageKey, userId, syncNow]);
+  }, [storageKey, userId, flush]);
 
   useEffect(() => {
     if (!userId) return;
-    const onOnline = () => { syncNow(notesRef.current); };
+    const onOnline = () => { flush(); };
     window.addEventListener("online", onOnline);
     return () => window.removeEventListener("online", onOnline);
-  }, [userId, syncNow]);
+  }, [userId, flush]);
 
   const persist = useCallback((data: Record<string, StickyNote[]>) => {
     localStorage.setItem(storageKey, JSON.stringify(data));
-    if (userId) syncNow(data);
-  }, [storageKey, userId, syncNow]);
+    if (userId) scheduleFlush();
+  }, [storageKey, userId, scheduleFlush]);
 
   const handleAddNote = useCallback((id: string, text: string, color: number) => {
     const noteId = nextNoteId();
@@ -346,7 +395,12 @@ export function useNotes(userId: string | undefined) {
       next = { ...prev, [id]: [...(prev[id] || []), { id: noteId, text, color }] };
       return next;
     });
-    queueMicrotask(() => { if (next) persist(next); });
+    queueMicrotask(() => {
+      if (next) {
+        dirtyRef.current.add(noteId);
+        persist(next);
+      }
+    });
   }, [persist]);
 
   const handleRemoveNote = useCallback((id: string, index: number) => {
@@ -368,26 +422,40 @@ export function useNotes(userId: string | undefined) {
 
   const handleChangeNoteColor = useCallback((id: string, index: number, color: number) => {
     let next: Record<string, StickyNote[]> | undefined;
+    let dirtyId: string | undefined;
     setNotes((prev) => {
       const arr = [...(prev[id] || [])];
       if (!arr[index]) return prev;
+      dirtyId = arr[index].id;
       arr[index] = { ...arr[index], color };
       next = { ...prev, [id]: arr };
       return next;
     });
-    queueMicrotask(() => { if (next) persist(next); });
+    queueMicrotask(() => {
+      if (next) {
+        if (dirtyId) dirtyRef.current.add(dirtyId);
+        persist(next);
+      }
+    });
   }, [persist]);
 
   const handleEditNote = useCallback((id: string, index: number, text: string) => {
     let next: Record<string, StickyNote[]> | undefined;
+    let dirtyId: string | undefined;
     setNotes((prev) => {
       const arr = [...(prev[id] || [])];
       if (!arr[index]) return prev;
+      dirtyId = arr[index].id;
       arr[index] = { ...arr[index], text };
       next = { ...prev, [id]: arr };
       return next;
     });
-    queueMicrotask(() => { if (next) persist(next); });
+    queueMicrotask(() => {
+      if (next) {
+        if (dirtyId) dirtyRef.current.add(dirtyId);
+        persist(next);
+      }
+    });
   }, [persist]);
 
   return { notes, initialized, syncStatus, handleAddNote, handleRemoveNote, handleChangeNoteColor, handleEditNote };
