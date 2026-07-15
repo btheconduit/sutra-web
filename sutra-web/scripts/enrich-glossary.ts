@@ -36,7 +36,7 @@ for (const entry of glossary) {
 // --- Load co-occurrence data ---
 const coData: Record<string, string[]> = JSON.parse(
   readFileSync(
-    resolve(__dirname, "../src/app/data/sources/cooccurrence.json"),
+    resolve(__dirname, "../src/app/data/cooccurrence.json"),
     "utf-8"
   )
 );

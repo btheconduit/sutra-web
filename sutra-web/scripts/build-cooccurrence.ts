@@ -5,7 +5,7 @@
  *
  * Usage: npx tsx scripts/build-cooccurrence.ts
  *
- * Output: src/app/data/sources/cooccurrence.json
+ * Output: src/app/data/cooccurrence.json
  */
 
 import { readdirSync, readFileSync, writeFileSync } from "fs";
@@ -13,11 +13,11 @@ import { resolve } from "path";
 
 const generatedDir = resolve(
   __dirname,
-  "../src/app/data/sources/generated"
+  "../data-sources/generated"
 );
 const outPath = resolve(
   __dirname,
-  "../src/app/data/sources/cooccurrence.json"
+  "../src/app/data/cooccurrence.json"
 );
 
 type SourceRef = { text: string; ref: string };

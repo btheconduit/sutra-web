@@ -1,5 +1,5 @@
 import { glossary, glossaryById, type GlossaryEntry } from "../data/glossary";
-import cooccurrence from "../data/sources/cooccurrence.json";
+import cooccurrence from "../data/cooccurrence.json";
 
 export function normalize(s: string): string {
   return (

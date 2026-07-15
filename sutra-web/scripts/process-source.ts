@@ -12,14 +12,14 @@
  *
  * Examples:
  *   npx tsx scripts/process-source.ts \
- *     src/app/data/sources/raw/vivekachudamani.txt vivekachudamani \
+ *     data-sources/raw/vivekachudamani.txt vivekachudamani \
  *     --ref-prefix "Vivekacūḍāmaṇi" --format itrans
  *
  *   npx tsx scripts/process-source.ts \
- *     src/app/data/sources/raw/brahma-sutra-bhashya.txt brahma-sutra-bhashya \
+ *     data-sources/raw/brahma-sutra-bhashya.txt brahma-sutra-bhashya \
  *     --ref-prefix "Brahma-Sūtra-Bhāṣya" --format prose --skip-lines 800
  *
- * Output: src/app/data/sources/generated/<source-name>.json
+ * Output: data-sources/generated/<source-name>.json
  */
 
 import { readFileSync, writeFileSync } from "fs";
@@ -230,7 +230,7 @@ for (const chunk of chunks) {
 // --- Write output ---
 const outPath = resolve(
   __dirname,
-  "../src/app/data/sources/generated",
+  "../data-sources/generated",
   `${sourceName}.json`
 );
 writeFileSync(outPath, JSON.stringify(result, null, 2));
