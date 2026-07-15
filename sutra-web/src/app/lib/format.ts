@@ -3,6 +3,26 @@ import { roots } from "../data/roots";
 import { morphemes } from "../data/morphemes";
 import { toDevanagari } from "../data/devanagari";
 
+export function truncate(text: string, max: number): string {
+  return text.length > max ? text.slice(0, max) + "..." : text;
+}
+
+export function displayDevanagari(entry: Pick<GlossaryEntry, "devanagari" | "term">): string {
+  return entry.devanagari || toDevanagari(entry.term);
+}
+
+export function copyEntryText(entry: GlossaryEntry, showToast: (message: string) => void) {
+  navigator.clipboard.writeText(formatEntryAsText(entry))
+    .then(() => showToast("Copied to clipboard"))
+    .catch(() => showToast("Failed to copy"));
+}
+
+export function copyEntryLink(entry: GlossaryEntry, showToast: (message: string) => void) {
+  navigator.clipboard.writeText(`${window.location.origin}/t/${entry.id}`)
+    .then(() => showToast("Link copied"))
+    .catch(() => showToast("Failed to copy link"));
+}
+
 function formatRoot(root: NonNullable<GlossaryEntry["root"]>): string {
   const prefix = root.prefix ? `${root.prefix} + ` : "";
   const body = root.keys
@@ -26,11 +46,10 @@ function formatComposition(composition: NonNullable<GlossaryEntry["composition"]
 }
 
 export function formatEntryAsText(entry: GlossaryEntry): string {
-  const devanagari = entry.devanagari || toDevanagari(entry.term);
   const lines: string[] = [];
 
-  lines.push(`${entry.term} (${devanagari})`);
-  lines.push(entry.transliteration);
+  lines.push(`${entry.term} (${displayDevanagari(entry)})`);
+  if (entry.transliteration !== entry.term) lines.push(entry.transliteration);
   lines.push("");
   lines.push(entry.definition);
 

@@ -1,8 +1,19 @@
+import { glossaryById, type GlossaryEntry } from "./glossary";
+
 export interface Category {
   id: string;
   label: string;
   description: string;
   termIds: string[];
+}
+
+export function getCategoryEntries(categoryId: string | null): GlossaryEntry[] {
+  if (!categoryId) return [];
+  const cat = categories.find((c) => c.id === categoryId);
+  if (!cat) return [];
+  return cat.termIds
+    .map((id) => glossaryById.get(id))
+    .filter((e): e is GlossaryEntry => e !== undefined);
 }
 
 export const categories: Category[] = [

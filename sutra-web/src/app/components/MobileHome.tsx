@@ -2,16 +2,15 @@
 
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import type { User } from "@supabase/supabase-js";
-import { glossaryById, type GlossaryEntry } from "../data/glossary";
-import { toDevanagari } from "../data/devanagari";
-import { categories } from "../data/categories";
+import type { GlossaryEntry } from "../data/glossary";
+import { categories, getCategoryEntries } from "../data/categories";
 import type { StickyNote, SharedEntryState } from "../types";
 import { searchGlossary, findByTerm, getRelatedTerms } from "../lib/search";
-import { useTheme } from "../hooks";
-import { IconInfo, IconUser, IconCopy, IconShare, Wordmark, iconButtonClass } from "./Icons";
+import { useTheme, countNotes } from "../hooks";
+import { IconInfo, IconUser, IconCopy, IconShare, IconSun, IconMoon, Wordmark, iconButtonClass } from "./Icons";
 import { NotesList, NoteComposer } from "./Notes";
 import { Section, RootDisplay, CompositionDisplay, DefinitionText, MwSection } from "./WordPanel";
-import { formatEntryAsText } from "../lib/format";
+import { truncate, displayDevanagari, copyEntryText, copyEntryLink } from "../lib/format";
 import { MobileAuthDropdown } from "./Auth";
 import { InfoPanel } from "./InfoPanel";
 
@@ -49,20 +48,14 @@ function MobileDetailView({
   const tabsRef = useRef<HTMLDivElement>(null);
   const touchRef = useRef<{ x: number; y: number } | null>(null);
 
-  const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText(formatEntryAsText(entry))
-      .then(() => showToast("Copied to clipboard"))
-      .catch(() => showToast("Failed to copy"));
-  }, [entry, showToast]);
+  const handleCopy = useCallback(() => copyEntryText(entry, showToast), [entry, showToast]);
 
   const handleShare = useCallback(() => {
-    const url = `${window.location.origin}/t/${entry.id}`;
     if (typeof navigator.share === "function") {
+      const url = `${window.location.origin}/t/${entry.id}`;
       navigator.share({ title: entry.term, url }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(url)
-        .then(() => showToast("Link copied"))
-        .catch(() => showToast("Failed to copy link"));
+      copyEntryLink(entry, showToast);
     }
   }, [entry, showToast]);
 
@@ -149,7 +142,7 @@ function MobileDetailView({
           <div className="flex items-start justify-between">
             <div>
               <div className="font-mono text-4xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">
-                {entry.devanagari || toDevanagari(entry.term)}
+                {displayDevanagari(entry)}
               </div>
               <div className="mt-2 text-lg text-zinc-400 dark:text-zinc-500">
                 {entry.term}
@@ -325,16 +318,9 @@ export function MobileHome({ openEntries, setOpenEntries, notes, syncStatus, han
     [results, highlightedIndex, handleSelect],
   );
 
-  const categoryEntries = useMemo(() => {
-    if (!selectedCategory) return [];
-    const cat = categories.find((c) => c.id === selectedCategory);
-    if (!cat) return [];
-    return cat.termIds
-      .map((id) => glossaryById.get(id))
-      .filter((e): e is GlossaryEntry => e !== undefined);
-  }, [selectedCategory]);
+  const categoryEntries = useMemo(() => getCategoryEntries(selectedCategory), [selectedCategory]);
 
-  const noteCount = Object.values(notes).reduce((sum, arr) => sum + arr.length, 0);
+  const noteCount = countNotes(notes);
 
   const authModal = showAuth ? (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowAuth(false)}>
@@ -394,11 +380,7 @@ export function MobileHome({ openEntries, setOpenEntries, notes, syncStatus, han
               aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
               className="text-zinc-300 transition-colors hover:text-zinc-500 dark:text-zinc-700 dark:hover:text-zinc-400"
             >
-              {dark ? (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-              ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-              )}
+              {dark ? <IconSun /> : <IconMoon />}
             </button>
             <button
               onClick={() => setShowAuth(!showAuth)}
@@ -484,11 +466,11 @@ export function MobileHome({ openEntries, setOpenEntries, notes, syncStatus, han
                     {entry.term}
                   </span>
                   <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
-                    {entry.devanagari || toDevanagari(entry.term)}
+                    {displayDevanagari(entry)}
                   </span>
                 </div>
                 <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
-                  {entry.definition.length > 80 ? entry.definition.slice(0, 80) + "..." : entry.definition}
+                  {truncate(entry.definition, 80)}
                 </div>
               </button>
             ))}
@@ -536,13 +518,13 @@ export function MobileHome({ openEntries, setOpenEntries, notes, syncStatus, han
                             className="rounded-lg border border-zinc-200 px-3.5 py-3 text-left transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:border-zinc-700 dark:hover:bg-zinc-900/50"
                           >
                             <div className="font-mono text-sm text-zinc-400 dark:text-zinc-500">
-                              {entry.devanagari || toDevanagari(entry.term)}
+                              {displayDevanagari(entry)}
                             </div>
                             <div className="mt-0.5 text-sm text-zinc-700 dark:text-zinc-200">
                               {entry.term}
                             </div>
                             <div className="mt-1 text-[11px] leading-snug text-zinc-400 dark:text-zinc-600">
-                              {entry.definition.length > 60 ? entry.definition.slice(0, 60) + "..." : entry.definition}
+                              {truncate(entry.definition, 60)}
                             </div>
                           </button>
                         ))}

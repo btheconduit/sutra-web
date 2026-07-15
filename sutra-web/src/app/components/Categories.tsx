@@ -1,6 +1,6 @@
-import { glossaryById, type GlossaryEntry } from "../data/glossary";
-import { toDevanagari } from "../data/devanagari";
-import { categories, type Category } from "../data/categories";
+import type { GlossaryEntry } from "../data/glossary";
+import { categories, getCategoryEntries, type Category } from "../data/categories";
+import { truncate, displayDevanagari } from "../lib/format";
 
 export function CategoryBlocks({
   selected,
@@ -41,15 +41,13 @@ export function TermCard({
       className="group rounded-lg border border-zinc-200 px-4 py-3 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-300 hover:bg-zinc-50 hover:shadow-sm dark:border-zinc-800 dark:hover:border-zinc-700 dark:hover:bg-zinc-900/50 dark:hover:shadow-zinc-950/30"
     >
       <div className="font-mono text-base text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors">
-        {entry.devanagari || toDevanagari(entry.term)}
+        {displayDevanagari(entry)}
       </div>
       <div className="mt-1 text-sm text-zinc-700 dark:text-zinc-200">
         {entry.term}
       </div>
       <div className="mt-1.5 text-xs leading-relaxed text-zinc-400 dark:text-zinc-600">
-        {entry.definition.length > 80
-          ? entry.definition.slice(0, 80) + "..."
-          : entry.definition}
+        {truncate(entry.definition, 80)}
       </div>
     </button>
   );
@@ -62,9 +60,7 @@ export function CategoryTermCards({
   category: Category;
   onSelect: (entry: GlossaryEntry) => void;
 }) {
-  const entries = category.termIds
-    .map((id) => glossaryById.get(id))
-    .filter((e): e is GlossaryEntry => e !== undefined);
+  const entries = getCategoryEntries(category.id);
 
   if (entries.length === 0) return null;
 

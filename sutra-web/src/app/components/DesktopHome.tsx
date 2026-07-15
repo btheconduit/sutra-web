@@ -2,11 +2,11 @@
 
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import type { GlossaryEntry } from "../data/glossary";
-import { toDevanagari } from "../data/devanagari";
 import { categories } from "../data/categories";
 import type { PanelState, SharedEntryState } from "../types";
 import { searchGlossary } from "../lib/search";
-import { useTheme } from "../hooks";
+import { truncate, displayDevanagari } from "../lib/format";
+import { useTheme, countNotes } from "../hooks";
 import { Wordmark } from "./Icons";
 import { TopBar } from "./Auth";
 import { InfoPanel } from "./InfoPanel";
@@ -59,6 +59,7 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
   const newPanelIds = useRef<Set<string>>(new Set());
 
   const results = useMemo(() => searchGlossary(query), [query]);
+  const noteCount = useMemo(() => countNotes(notes), [notes]);
   const hasPanels = openEntries.length > 0;
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
@@ -332,7 +333,7 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
   if (!hasPanels) {
     return (
       <div className="flex flex-1 flex-col items-center justify-start bg-white font-sans dark:bg-zinc-950">
-        <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={Object.values(notes).reduce((sum, arr) => sum + arr.length, 0)} showAuth={showAuth} setShowAuth={setShowAuth} syncStatus={syncStatus} />
+        <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={noteCount} showAuth={showAuth} setShowAuth={setShowAuth} syncStatus={syncStatus} />
         {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
         <main className="flex w-full max-w-2xl flex-col items-center px-6 pt-32 pb-16">
           <div className="mb-10 flex flex-col items-center">
@@ -379,12 +380,10 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
                         {entry.term}
                       </span>
                       <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
-                        {entry.devanagari || toDevanagari(entry.term)}
+                        {displayDevanagari(entry)}
                       </span>
                       <span className="ml-auto text-xs text-zinc-400 dark:text-zinc-500">
-                        {entry.definition.length > 50
-                          ? entry.definition.slice(0, 50) + "..."
-                          : entry.definition}
+                        {truncate(entry.definition, 50)}
                       </span>
                     </button>
                   </li>
@@ -429,7 +428,7 @@ export function DesktopHome({ openEntries, setOpenEntries, notes, syncStatus, ha
       className="relative flex h-full min-h-0 flex-1 overflow-hidden bg-white font-sans dark:bg-zinc-950"
       style={{ "--sidebar-w": sidebarCollapsed ? "3rem" : "18rem" } as React.CSSProperties}
     >
-      <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={Object.values(notes).reduce((sum, arr) => sum + arr.length, 0)} showAuth={showAuth} setShowAuth={setShowAuth} syncStatus={syncStatus} />
+      <TopBar dark={dark} onToggle={toggle} onInfoClick={() => setShowInfo(true)} user={user} noteCount={noteCount} showAuth={showAuth} setShowAuth={setShowAuth} syncStatus={syncStatus} />
       {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
 
       <div className="absolute inset-y-0 left-0 z-10">

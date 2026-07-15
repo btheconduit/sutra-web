@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { glossaryById, type GlossaryEntry } from "../data/glossary";
-import { toDevanagari } from "../data/devanagari";
-import { categories } from "../data/categories";
+import type { GlossaryEntry } from "../data/glossary";
+import { categories, getCategoryEntries } from "../data/categories";
+import { truncate, displayDevanagari } from "../lib/format";
 import { Wordmark } from "./Icons";
 
 export function SearchSidebar({
@@ -33,14 +33,7 @@ export function SearchSidebar({
   collapsed: boolean;
   onToggleCollapse: () => void;
 }) {
-  const categoryEntries = useMemo(() => {
-    if (!selectedCategory) return [];
-    const cat = categories.find((c) => c.id === selectedCategory);
-    if (!cat) return [];
-    return cat.termIds
-      .map((id) => glossaryById.get(id))
-      .filter((e): e is GlossaryEntry => e !== undefined);
-  }, [selectedCategory]);
+  const categoryEntries = useMemo(() => getCategoryEntries(selectedCategory), [selectedCategory]);
 
   return (
     <div
@@ -127,11 +120,11 @@ export function SearchSidebar({
                         {entry.term}
                       </span>
                       <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
-                        {entry.devanagari || toDevanagari(entry.term)}
+                        {displayDevanagari(entry)}
                       </span>
                     </div>
                     <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
-                      {entry.definition.length > 60 ? entry.definition.slice(0, 60) + "..." : entry.definition}
+                      {truncate(entry.definition, 60)}
                     </div>
                   </button>
                 ))}
@@ -173,11 +166,11 @@ export function SearchSidebar({
                         <div className="flex items-baseline gap-2">
                           <span className="text-sm text-zinc-700 dark:text-zinc-200">{entry.term}</span>
                           <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
-                            {entry.devanagari || toDevanagari(entry.term)}
+                            {displayDevanagari(entry)}
                           </span>
                         </div>
                         <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
-                          {entry.definition.length > 60 ? entry.definition.slice(0, 60) + "..." : entry.definition}
+                          {truncate(entry.definition, 60)}
                         </div>
                       </button>
                     ))}

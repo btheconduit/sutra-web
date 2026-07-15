@@ -89,6 +89,10 @@ export function useIsMobile(breakpoint = 768) {
 
 // --- Notes ---
 
+export function countNotes(notes: Record<string, StickyNote[]>): number {
+  return Object.values(notes).reduce((sum, arr) => sum + arr.length, 0);
+}
+
 let noteIdCounter = 0;
 function nextNoteId() {
   return `note-${Date.now()}-${++noteIdCounter}`;

@@ -6,12 +6,11 @@ import type { GlossaryEntry } from "../data/glossary";
 import { roots } from "../data/roots";
 import { morphemes } from "../data/morphemes";
 import type { StickyNote, MwEntry } from "../types";
-import { toDevanagari } from "../data/devanagari";
 import { findByTerm, getRelatedTerms } from "../lib/search";
 import { loadMwData } from "../lib/mw";
 import { IconExpand, IconCollapse, IconMinimize, IconClose, IconCopy, IconShare, iconButtonClass } from "./Icons";
 import { NotesList, NoteComposer } from "./Notes";
-import { formatEntryAsText } from "../lib/format";
+import { displayDevanagari, copyEntryText, copyEntryLink } from "../lib/format";
 
 export function Section({
   label,
@@ -192,7 +191,7 @@ export function CollapsedPanel({
   onRestore: () => void;
   onClose: () => void;
 }) {
-  const devanagari = entry.devanagari || toDevanagari(entry.transliteration);
+  const devanagari = displayDevanagari(entry);
   return (
     <div
       onClick={onRestore}
@@ -344,16 +343,11 @@ export function WordPanel({
   const [stuck, setStuck] = useState(false);
 
   function handleCopy() {
-    navigator.clipboard.writeText(formatEntryAsText(entry))
-      .then(() => showToast("Copied to clipboard"))
-      .catch(() => showToast("Failed to copy"));
+    copyEntryText(entry, showToast);
   }
 
   function handleShare() {
-    const url = `${window.location.origin}/t/${entry.id}`;
-    navigator.clipboard.writeText(url)
-      .then(() => showToast("Link copied"))
-      .catch(() => showToast("Failed to copy link"));
+    copyEntryLink(entry, showToast);
   }
 
   useEffect(() => {
@@ -380,7 +374,7 @@ export function WordPanel({
           <div className="flex h-full items-center justify-between gap-3 border-b border-zinc-100 bg-white/95 px-6 backdrop-blur dark:border-zinc-800/60 dark:bg-zinc-900/85">
             <div className="min-w-0">
               <div className="font-mono text-xl font-light leading-tight tracking-tight text-zinc-900 dark:text-zinc-100">
-                {entry.devanagari || toDevanagari(entry.term)}
+                {displayDevanagari(entry)}
               </div>
               <div className="text-xs leading-tight text-zinc-400 dark:text-zinc-500">
                 {entry.term}
@@ -403,7 +397,7 @@ export function WordPanel({
           <div className="mb-6 flex items-start justify-between">
             <div>
               <div className="text-4xl font-light tracking-tight font-mono text-zinc-900 dark:text-zinc-100">
-                {entry.devanagari || toDevanagari(entry.term)}
+                {displayDevanagari(entry)}
               </div>
               <div className="mt-1.5 text-lg text-zinc-400 dark:text-zinc-500">
                 {entry.term}
