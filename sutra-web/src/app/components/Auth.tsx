@@ -11,23 +11,15 @@ function formatJoinDate(iso: string) {
   return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 }
 
-export function AuthDropdown({ user, onClose, noteCount, syncStatus }: { user: User | null; onClose: () => void; noteCount: number; syncStatus: NoteSyncStatus }) {
+// Shared OTP sign-in state and handlers for the desktop dropdown and the
+// mobile bottom sheet; only the markup differs between the two.
+function useOtpAuth(onClose: () => void) {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
   const [signingOut, setSigningOut] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (sent) return;
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [onClose, sent]);
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
@@ -63,6 +55,29 @@ export function AuthDropdown({ user, onClose, noteCount, syncStatus }: { user: U
     await supabase?.auth.signOut();
     onClose();
   }
+
+  function reset() {
+    setSent(false);
+    setEmail("");
+    setOtp("");
+    setError("");
+  }
+
+  return { email, setEmail, otp, setOtp, sent, verifying, error, signingOut, handleSignIn, handleVerifyOtp, handleSignOut, reset };
+}
+
+export function AuthDropdown({ user, onClose, noteCount, syncStatus }: { user: User | null; onClose: () => void; noteCount: number; syncStatus: NoteSyncStatus }) {
+  const { email, setEmail, otp, setOtp, sent, verifying, error, signingOut, handleSignIn, handleVerifyOtp, handleSignOut, reset } = useOtpAuth(onClose);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (sent) return;
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [onClose, sent]);
 
   if (user) {
     return (
@@ -128,7 +143,7 @@ export function AuthDropdown({ user, onClose, noteCount, syncStatus }: { user: U
           </button>
         </form>
         <button
-          onClick={() => { setSent(false); setEmail(""); setOtp(""); setError(""); }}
+          onClick={reset}
           className="mt-2 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
         >
           Try a different email
@@ -168,47 +183,7 @@ export function AuthDropdown({ user, onClose, noteCount, syncStatus }: { user: U
 }
 
 export function MobileAuthDropdown({ user, onClose, noteCount, syncStatus }: { user: User | null; onClose: () => void; noteCount: number; syncStatus: NoteSyncStatus }) {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [verifying, setVerifying] = useState(false);
-  const [error, setError] = useState("");
-  const [signingOut, setSigningOut] = useState(false);
-
-  async function handleSignIn(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    if (!supabase) {
-      setError("Sign-in is not available");
-      return;
-    }
-    const { error: err } = await supabase.auth.signInWithOtp({
-      email,
-      options: { shouldCreateUser: true, emailRedirectTo: window.location.origin },
-    });
-    if (err) setError(err.message);
-    else setSent(true);
-  }
-
-  async function handleVerifyOtp(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    if (!supabase) return;
-    setVerifying(true);
-    const { error: err } = await supabase.auth.verifyOtp({
-      email,
-      token: otp.trim(),
-      type: "email",
-    });
-    setVerifying(false);
-    if (err) setError(err.message);
-  }
-
-  async function handleSignOut() {
-    setSigningOut(true);
-    await supabase?.auth.signOut();
-    onClose();
-  }
+  const { email, setEmail, otp, setOtp, sent, verifying, error, signingOut, handleSignIn, handleVerifyOtp, handleSignOut, reset } = useOtpAuth(onClose);
 
   if (user) {
     return (
@@ -265,7 +240,7 @@ export function MobileAuthDropdown({ user, onClose, noteCount, syncStatus }: { u
           </button>
         </form>
         <button
-          onClick={() => { setSent(false); setEmail(""); setOtp(""); setError(""); }}
+          onClick={reset}
           className="mt-3 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
         >
           Try a different email
