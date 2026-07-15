@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
+import type { GlossaryEntry } from "./data/glossary";
 import type { StickyNote, NoteSyncStatus } from "./types";
 
 function pendingKey(userId: string) {
@@ -85,6 +86,60 @@ export function useIsMobile(breakpoint = 768) {
   }, [breakpoint]);
 
   return isMobile;
+}
+
+// --- Keyboard ---
+
+/** Arrow/Enter navigation over search results, shared by both layouts. */
+export function useSearchKeyboardNav(
+  results: GlossaryEntry[],
+  onSelect: (entry: GlossaryEntry) => void,
+) {
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [prevResults, setPrevResults] = useState(results);
+  if (prevResults !== results) {
+    setPrevResults(results);
+    setHighlightedIndex(-1);
+  }
+
+  const handleSearchKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (results.length === 0) return;
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setHighlightedIndex((prev) => (prev < results.length - 1 ? prev + 1 : 0));
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : results.length - 1));
+      } else if (e.key === "Enter" && highlightedIndex >= 0) {
+        e.preventDefault();
+        onSelect(results[highlightedIndex]);
+      }
+    },
+    [results, highlightedIndex, onSelect],
+  );
+
+  return { highlightedIndex, handleSearchKeyDown };
+}
+
+/** Global `i` (info) and `o` (theme) shortcuts, shared by both layouts. */
+export function useGlobalShortcuts(onToggleInfo: () => void, onToggleTheme: () => void) {
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement)?.tagName;
+      const isInput = tag === "INPUT" || tag === "TEXTAREA";
+      if (isInput || e.metaKey || e.ctrlKey) return;
+      if (e.key === "i") {
+        e.preventDefault();
+        onToggleInfo();
+      } else if (e.key === "o") {
+        e.preventDefault();
+        onToggleTheme();
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onToggleInfo, onToggleTheme]);
 }
 
 // --- Notes ---

@@ -6,7 +6,7 @@ import type { GlossaryEntry } from "../data/glossary";
 import { categories, getCategoryEntries } from "../data/categories";
 import type { StickyNote, SharedEntryState } from "../types";
 import { searchGlossary } from "../lib/search";
-import { useTheme, countNotes } from "../hooks";
+import { useTheme, countNotes, useSearchKeyboardNav, useGlobalShortcuts } from "../hooks";
 import { IconInfo, IconUser, IconCopy, IconShare, IconSun, IconMoon, Wordmark, iconButtonClass } from "./Icons";
 import { NotesList, NoteComposer } from "./Notes";
 import { EntryBody } from "./EntryBody";
@@ -190,16 +190,11 @@ export function MobileHome({ openEntries, setOpenEntries, notes, syncStatus, han
   const [activeId, setActiveId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { dark, toggle } = useTheme();
-  const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   const handleSignInClick = useCallback(() => setShowAuth(true), []);
 
   const results = useMemo(() => searchGlossary(query), [query]);
   const activeEntry = openEntries.find((e) => e.id === activeId) || null;
-
-  useEffect(() => {
-    setHighlightedIndex(-1);
-  }, [results]);
 
   const handleSelect = useCallback((entry: GlossaryEntry) => {
     setOpenEntries((prev) => {
@@ -240,44 +235,10 @@ export function MobileHome({ openEntries, setOpenEntries, notes, syncStatus, han
     }
   }, [focusOnBack, activeEntry]);
 
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      const tag = (e.target as HTMLElement)?.tagName;
-      const isInput = tag === "INPUT" || tag === "TEXTAREA";
+  const handleToggleInfo = useCallback(() => setShowInfo((prev) => !prev), []);
+  useGlobalShortcuts(handleToggleInfo, toggle);
 
-      if (e.key === "i" && !isInput && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault();
-        setShowInfo((prev) => !prev);
-        return;
-      }
-
-      if (e.key === "o" && !isInput && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault();
-        toggle();
-        return;
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [toggle]);
-
-  const handleSearchKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (results.length === 0) return;
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setHighlightedIndex((prev) => (prev < results.length - 1 ? prev + 1 : 0));
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : results.length - 1));
-      } else if (e.key === "Enter" && highlightedIndex >= 0) {
-        e.preventDefault();
-        handleSelect(results[highlightedIndex]);
-      }
-    },
-    [results, highlightedIndex, handleSelect],
-  );
+  const { highlightedIndex, handleSearchKeyDown } = useSearchKeyboardNav(results, handleSelect);
 
   const categoryEntries = useMemo(() => getCategoryEntries(selectedCategory), [selectedCategory]);
 
